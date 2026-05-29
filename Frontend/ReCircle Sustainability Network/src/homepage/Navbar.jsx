@@ -5,15 +5,16 @@ import HowItWorksModal from './modals/HowItWorksModal';
 import ContactUs from './modals/ContactUs';
 import ImpactModal from './modals/ImpactModal';
 import ForCollectors from './modals/ForCollectors';
+import AuthModal from './modals/AuthModal';
 
-const Navbar = () => {
+const Navbar = ({onOpenAuth}) => {
   const [isOpen, setIsOpen] = useState(false);
   const navLinks = ['Home', 'How It Works', 'Impact', 'For Collectors', 'Contact Us'];
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
 const [isContactUsOpen, setIsContactUsOpen] = useState(false);
 const [isImpactOpen, setIsImpactOpen] = useState(false);
 const [isCollectorsOpen, setIsCollectorsOpen] = useState(false);
-
+const [isAuthOpen, setIsAuthOpen] = useState(false);
 
 return (
     <nav className="absolute top-0 left-0 w-full z-50">
@@ -75,7 +76,7 @@ return (
 
         {/* Desktop Button (Single Auth Button) */}
         <div className="hidden lg:flex items-center">
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white font-medium rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
+          <button onClick={onOpenAuth}  className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white font-medium rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300">
             <FiUser className="text-lg" /> Join Movement 🌿
           </button>
         </div>
@@ -154,7 +155,7 @@ return (
 
           {/* Mobile Single Auth Button */}
           <div className="w-full">
-            <button className="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white font-medium text-lg rounded-full shadow-md active:scale-95 transition-transform">
+            <button onClick={onOpenAuth} className="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white font-medium text-lg rounded-full shadow-md active:scale-95 transition-transform">
               <FiUser className="text-xl" /> Join Movement 🌿
             </button>
           </div>

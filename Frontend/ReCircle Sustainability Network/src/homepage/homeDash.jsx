@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './Navbar';
 import HeroSection from './HeroSection';
 import ImpactStats from './ImpactStats'; 
 import Footer from './Footer';
 import Process from './Process';
+import AuthModal from './modals/AuthModal';
 
 const HomeDash = () => {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  
+
   return (
     <div className="relative w-full min-h-screen bg-white">
-      <Navbar /> 
+      <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
       
       <main>
-        <HeroSection />
+       <HeroSection onOpenAuth={() => setIsAuthOpen(true)} />
+        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
         <ImpactStats />
         <Process/>
         

@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import HeroSection from './HeroSection';
 import ImpactStats from './ImpactStats'; 
 import Footer from './Footer';
+import Process from './Process';
 
 const HomeDash = () => {
   return (
@@ -12,6 +13,8 @@ const HomeDash = () => {
       <main>
         <HeroSection />
         <ImpactStats />
+        <Process/>
+        
         
       </main>
       

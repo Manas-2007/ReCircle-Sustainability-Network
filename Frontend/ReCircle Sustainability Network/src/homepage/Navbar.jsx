@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { HiOutlineMenu, HiX } from 'react-icons/hi';
 import { FiUser } from 'react-icons/fi';
+import HowItWorksModal from './modals/HowItWorksModal';
+import ContactUs from './modals/ContactUs';
+import ImpactModal from './modals/ImpactModal';
+import ForCollectors from './modals/ForCollectors';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navLinks = ['Home', 'About Us', 'How It Works', 'Impact', 'For Collectors', 'Contact Us'];
+  const navLinks = ['Home', 'How It Works', 'Impact', 'For Collectors', 'Contact Us'];
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+const [isContactUsOpen, setIsContactUsOpen] = useState(false);
+const [isImpactOpen, setIsImpactOpen] = useState(false);
+const [isCollectorsOpen, setIsCollectorsOpen] = useState(false);
 
-  return (
+
+return (
     <nav className="absolute top-0 left-0 w-full z-50">
       
       {/* Desktop & Tablet Navbar */}
@@ -29,8 +38,26 @@ const Navbar = () => {
         <ul className="hidden lg:flex items-center gap-8">
           {navLinks.map((link, index) => (
             <li key={index}>
-              <a 
-                href="#" 
+             <a 
+                href={(link === 'How It Works' || link === 'Contact Us') ? undefined : "#"} 
+                style={{ cursor: 'pointer' }}
+                onClick={(e) => {
+                  if (link === 'How It Works') {
+                    e.preventDefault();
+                    setIsHowItWorksOpen(true);
+                  } else if (link === 'Contact Us') {
+                    e.preventDefault();
+                    setIsContactUsOpen(true);
+                  }
+                  else if (link === 'Impact') {
+                     e.preventDefault();
+                     setIsImpactOpen(true);
+                   }
+                   else if (link === 'For Collectors') {
+                e.preventDefault();
+               setIsCollectorsOpen(true);
+               }
+                }}
                 className={`relative text-[15px] font-medium transition-colors duration-300 pb-1 border-none outline-none focus:outline-none
                   /* The sliding border effect setup */
                   after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2.5px] after:bg-[#4ade80] after:transition-transform after:duration-300 after:origin-left
@@ -93,8 +120,30 @@ const Navbar = () => {
           <ul className="flex flex-col items-start gap-5 w-full mb-10">
             {navLinks.map((link, index) => (
               <li key={index} className="w-full">
-                <a 
-                  href="#" 
+               <a 
+                  href={(link === 'How It Works' || link === 'Contact Us') ? undefined : "#"} 
+                  style={{ cursor: 'pointer' }}
+                  onClick={(e) => {
+                    if (link === 'How It Works') {
+                      e.preventDefault();
+                      setIsOpen(false); 
+                      setIsHowItWorksOpen(true); 
+                    } else if (link === 'Contact Us') {
+                      e.preventDefault();
+                      setIsOpen(false); 
+                      setIsContactUsOpen(true); 
+                    }
+                    else if (link === 'Impact') {
+                      e.preventDefault();
+                      setIsOpen(false); 
+                      setIsImpactOpen(true);
+                     }
+                     else if (link === 'For Collectors') {
+                     e.preventDefault();
+                     setIsOpen(false); 
+                     setIsCollectorsOpen(true);
+                      }
+                  }}
                   className="text-[15px] font-medium text-gray-800 hover:text-[#15803d] flex items-center gap-2 border-b border-green-400 border-l-5 border-[#15803d] pl-4 pb-3 w-full transition-colors"
                 >
                   {link} <span className="text-[#4ade80] text-base drop-shadow-sm">🍃</span>
@@ -120,6 +169,27 @@ const Navbar = () => {
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] lg:hidden transition-opacity"
         ></div>
       )}
+
+{/*Popup Modal */}
+      <HowItWorksModal 
+        isOpen={isHowItWorksOpen} 
+        onClose={() => setIsHowItWorksOpen(false)} 
+      />
+
+      <ContactUs 
+        isOpen={isContactUsOpen} 
+        onClose={() => setIsContactUsOpen(false)} 
+      />
+
+      <ImpactModal 
+      isOpen={isImpactOpen} 
+      onClose={() => setIsImpactOpen(false)}
+       />
+
+       <ForCollectors
+        isOpen={isCollectorsOpen} 
+        onClose={() => setIsCollectorsOpen(false)} 
+        />
 
     </nav>
   );

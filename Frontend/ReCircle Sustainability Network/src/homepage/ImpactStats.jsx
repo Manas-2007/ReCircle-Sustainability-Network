@@ -65,23 +65,25 @@ const ImpactStats = () => {
         </div>
 
         {/* ⚪ White Overlapping Card - Intact */}
-        <div className="w-full lg:w-[350px] bg-white rounded-3xl p-6 md:p-4 flex items-center justify-between shadow-[0_15px_50px_rgba(0,0,0,0.15)] z-10 lg:-ml-12 mt-6 lg:mt-0">
-          
-          <div className="flex flex-col gap-4">
-            <h3 className="text-gray-800 font-[700] text-xl md:text-xl leading-[1.15] tracking-tight">
-              Small Steps.<br />Big Impact.
-            </h3>
-            
-            <button className="bg-[#16a34a] hover:bg-[#15803d] text-white text-sm font-semibold px-6 py-3 rounded-full flex items-center w-fit gap-2 transition-all duration-300 hover:scale-105 shadow-md group mt-1">
-              See Our Impact <FaArrowRight className="text-[11px] transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
-          </div>
+        <div className="w-full max-w-[340px] md:max-w-[360px] mx-auto lg:mx-0 lg:w-[350px] bg-white rounded-3xl p-6 lg:p-7 flex items-center justify-between shadow-[0_15px_50px_rgba(0,0,0,0.15)] z-10 lg:-ml-12 mt-6 lg:mt-0">
+  
+  {/* Text and Button Container */}
+  <div className="flex flex-col gap-3">
+    <h3 className="text-gray-800 font-[700] text-[18px] md:text-xl leading-[1.2] tracking-tight">
+      Small Steps.<br />Big Impact.
+    </h3>
+    
+    <button className="bg-[#16a34a] hover:bg-[#15803d] text-white text-[13px] md:text-sm font-semibold px-5 py-2.5 rounded-full flex items-center w-fit gap-2 transition-all duration-300 hover:scale-105 shadow-md group mt-1">
+      See Our Impact <FaArrowRight className="text-[10px] transition-transform duration-300 group-hover:translate-x-1" />
+    </button>
+  </div>
 
-          <div className="w-28 h-28 md:w-32 md:h-32 flex-shrink-0 -mr-2 lg:-mr-4">
-             <img src="miniEarth.jpg" alt="Impact Earth" className="w-full h-full object-contain" />
-          </div>
+  {/* Image Container */}
+  <div className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 -mr-2">
+     <img src="miniEarth.jpg" alt="Impact Earth" className="w-full h-full object-contain" />
+  </div>
 
-        </div>
+</div>
 
       </div>
     </div>

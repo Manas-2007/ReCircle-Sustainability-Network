@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const AuthModal = ({ isOpen, onClose }) => {
+const AuthModal = ({ isOpen, onClose,onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [selectedRole, setSelectedRole] = useState('household');
   const [mounted, setMounted] = useState(false);
@@ -192,13 +192,13 @@ const AuthModal = ({ isOpen, onClose }) => {
 
           {/* END scrollable body */}
 
-
-          {/* Footer */}
+{/* Footer */}
 <div className="flex-shrink-0 bg-gray-50 border-t border-gray-100 px-5 py-4 sm:px-6">
 
-  {/* Main Auth Button */}
+  {/* Main Auth Button - YAHAN onClick LAGANA THA */}
   <button
     type="button"
+    onClick={onLoginSuccess} // <--- Ye ab sahi jagah par hai
     className="rc-display w-full text-white text-[13.5px] font-[600] py-3 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
     style={{
       background: 'linear-gradient(135deg,#16a34a,#15803d)',
@@ -227,9 +227,10 @@ const AuthModal = ({ isOpen, onClose }) => {
         : 'Already a member?'}
     </span>
 
+    {/* Yahan se extra onClick hata diya hai */}
     <button
       type="button"
-      onClick={() => setIsLogin(!isLogin)}
+      onClick={() => setIsLogin(!isLogin)} 
       className="rc-display text-[#16a34a] hover:text-[#15803d] transition-all duration-150 hover:underline"
     >
       {isLogin

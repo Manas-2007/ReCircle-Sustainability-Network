@@ -6,7 +6,7 @@ import Footer from './Footer';
 import Process from './Process';
 import AuthModal from './modals/AuthModal';
 
-const HomeDash = () => {
+const HomeDash = ({onLogin}) => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   
 
@@ -16,7 +16,7 @@ const HomeDash = () => {
       
       <main>
        <HeroSection onOpenAuth={() => setIsAuthOpen(true)} />
-        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onLoginSuccess={onLogin} />
         <ImpactStats />
         <Process/>
         

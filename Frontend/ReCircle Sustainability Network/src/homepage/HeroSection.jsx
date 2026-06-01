@@ -38,7 +38,6 @@ const HeroSection = ({onOpenAuth}) => {
           {/* Action Button */}
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center md:justify-start">
             <button onClick={() => {
-    console.log("Hero Button Clicked!");
     onOpenAuth();
 }}
   className="flex items-center justify-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 group w-fit mx-auto md:mx-0">

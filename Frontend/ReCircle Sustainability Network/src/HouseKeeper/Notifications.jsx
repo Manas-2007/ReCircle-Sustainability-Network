@@ -73,109 +73,99 @@ const Notifications = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 font-sans pb-10">
+    <div className="max-w-screen-2xl mx-auto px-4 sm:px-3 lg:px-2 font-sans pb-10">
       
       {/* 1. HEADER */}
-      <div className="flex items-center justify-between mb-8 pt-0">
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="p-2 sm:p-2.5 bg-emerald-50 rounded-xl sm:rounded-2xl border border-emerald-100 shrink-0">
-            <Bell size={20} className="text-emerald-600 sm:w-6 sm:h-6" />
-          </div>
-          <div>
-            <h1 className="text-lg sm:text-2xl font-bold text-gray-900 leading-tight">Notifications</h1>
-            <p className="text-gray-500 text-[11px] sm:text-sm font-medium mt-0.5">Stay on top of your eco-impact</p>
-          </div>
+    <div className="flex items-center justify-between mb-6 sm:-mt-2">
+      {/* Left: Icon & Title */}
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-100 shrink-0">
+          <Bell size={18} className="text-emerald-600" />
+        </div>
+        <div className="flex flex-col justify-center">
+          <h1 className="text-[17px] sm:text-xl font-bold text-gray-900 leading-none">Notifications</h1>
+          <p className="text-gray-500 text-[10px] sm:text-[11px] font-medium ">Impact updates</p>
+        </div>
+      </div>
+
+      {/* Right: Mark All Read Button */}
+      {unreadCount > 0 && (
+        <button
+          onClick={handleMarkAllRead}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-200 rounded-lg text-[11px] sm:text-[12px] font-bold text-gray-700 hover:text-emerald-700 transition-all active:scale-95 shadow-sm shrink-0"
+        >
+          <CheckCheck size={13} />
+          <span>Mark all as read</span>
+        </button>
+      )}
+    </div>
+
+      {/* 2. BALANCED CARDS GRID */}
+      {/* Optimized Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
+<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+  {notifications.map((notif) => (
+    <div
+      key={notif.id}
+      className={`relative flex flex-col bg-white rounded-2xl p-4 transition-all duration-300 border ${
+        notif.isUnread 
+          ? 'border-emerald-500/30 shadow-sm' 
+          : 'border-gray-200 shadow-sm'
+      }`}
+    >
+      {/* Unread Indicator */}
+      {notif.isUnread && (
+        <div className="absolute top-4 right-4 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+      )}
+
+      <div className="flex gap-3 items-start">
+        {/* IMAGE / ICON - Fixed size to prevent layout pushing */}
+        <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center bg-gray-50">
+          {notif.image ? (
+            <img src={notif.image} alt="notif" className="w-full h-full object-cover" />
+          ) : (
+            <div className={`w-full h-full flex items-center justify-center ${notif.iconBg}`}>
+              {React.cloneElement(notif.icon, { size: 20 })}
+            </div>
+          )}
         </div>
 
-        {unreadCount > 0 && (
-          <button
-            onClick={handleMarkAllRead}
-            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-200 rounded-xl text-[11px] sm:text-xs font-bold text-gray-600 hover:text-emerald-700 transition-all active:scale-95 shadow-sm"
-          >
-            <CheckCheck size={14} />
-            <span className="hidden xs:inline">Mark all as read</span>
-            <span className="xs:hidden">Mark Read</span>
+        {/* CONTENT - min-w-0 is crucial for text wrapping */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <h3 className="font-bold text-[14px] text-gray-900 leading-tight break-words">
+              {notif.title}
+            </h3>
+          </div>
+          
+          {notif.status && (
+            <span className="inline-block px-1.5 py-0.5 mb-1.5 text-[9px] font-bold rounded-md uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
+              {notif.status}
+            </span>
+          )}
+
+          <p className="text-[12px] text-gray-500 font-medium leading-relaxed break-words">
+            {notif.message}
+          </p>
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
+        <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-semibold">
+          <Clock size={11} />
+          {notif.time}
+        </div>
+
+        {notif.actionText && (
+          <button className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all shadow-sm ${getButtonStyles(notif.type)}`}>
+            {React.cloneElement(notif.actionIcon, { size: 12 })}
+            {notif.actionText}
           </button>
         )}
       </div>
-
-      {/* 2. BALANCED CARDS GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {notifications.map((notif) => (
-          <div
-            key={notif.id}
-            className={`
-              relative flex flex-col bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 transition-all duration-300 border
-              ${notif.isUnread 
-                ? 'border-emerald-500/40 shadow-[0_4px_15px_rgba(16,185,129,0.08)]' 
-                : 'border-gray-200 shadow-sm'
-              }
-            `}
-          >
-            {/* Unread Indicator */}
-            {notif.isUnread && (
-              <div className="absolute top-4 right-4 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            )}
-
-            <div className="flex gap-4 sm:gap-5">
-              
-              {/* IMAGE OR ICON RENDERER (Naya Logic) */}
-              {notif.image ? (
-                <div className="w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] shrink-0 rounded-xl sm:rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm bg-white p-0.5">
-                  <img src={notif.image} alt="notification" className="w-full h-full object-cover rounded-[10px]" />
-                </div>
-              ) : (
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl sm:rounded-2xl flex items-center justify-center ${notif.iconBg} border border-white/50 shadow-sm`}>
-                  {notif.icon}
-                </div>
-              )}
-
-              {/* Content Area */}
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 mb-2">
-                  <h3 className={`font-bold text-sm sm:text-[15.5px] truncate leading-none ${notif.isUnread ? 'text-gray-900' : 'text-gray-700'}`}>
-                    {notif.title}
-                  </h3>
-
-                  {notif.status && (
-                    <span className={`self-start xs:self-center px-2 py-0.5 text-[9px] font-bold rounded-md uppercase tracking-wider shrink-0
-                      ${notif.status === 'In Transit' 
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                        : 'bg-gray-100 text-gray-500 border border-gray-200'
-                      }`}>
-                      {notif.status}
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-[12.5px] sm:text-[14px] font-medium leading-relaxed text-gray-500 line-clamp-2 sm:line-clamp-3">
-                  {notif.message}
-                </p>
-
-                {/* Bottom - Actions & Time */}
-                <div className="flex items-center justify-between mt-4 sm:mt-5 pt-3 border-t border-gray-50">
-                  <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-gray-400 font-semibold">
-                    <Clock size={12} />
-                    {notif.time}
-                  </div>
-
-                  {notif.actionText && (
-                    <button
-                      className={`
-                        flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-[11.5px] font-bold transition-all active:scale-95 shadow-sm
-                        ${getButtonStyles(notif.type)}
-                      `}
-                    >
-                      {React.cloneElement(notif.actionIcon, { size: 12 })}
-                      {notif.actionText}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    </div>
+  ))}
+</div>
     </div>
   );
 };

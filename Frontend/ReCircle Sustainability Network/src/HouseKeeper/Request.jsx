@@ -108,30 +108,28 @@ const Request = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-2 lg:px-4  font-sans">
+    <div className="max-w-screen-2xl mx-auto px-2 lg:px-2  font-sans">
       
-      {/* ========================================== */}
-      {/* HEADER (With Create Request Button) */}
-      {/* ========================================== */}
-      <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gray-300 pb-5">
-        <div className="text-center sm:text-left">
-          <h1 className="text-xl sm:text-2xl font-[650] text-gray-900 tracking-tight">
-            Schedule a Pickup
-          </h1>
-          <p className="text-gray-500 text-[13px] sm:text-[12px] font-[600] mt-1 sm:mt-1.5">
-            Book a collector, earn eco-points, and save the planet.
-          </p>
-        </div>
+      {/* HEADER */}
+<div className="mb-8 sm:-mt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gray-300 pb-5">
+  <div className="text-center sm:text-left">
+    <h1 className="text-xl sm:text-2xl font-bold sm:font-bold text-gray-800 tracking-tight">
+      Schedule Pickup
+    </h1>
+    <p className="text-gray-500 text-[13px] sm:text-[12px] font-medium">
+      Book a collector, earn eco-points, and save the planet.
+    </p>
+  </div>
 
-        {/* Create Request Button */}
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="bg-emerald-800 hover:bg-emerald-900 text-white px-5 py-2.5 rounded-xl font-[650] text-[14px] tracking-wide transition-all duration-200 shadow-md shadow-emerald-900/20 active:scale-[0.97] flex items-center justify-center gap-2 shrink-0"
-        >
-          <Plus size={18} />
-          Create Request
-        </button>
-      </div>
+  {/* Create Request Button */}
+  <button 
+    onClick={() => setIsModalOpen(true)}
+    className="bg-emerald-800 hover:bg-emerald-900 text-white px-5 py-2.5 rounded-xl font-semibold text-[14px] tracking-wide transition-all duration-200 shadow-md shadow-emerald-900/20 active:scale-[0.97] flex items-center justify-center gap-2 shrink-0"
+  >
+    <Plus size={18} />
+    Create Request
+  </button>
+</div>
 
       {/* CREATE REQUEST MODAL (Ultra-Compact & Centered) */}
       {isModalOpen && (

@@ -45,7 +45,7 @@ const EcoPoints = () => {
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* HERO SECTION */}
-        <div className="relative bg-[#064e3b] rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 text-white mb-12 shadow-sm border border-emerald-900/50 overflow-hidden flex flex-col gap-4 sm:gap-5 lg:max-w-5xl lg:mx-auto">
+        <div className="relative bg-[#064e3b] rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 text-white mb-8 shadow-sm border border-emerald-900/50 overflow-hidden flex flex-col gap-4 sm:gap-5 lg:max-w-5xl lg:mx-auto">
           
           <div 
             className="absolute top-0 right-0 w-full sm:w-1/2 h-full opacity-40 pointer-events-none"
@@ -107,7 +107,7 @@ const EcoPoints = () => {
         </div>
 
       {/* REDEEM REWARDS */}
-      <div className="mb-14">
+      <div className="mb-4">
         <div className="flex items-center justify-between mb-5 px-1">
           <h2 className="text-[18px] sm:text-xl font-bold text-gray-900 tracking-tight">Redeem Rewards</h2>
           <span className="text-emerald-600 text-[12px] sm:text-[13px] font-bold flex items-center gap-1">
@@ -195,10 +195,10 @@ const EcoPoints = () => {
       </div>
 
         {/* 3. BADGE JOURNEY (Gamified & Highlighted) */}
-      <div className="mb-14">
-        <div className="flex items-center justify-between mb-5 px-1">
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5 ">
           <div>
-            <h2 className="text-[18px] sm:text-xl font-bold text-gray-900 tracking-tight">Your Badge Journey</h2>
+            <h2 className="text-[18px] sm:text-xl font-[650] text-gray-900 tracking-tight">Your Badge Journey</h2>
             <p className="text-gray-500 text-[12px] sm:text-[13px] font-medium mt-0.5">Keep recycling to unlock new tiers</p>
           </div>
           <div className="bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl text-[11px] sm:text-[12px] font-bold border border-emerald-200/60 shadow-sm shrink-0">
@@ -270,43 +270,41 @@ const EcoPoints = () => {
         </div>
       </div>
 
-      {/* 4. COMING SOON PERKS (Animated & Premium) */}
-      <div className="mb-12">
-        <div className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] bg-gradient-to-br from-emerald-50/50 via-white to-emerald-50/50 border-2 border-dashed border-emerald-200/80 p-8 sm:p-12 flex flex-col items-center justify-center text-center group cursor-default transition-all duration-500 hover:border-emerald-300 hover:shadow-[0_10px_40px_rgba(16,185,129,0.08)]">
-          
-          {/* Animated Background Decorative Blobs */}
-          <div className="absolute top-0 left-0 w-32 h-32 sm:w-48 sm:h-48 bg-emerald-200/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 group-hover:scale-150 transition-transform duration-1000 ease-in-out"></div>
-          <div className="absolute bottom-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-teal-200/40 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 group-hover:scale-150 transition-transform duration-1000 ease-in-out"></div>
+      {/* 4. COMING SOON PERKS (Optimized Compact Version) */}
+<div className="mb-8">
+  <div className="relative overflow-hidden rounded-[20px] sm:rounded-[24px] bg-gradient-to-br from-emerald-50/50 via-white to-emerald-50/50 border-2 border-dashed border-emerald-200/80 p-5 sm:p-8 flex flex-col items-center justify-center text-center group cursor-default transition-all duration-300 hover:border-emerald-300 hover:shadow-lg">
+    
+    {/* Animated Background Decorative Blobs (Scaled down) */}
+    <div className="absolute top-0 left-0 w-24 sm:w-32 h-24 sm:h-32 bg-emerald-200/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 group-hover:scale-125 transition-transform duration-700"></div>
+    <div className="absolute bottom-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-teal-200/40 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 group-hover:scale-125 transition-transform duration-700"></div>
 
-          {/* Floating Animated Icon Box */}
-          <div className="relative mb-6">
-            {/* Radar Pulse Effect */}
-            <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-20 duration-1000"></div>
-            
-            <div className="relative bg-white w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-emerald-100 shadow-[0_8px_30px_rgba(16,185,129,0.15)] flex items-center justify-center text-emerald-500 group-hover:-translate-y-2 transition-transform duration-500">
-              <Sparkles size={28} className="sm:w-8 sm:h-8 animate-[spin_4s_linear_infinite]" />
-            </div>
-          </div>
-
-          {/* Text Content */}
-          <h3 className="text-[20px] sm:text-[26px] font-bold text-gray-900 tracking-tight mb-3 flex flex-col sm:flex-row items-center gap-2">
-            More Exciting Perks 
-            <span className="text-emerald-700 bg-emerald-100/80 border border-emerald-200 px-3 py-1 rounded-xl text-[12px] sm:text-[14px] uppercase tracking-wider font-extrabold shadow-sm">
-              Coming Soon
-            </span>
-          </h3>
-          
-          <p className="text-[13px] sm:text-[15px] text-gray-500 max-w-lg font-medium leading-relaxed relative z-10">
-            We are partnering with top sustainable brands to bring you exclusive discounts, eco-friendly merch, and VIP event passes. Keep stacking those points!
-          </p>
-
-          {/* Interactive Live Indicator */}
-          <div className="mt-8 relative z-10 flex items-center gap-2.5 text-[12px] sm:text-[13px] font-bold text-emerald-700 bg-white border border-emerald-100 px-5 py-2.5 rounded-full shadow-sm group-hover:shadow-md group-hover:border-emerald-200 transition-all">
-             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border border-emerald-200"></div>
-             New rewards dropping next week
-          </div>
-        </div>
+    {/* Floating Animated Icon Box (Slimmer) */}
+    <div className="relative mb-4">
+      <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-20 duration-1000"></div>
+      <div className="relative bg-white w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-emerald-100 shadow-md flex items-center justify-center text-emerald-500 group-hover:-translate-y-1 transition-transform duration-300">
+        <Sparkles size={20} className="sm:w-6 sm:h-6 animate-[spin_4s_linear_infinite]" />
       </div>
+    </div>
+
+    {/* Text Content (Smaller Typography) */}
+    <h3 className="text-[17px] sm:text-[20px] font-bold text-gray-900 tracking-tight mb-2 flex flex-col sm:flex-row items-center gap-2">
+      More Exciting Perks 
+      <span className="text-emerald-700 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-lg text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold">
+        Coming Soon
+      </span>
+    </h3>
+    
+    <p className="text-[11px] sm:text-[13px] text-gray-500 max-w-sm font-medium leading-relaxed relative z-10">
+      We are partnering with top brands to bring you exclusive discounts and VIP passes. Keep stacking those points!
+    </p>
+
+    {/* Interactive Live Indicator (Compact) */}
+    <div className="mt-5 relative z-10 flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-emerald-700 bg-white border border-emerald-100 px-3 py-1.5 rounded-full shadow-sm">
+         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+         New rewards dropping next week
+    </div>
+  </div>
+</div>
 
       </div>
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { Trophy, Medal, Leaf, ArrowUp, ArrowDown, Minus, User, CalendarDays,Star,Sparkles,RefreshCw } from 'lucide-react';
 
 const Leaderboard = () => {
-  // Mock Data for Leaderboard (Exactly 7 Users for Weekly Report)
   const leaderboardData = [
     { rank: 1, name: "Sarah Jenkins", points: 1540, weight: "45 kg", trend: "up" },
     { rank: 2, name: "Rahul Sharma", points: 1220, weight: "38 kg", trend: "up" },
@@ -24,44 +23,45 @@ const Leaderboard = () => {
     <div className="max-w-screen-xl mx-auto px-2 font-sans">
 
       {/* Header */}
-      <div className="mb-6 flex flex-row items-center justify-between gap-x-3 border-b border-gray-300 pb-5 overflow-hidden whitespace-nowrap">
+    <div className="mt-0 sm:-mt-4 mb-6 flex flex-row items-center justify-between gap-x-3 border-b border-gray-300 pb-5 overflow-hidden whitespace-nowrap">
+      
+      {/* Left Section: Badge and Titles */}
+      <div className="flex flex-col items-start justify-center flex-1 truncate">
         
-       {/* Left Section: Badge and Titles */}
-        <div className="flex flex-col items-start justify-center flex-1 truncate">
-          
-          {/* Weekly Badge - Placed above the title */}
-          <div className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 sm:py-1 rounded-md text-[10px] sm:text-[9px] font-semibold uppercase tracking-wider border border-emerald-100 mb-1.5 shrink-0">
-            <CalendarDays size={10} className="sm:w-[11px] sm:h-[11px]" />
-            <span>Weekly Report</span>
-          </div>
+        {/* Weekly Badge - Compact & Clean */}
+        <div className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider border border-emerald-100 mb-1.5 shrink-0">
+          <CalendarDays size={10} />
+          <span>Weekly Report</span>
+        </div>
 
-          {/* Title */}
-          <h1 className="text-xl sm:text-2lg font-[650] text-gray-950 tracking-tight flex items-center gap-1.5 sm:gap-2 truncate w-full">
-            <Trophy className="text-amber-500 shrink-0" size={18} />
-            <span className="truncate">Eco Champions</span>
-          </h1>
-          
-          {/* Description (Hidden on mobile to save space) */}
-          <p className="hidden sm:block text-gray-500 text-[12px] font-medium mt-0.5 truncate">
-            Top contributors this week. Climb ranks to earn rewards!
+        {/* Title - Refined size and weight for desktop */}
+        <h1 className="text-[15px] sm:text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2 truncate w-full">
+          <Trophy className="text-amber-500 shrink-0" size={16} />
+          <span className="truncate">Eco Champions</span>
+        </h1>
+        
+        {/* Description - Normal weight for better readability on desktop */}
+        <p className="hidden sm:block text-gray-500 text-[12px] font-normal mt-0.5 truncate">
+          Top contributors this week. Climb ranks to earn rewards!
+        </p>
+      </div>
+      
+      {/* Right Section: User's Quick Stat */}
+      <div className="bg-white border border-gray-100 px-3 py-2 sm:px-4 rounded-xl flex items-center gap-2.5 shadow-sm shrink-0">
+        <div className="bg-emerald-50 p-1.5 rounded-lg text-emerald-600">
+          <User size={16} />
+        </div>
+        <div>
+          <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest leading-none">Your Rank</p>
+          <p className="text-sm font-bold text-gray-900 leading-none mt-1">
+            #5 <span className="text-gray-400 text-xs font-normal">/ 420</span>
           </p>
         </div>
-        
-        {/* Right Section: User's Quick Stat */}
-        <div className="bg-white border border-gray-100 px-3 py-2 sm:px-4 rounded-xl flex items-center gap-2.5 sm:gap-3 shadow-inner shadow-gray-50/50 shrink-0">
-          <div className="bg-emerald-50 p-1.5 rounded-lg text-emerald-600">
-            <User size={16} className="sm:hidden" />
-            <User size={18} className="hidden sm:block" />
-          </div>
-          <div>
-            <p className="text-[10px] sm:text-[10px] font-semibold text-gray-500 uppercase tracking-widest leading-none">Your Rank</p>
-            <p className="text-sm sm:text-base font-bold text-gray-900 leading-none mt-1">#5 <span className="text-gray-400 text-xs font-medium">/ 420</span></p>
-          </div>
-        </div>
       </div>
+    </div>
 
       {/* PREMIUM SOLID TOP 3 PODIUM SECTION */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 justify-center items-center w-full max-w-[900px] mx-auto mb-10  pt-10 sm:pt-9 ">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 justify-center items-center w-full max-w-[900px] mx-auto mb-10  pt-2 sm:pt-9 ">
         
         {/* RANK 2: SILVER (Sleek Slate) */}
         <div className="order-1 bg-gradient-to-b from-slate-700 to-slate-900 border border-slate-600 rounded-[12px] sm:rounded-[20px] p-2.5 sm:p-5 flex flex-col items-center text-center shadow-lg relative overflow-hidden group">
@@ -159,11 +159,9 @@ const Leaderboard = () => {
 
       </div>
 
-      {/* ========================================== */}
       {/* VERTICAL LADDER GRAPH (Hybrid, Perfect Alignment & Premium Shadows) */}
-      {/* ========================================== */}
       <div className="mt-6 sm:mt-12 relative px-1 sm:px-4 w-full">
-        <h3 className="text-base sm:text-lg font-[650] text-gray-900 mb-3 flex items-center gap-2 tracking-tight">
+        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2 tracking-tight">
           <ArrowUp size={20} className="text-emerald-500" />
           Contenders Ladder
         </h3>
@@ -241,9 +239,9 @@ const Leaderboard = () => {
                         </div>
                       </div>
 
-                      {/* ========================================== */}
+              
                       {/* 2A. MOBILE ONLY: Circular Progress Ring (Centered perfectly) */}
-                      {/* ========================================== */}
+              
                       <div className="flex sm:hidden w-[20%] flex-col items-center justify-center shrink-0">
                         <div className="relative flex items-center justify-center w-9 h-9">
                           <div className={`absolute inset-0 rounded-full border-[1.5px] border-dashed ${ringBorder} animate-[spin_6s_linear_infinite] transition-colors`}></div>
@@ -263,9 +261,9 @@ const Leaderboard = () => {
                         </div>
                       </div>
 
-                      {/* ========================================== */}
+              
                       {/* 2B. DESKTOP ONLY: Linear Progress Bar */}
-                      {/* ========================================== */}
+              
                       <div className="hidden sm:flex flex-1 flex-col justify-center gap-1.5 px-3">
                         <div className="flex justify-between items-end text-[10px] font-semibold uppercase tracking-wider">
                           <span className="text-gray-400">Target: Rank #1</span>
@@ -306,9 +304,7 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* ========================================== */}
       {/* ANIMATED INFO BOX (How it works & Weekly Reset) */}
-      {/* ========================================== */}
       <div className="mt-8 sm:mt-12 mb-6 max-w-[900px] mx-auto px-2 sm:px-4 w-full">
         <div className="relative overflow-hidden rounded-[16px] sm:rounded-[24px] bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 border-[1.5px] border-emerald-200/60 p-4 sm:p-6 shadow-[0_8px_30px_rgba(16,185,129,0.08)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] hover:border-emerald-300 group">
           

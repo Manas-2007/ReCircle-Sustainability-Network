@@ -55,7 +55,7 @@ const Profile = () => {
             
             {/* Avatar overlapping cover */}
             <div className="relative -mt-12 sm:-mt-14 mb-3">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-[3px] border-white shadow-md overflow-hidden bg-gradient-to-br from-[#064e3b] to-emerald-600 flex items-center justify-center">
+              <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-full border-[3px] border-white shadow-md overflow-hidden bg-gradient-to-br from-[#064e3b] to-emerald-600 flex items-center justify-center">
                 {profileImage ? (
                   <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
@@ -82,7 +82,7 @@ const Profile = () => {
             </div>
             
             {/* Name, Role & Dynamic Badge */}
-            <h1 className="text-xl sm:text-[22px] font-semibold text-gray-900 tracking-tight flex items-center gap-1.5 justify-center sm:justify-start w-full">
+            <h1 className="text-xl sm:text-[22px] font-bold text-gray-900 tracking-tight flex items-center gap-1.5 justify-center sm:justify-start w-full">
               John Doe <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
             </h1>
             

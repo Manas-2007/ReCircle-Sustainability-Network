@@ -116,159 +116,154 @@ const History = () => {
     <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 font-sans pb-10 ">
       
       {/* HEADER (Hidden on Desktop 'lg:hidden', Visible on Mobile) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 lg:hidden">
-        <div className="flex items-center gap-3">
-          <div className="p-2 sm:p-2.5 bg-emerald-50 rounded-xl border border-emerald-100 shrink-0">
-            <HistoryIcon size={22} className="text-emerald-600 sm:w-6 sm:h-6" />
+    <div className="flex flex-row items-center justify-between gap-3 mb-6 lg:hidden">
+      {/* Left Section: Icon + Title (min-w-0 ensures truncation works) */}
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-100 shrink-0">
+          <HistoryIcon size={20} className="text-emerald-600" />
+        </div>
+        <div className="truncate">
+          <h1 className="text-base font-semibold text-gray-900 leading-tight truncate">Pickup History</h1>
+          <p className="text-gray-500 text-[11px] font-normal truncate">Your journey of impact</p>
+        </div>
+      </div>
+
+      {/* Button: shrink-0 keeps it in the same row */}
+      <button 
+        onClick={downloadCSV}
+        className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-200 rounded-xl text-[11px] font-medium text-gray-700 hover:text-emerald-700 transition-all active:scale-95 shadow-sm shrink-0"
+      >
+        <Download size={14} />
+        <span className="hidden xs:inline">Report</span>
+      </button>
+    </div>
+
+      {/* COMPACT COUNTERS (Grid-3, Image Top on Mobile, Image Right on Desktop) */}
+    <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-6 mb-8 w-full">
+      {stats.map((stat, index) => (
+        <div 
+          key={index} 
+          className={`flex flex-col sm:flex-row-reverse items-center justify-between p-2 sm:p-5 rounded-xl sm:rounded-2xl border ${stat.border} ${stat.bg} shadow-md hover:shadow-lg transition-all duration-300 relative overflow-hidden`}
+        >
+          
+          {/* Right Side: Image (Top on Mobile, Right on Desktop) */}
+          <div className="w-10 h-10 sm:w-16 sm:h-16 lg:w-[92px] lg:h-[92px] rounded-[8px] sm:rounded-[10px] lg:rounded-[15px] overflow-hidden border-[2px] border-white/20 shadow-lg shrink-0 z-10 bg-white p-0.5 mb-2 sm:mb-0">
+            <img 
+              src={stat.image} 
+              alt={stat.title} 
+              className="w-full h-full object-cover rounded-[6px] sm:rounded-[8px] lg:rounded-[14px]" 
+            />
           </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight leading-tight">Pickup History</h1>
-            <p className="text-gray-500 mt-0.5 text-[12px] sm:text-[13.5px] font-normal">Your journey of positive impact</p>
+
+          {/* Left Side: Stats (Text centered on mobile, left-aligned on desktop) */}
+          <div className="flex flex-col z-10 relative items-center sm:items-start text-center sm:text-left w-full">
+            <p className={`text-[8px] sm:text-[11px] lg:text-[12px] font-semibold tracking-wide uppercase ${stat.titleColor} opacity-80 mb-0.5`}>
+              {stat.title}
+            </p>
+            <h3 className={`${stat.valueColor} text-[13px] sm:text-xl lg:text-3xl font-bold tracking-tight`}>
+              {stat.value}
+            </h3>
+            
+            {/* Badge - Tiny on mobile, normal on desktop */}
+            <div className={`mt-1 inline-flex items-center px-1.5 py-0.5 rounded text-[7px] sm:text-[10px] font-semibold border ${stat.badgeBg} ${stat.badgeText} ${stat.badgeBorder}`}>
+              {stat.message}
+            </div>
           </div>
         </div>
-
-        <button 
-          onClick={downloadCSV}
-          className="flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-200 rounded-xl text-[12px] sm:text-[13px] font-medium text-gray-700 hover:text-emerald-700 transition-all active:scale-95 shadow-sm sm:w-auto w-full"
-        >
-          <Download size={16} />
-          <span className="hidden xs:inline">Download CSV Report</span>
-          <span className="xs:hidden">Download CSV</span>
-        </button>
-      </div>
-
-      {/* COMPACT COUNTERS WITH DARK PREMIUM THEME */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-        {stats.map((stat, index) => (
-          <div 
-            key={index} 
-            className={`flex items-center justify-between p-4 lg:p-5 rounded-2xl border ${stat.border} ${stat.bg} shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden`}
-          >
-            {/* Left Side: Stats & Messages */}
-            <div className="flex flex-col z-10 relative">
-              <p className={`text-[11px] lg:text-[12px] font-semibold tracking-wide uppercase ${stat.titleColor} opacity-90`}>
-                {stat.title}
-              </p>
-              <h3 className={`${stat.valueColor} text-2xl lg:text-3xl font-bold tracking-tight mt-1`}>
-                {stat.value}
-              </h3>
-              {/* Dynamic Dark Theme Badge */}
-              <div className={`mt-2 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] lg:text-[11px] font-semibold w-fit border ${stat.badgeBg} ${stat.badgeText} ${stat.badgeBorder}`}>
-                {stat.message}
-              </div>
-            </div>
-            
-            {/* Right Side: Resized Smaller Image with semi-transparent border */}
-            <div className="w-20 h-20 lg:w-[92px] lg:h-[92px] rounded-[15px] overflow-hidden border-[3px] border-white/20 shadow-lg shrink-0 relative z-10 bg-white p-1">
-              <img 
-                src={stat.image} 
-                alt={stat.title} 
-                className="w-full h-full object-cover rounded-[14px] group-hover:scale-110 transition-transform duration-500" 
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+      ))}
+    </div>
 
       {/* HISTORY TABLE WITH S.NO AND QUANTITY COLUMNS */}
-      <div className="bg-white border border-green-400 rounded-2xl shadow-sm overflow-hidden">
+      <div className="divide-y divide-gray-100">
+
+        {/* Desktop Header Labels */}
+<div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-100 bg-gray-50/50 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+  <div className="col-span-1">S.No</div>
+  <div className="col-span-4">Pickup Details</div>
+  <div className="col-span-1">Qty</div>
+  <div className="col-span-2">Collector</div>
+  <div className="col-span-2">Reward</div>
+  <div className="col-span-2 text-right">Status</div>
+</div>
+
+  {historyData.map((item, index) => (
+    <div key={item.id} className="group transition-all duration-300">
+      
+      {/* 1. DESKTOP TABLE ROW (Hidden on Mobile) */}
+<div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50/80 items-center border-b border-gray-50">
+  <div className="col-span-1 text-[13px] font-semibold text-gray-500">#{String(index + 1).padStart(2, '0')}</div>
+  
+  <div className="col-span-4 flex items-center gap-4">
+    <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200">
+      <img src={item.image} alt={item.type} className="w-full h-full object-cover" />
+    </div>
+    <div>
+      <div className="font-semibold text-gray-800 text-[14px]">{item.type}</div>
+      <div className="text-[12px] text-gray-500 flex items-center gap-1"><MapPin size={12} /> {item.location}</div>
+    </div>
+  </div>
+  
+  <div className="col-span-1 text-[13px] font-medium text-gray-700">{item.weight}</div>
+  <div className="col-span-2 text-[13px] text-gray-700">{item.collector}</div>
+  
+  <div className="col-span-2">
+     <div className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-1 rounded-md text-[12px] font-semibold border border-amber-200">
+       <TrendingUp size={12} /> +{item.points}
+     </div>
+  </div>
+  
+  <div className="col-span-2 text-right text-[13px] text-emerald-600 font-medium flex items-center justify-end gap-1">
+    <CheckCircle2 size={14} /> {item.status}
+  </div>
+</div>
+
+     {/* 2. MOBILE PREMIUM CARD LAYOUT (Visible only on Mobile) */}
+<div className="lg:hidden my-2">
+  <div className="bg-white rounded-3xl p-4 border border-gray-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group">
+    
+    {/* Subtle Accent Stripe on Left */}
+    <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${item.status === 'Completed' ? 'bg-emerald-500' : 'bg-amber-400'}`}></div>
+
+    {/* Header: Status + Points */}
+    <div className="flex justify-between items-center mb-4 pl-2">
+      <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${item.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+        <CheckCircle2 size={10} /> {item.status}
+      </span>
+      <div className="flex items-center gap-1 text-[11px] font-[600] text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-300">
+        <TrendingUp size={12} /> +{item.points} Pts
+      </div>
+    </div>
+
+    {/* Body: Image + Info */}
+    <div className="flex gap-4 items-start pl-2">
+      <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-inner shrink-0 border border-gray-100">
+        <img src={item.image} alt={item.type} className="w-full h-full object-cover" />
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <h4 className="font-[600] text-gray-900 text-[16px] truncate leading-tight">{item.type}</h4>
         
-        {/* Table Header (Updated Grid for S.No and Qty) */}
-        <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 border-b border-green-400 bg-gray-50/50 text-[12px] font-semibold text-black-500 uppercase tracking-wider">
-          <div className="col-span-1">S.No</div>
-          <div className="col-span-4">Pickup Details</div>
-          <div className="col-span-1">Qty</div>
-          <div className="col-span-2">Collector</div>
-          <div className="col-span-2">Reward</div>
-          <div className="col-span-2 text-right">Status</div>
-        </div>
-
-        <div className="divide-y divide-green-300">
-          {/* Note: Added 'index' to the map function */}
-          {historyData.map((item, index) => (
-            <div 
-              key={item.id} 
-              className="group flex flex-col lg:grid lg:grid-cols-12 gap-4 px-5 sm:px-6 py-4 hover:bg-gray-200/50 transition-all duration-200"
-            >
-              {/* 0. S.No Column (NEW) */}
-              <div className="col-span-1 hidden lg:flex items-center text-[13px] font-[600] text-gray-800">
-                #{String(index + 1).padStart(2, '0')}
-              </div>
-
-              {/* 1. Image + Details */}
-              <div className="col-span-4 flex items-start gap-3 lg:gap-4">
-                <div className="w-12 h-12 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-green-400 shadow-sm group-hover:shadow-md transition-all shrink-0">
-                  <img 
-                    src={item.image} 
-                    alt={item.type} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                  />
-                </div>
-                
-                <div className="flex-1 min-w-0 pt-0.5">
-                  <div className="font-semibold text-gray-800 text-[13.5px] sm:text-[15px] leading-tight truncate">
-                    {item.type} 
-                    {/* Mobile fallback for quantity */}
-                    <span className="lg:hidden text-emerald-600 font-medium text-[12.5px] ml-1">({item.weight})</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-1 text-[11px] sm:text-[13px] text-gray-500 font-normal">
-                    <Clock size={13} className="text-emerald-500" />
-                    {item.date} • {item.time}
-                  </div>
-                  <div className="flex items-start gap-1.5 mt-0.5 text-[11px] sm:text-[13px] text-gray-500 font-normal">
-                    <MapPin size={13} className="text-emerald-600 mt-0.5 shrink-0" />
-                    <span className="truncate">{item.location}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Quantity Column */}
-              <div className="col-span-1 hidden lg:flex items-center">
-                <span className="bg-gray-100 text-gray-800 border border-gray-200/80 px-2.5 py-1 rounded-md text-[12.5px] font-semibold whitespace-nowrap">
-                  {item.weight}
-                </span>
-              </div>
-
-              {/* 3. Collector */}
-              <div className="col-span-2 hidden lg:flex items-center text-[13px] text-gray-800 font-medium">
-                {item.collector}
-              </div>
-
-              {/* 4. Points */}
-              <div className="col-span-2 flex items-center mt-2 lg:mt-0">
-                <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-[12px] font-semibold shadow-sm">
-                  <TrendingUp size={15} />
-                  +{item.points} pts
-                </div>
-              </div>
-
-              {/* 5. Status */}
-              <div className="col-span-2 hidden lg:flex items-center justify-end gap-2">
-                <div className="flex items-center gap-1.5 text-emerald-700 font-medium text-[13px]">
-                  <CheckCircle2 size={16} className="text-emerald-600" />
-                  {item.status}
-                </div>
-                <ChevronRight size={16} className="text-gray-800 group-hover:text-emerald-500 transition-colors" />
-              </div>
-
-              {/* Mobile Only Row */}
-              <div className="lg:hidden flex justify-between pt-3 border-t border-gray-100 text-[12px] mt-1">
-                <span className="text-gray-500 font-medium truncate pr-2">by {item.collector}</span>
-                <span className="text-emerald-600 font-medium flex items-center gap-1 shrink-0">
-                  <CheckCircle2 size={14} /> {item.status}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100 text-center">
-          <button className="text-[12px] sm:text-[13px] text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1.5 mx-auto transition-colors">
-            Load More History <ChevronRight size={16} />
-          </button>
+        <div className="mt-2 space-y-1.5">
+          <div className="text-[12px] text-gray-500 font-medium flex items-center gap-2">
+            <Clock size={13} className="text-gray-400" /> {item.date} • {item.time}
+          </div>
+          <div className="text-[12px] text-gray-500 font-medium flex items-center gap-2">
+            <MapPin size={13} className="text-gray-400" /> <span className="truncate">{item.location}</span>
+          </div>
         </div>
       </div>
+    </div>
+
+    {/* Footer: Collector Info */}
+    <div className="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center pl-2">
+      <div className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Collector</div>
+      <div className="text-[12px] font-bold text-gray-800">{item.collector}</div>
+    </div>
+  </div>
+</div>
+    </div>
+  ))}
+</div>
     </div>
   );
 };

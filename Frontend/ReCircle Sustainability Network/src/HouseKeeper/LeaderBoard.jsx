@@ -23,7 +23,7 @@ const Leaderboard = () => {
     <div className="max-w-screen-xl mx-auto px-2 font-sans">
 
       {/* Header */}
-    <div className="mt-0 sm:-mt-4 mb-6 flex flex-row items-center justify-between gap-x-3 border-b border-gray-300 pb-5 overflow-hidden whitespace-nowrap">
+    <div className="-mt-2 sm:-mt-4 mb-6 flex flex-row items-center justify-between gap-x-3 border-b border-gray-300 pb-5 overflow-hidden whitespace-nowrap">
       
       {/* Left Section: Badge and Titles */}
       <div className="flex flex-col items-start justify-center flex-1 truncate">

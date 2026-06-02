@@ -84,7 +84,7 @@ const History = () => {
   ];
 
   return (
-    <div className="w-full mb-8 md:px-6">
+    <div className="w-full mb-8 md:px-6 -mt-3">
       {/* HEADER SECTION (Responsive) */}
       <div className="flex flex-row items-center justify-between mb-8 w-full px-3 ">
         
@@ -99,7 +99,7 @@ const History = () => {
 
           {/* YE TERA CODE HAI - BINA KISI CHANGE KE */}
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            <h1 className="text-[17px] sm:text-xl font-bold text-gray-900 leading-none flex items-center gap-2">
               Pickup <span className="text-emerald-700">History</span>
             </h1>
             <p className="text-xs text-gray-500 font-medium">

@@ -17,7 +17,7 @@ const Analytics = () => {
   const uniqueCategories = [...new Set(historyData.map(item => item.wasteType))].length;
 
   return (
-    <div className="w-full space-y-6 mb-8 px-3 md:px-0">
+    <div className="w-full space-y-6 mb-8 px-1 md:px-5">
       
       {/* HEADER SECTION (Responsive & Consistent) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 -mt-4">

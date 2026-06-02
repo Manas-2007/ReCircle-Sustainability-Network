@@ -120,7 +120,7 @@ const AuthModal = ({ isOpen, onClose,onLoginSuccess }) => {
           className={`flex-1 py-2 rounded-[10px] text-[11.5px] sm:text-[12px] font-[700] transition-all duration-200 rc-display tracking-wide
           ${
             active
-              ? 'bg-white text-[#166534] shadow-sm'
+              ? 'bg-white text-[#166534] border border-green-700 shadow-sm'
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >

@@ -160,7 +160,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                 onClick={() => setIsOpen(true)} 
                 className="lg:hidden ml-1 p-2 bg-[#f0fdf4] border border-[#bbf7d0] shadow-sm rounded-xl text-[#16a34a] focus:outline-none hover:bg-green-100 active:scale-95 transition-all"
               >
-                <Menu size={22} strokeWidth={2.5} />
+                <Menu size={17} strokeWidth={2.5} />
               </button>
               
             </div>
@@ -176,18 +176,18 @@ const Navbar = ({ activeTab, setActiveTab }) => {
           onClick={() => setIsOpen(false)} 
           className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-sm border border-gray-100 text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
         >
-          <X className="w-7 h-7" />
+          <X className="w-5 h-5" />
         </button>
 
         {/* Mobile Menu Content */}
-        <div className="flex flex-col pt-10 pb-8 px-6">
+        <div className="flex flex-col pt-5 pb-8 px-6">
           
           {/* Mobile Logo in Offcanvas */}
           <div className="flex items-center gap-3 mb-8">
             <img 
               src="/main logo.jpg" 
               alt="ReCircle Logo" 
-              className="w-14 h-14 object-cover bg-white rounded-2xl shadow-sm border border-gray-200"
+              className="w-12 h-12 object-cover bg-white rounded-2xl shadow-sm border border-gray-200"
             />
             <div>
               <h2 className="text-2xl font-[800] text-gray-900 leading-none tracking-tight">Re<span className='text-[#16a34a]'>Circle</span></h2>
@@ -201,7 +201,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
               setActiveTab('Profile');
               setIsOpen(false);
             }}
-            className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <div className="w-[46px] h-[46px] rounded-xl bg-gradient-to-br from-green-500 to-[#166534] flex items-center justify-center shadow-inner">
               <span className="text-white font-extrabold text-[16px] tracking-wide">JD</span>
@@ -226,7 +226,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                       setIsOpen(false); 
                     }}
                     className={`
-                      w-full flex items-center gap-3 p-4 rounded-2xl text-[15px] font-bold transition-all duration-300
+                      w-full flex items-center gap-3 p-4 rounded-2xl text-[13px] font-bold transition-all duration-300
                       ${isActive 
                         ? 'bg-green-100/80 text-[#166534] border-l-[5px] border-[#166534] shadow-sm' 
                         : 'bg-transparent text-gray-600 hover:bg-gray-50 border-l-[5px] border-transparent hover:border-gray-300'

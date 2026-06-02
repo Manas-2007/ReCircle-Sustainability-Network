@@ -28,7 +28,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
     <>
       {/* 1. FULL WIDTH, FLUSH TO TOP HEADER */}
       <header className="sticky top-0 z-50 w-full bg-white border-b border-green-400 font-sans antialiased">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-5 lg:px-8 h-[76px] sm:h-[88px] flex items-center justify-between">
+        <div className="max-w-screen-2xl mx-auto px-3 sm:px-5 lg:px-8 h-[76px] sm:h-[88px] flex items-center justify-between">
           
           {/* LEFT SIDE (LOGO + NAME ALONE ON MOBILE) */}
           <div className="flex-1 flex items-center justify-start">
@@ -74,7 +74,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                   className={`
                     flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 ease-out border whitespace-nowrap
                     ${isActive
-                        ? "bg-green-50 border-green-200 text-[#166534] shadow-sm"
+                        ? "bg-green-50 border-green-400 text-[#166534] shadow-sm"
                         : "bg-transparent border-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }
                   `}
@@ -117,7 +117,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                   relative w-[40px] h-[40px] rounded-xl
                   bg-gray-50 border border-gray-200
                   flex items-center justify-center
-                  group-hover:bg-gray-100 group-hover:border-gray-300
+                  group-hover:bg-gray-100 group-hover:border-gray-400
                   transition-all duration-200 active:scale-95 shadow-sm
                 "
               >
@@ -162,7 +162,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                 onClick={() => setIsOpen(true)} 
                 className="lg:hidden ml-1 p-2 bg-[#f0fdf4] border border-[#bbf7d0] shadow-sm rounded-xl text-[#16a34a] focus:outline-none hover:bg-green-100 active:scale-95 transition-all"
               >
-                <Menu size={22} strokeWidth={2.5} />
+                <Menu size={17} strokeWidth={2.5} />
               </button>
               
             </div>
@@ -176,20 +176,20 @@ const Navbar = ({ activeTab, setActiveTab }) => {
         {/* Close Button */}
         <button 
           onClick={() => setIsOpen(false)} 
-          className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-sm border border-gray-100 text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
+          className="absolute top-6 right-6 p-1 bg-white rounded-full shadow-sm border border-gray-200 text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
         >
-          <X className="w-7 h-7" />
+          <X className="w-5 h-5" />
         </button>
 
         {/* Mobile Menu Content */}
-        <div className="flex flex-col pt-10 pb-8 px-6">
+        <div className="flex flex-col pt-10 pb-8 px-6 -mt-5">
           
           {/* Mobile Logo in Offcanvas */}
           <div className="flex items-center gap-3 mb-8">
             <img 
               src="/main logo.jpg" 
               alt="ReCircle Logo" 
-              className="w-14 h-14 object-cover bg-white rounded-2xl shadow-sm border border-gray-200"
+              className="w-12 h-12 object-cover bg-white rounded-2xl shadow-sm border border-gray-200"
             />
             <div>
               <h2 className="text-2xl font-[800] text-gray-900 leading-none tracking-tight">Re<span className='text-[#16a34a]'>Circle</span></h2>
@@ -197,24 +197,30 @@ const Navbar = ({ activeTab, setActiveTab }) => {
             </div>
           </div>
 
-          {/* Mobile Profile & Eco Summary */}
-         <div 
-            onClick={() => {
-              setActiveTab('Profile');
-              setIsOpen(false);
-            }}
-            className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
-          >
-            <div className="w-[46px] h-[46px] rounded-xl bg-gradient-to-br from-green-500 to-[#166534] flex items-center justify-center shadow-inner">
-              <span className="text-white font-extrabold text-[16px] tracking-wide">JD</span>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">John Doe</p>
-              <p className="text-xs font-semibold text-[#16a34a] mt-0.5 flex items-center gap-1">
-                <Leaf size={12} /> 850 Eco Points
-              </p>
-            </div>
-          </div>
+          {/* Mobile Profile & Earnings Summary */}
+<div 
+  onClick={() => {
+    setActiveTab('Profile');
+    setIsOpen(false);
+  }}
+  className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-all active:scale-[0.98] mx-2"
+>
+  {/* Avatar - Gradient matching the branding */}
+  <div className="w-[48px] h-[48px] rounded-xl bg-gradient-to-br from-green-600 to-[#166534] flex items-center justify-center shadow-lg shadow-emerald-200/50">
+    <span className="text-white font-extrabold text-[16px] tracking-wide">RV</span>
+  </div>
+
+  {/* Info */}
+  <div>
+    <p className="text-sm font-bold text-gray-900">Ramesh Verma</p>
+    
+    {/* Earnings Badge - More professional than just text */}
+    <p className="text-[11px] font-bold text-emerald-700 mt-1 flex items-center gap-1.5 bg-emerald-50 px-2 py-1 rounded-lg w-fit border border-emerald-100/50">
+      <Wallet size={12} />
+      <span>₹2,450 Earned</span>
+    </p>
+  </div>
+</div>
 
           {/* Mobile Navigation Tabs */}
           <ul className="flex flex-col gap-2 w-full">
@@ -228,14 +234,14 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                       setIsOpen(false); 
                     }}
                     className={`
-                      w-full flex items-center gap-3 p-4 rounded-2xl text-[15px] font-bold transition-all duration-300
+                      w-full flex items-center gap-3 p-4 rounded-2xl text-[14px] font-bold transition-all duration-300
                       ${isActive 
                         ? 'bg-green-100/80 text-[#166534] border-l-[5px] border-[#166534] shadow-sm' 
                         : 'bg-transparent text-gray-600 hover:bg-gray-50 border-l-[5px] border-transparent hover:border-gray-300'
                       }
                     `}
                   >
-                    <span className={isActive ? "text-[#16a34a]" : "text-gray-400"}>
+                    <span className={isActive ? "text-[#16a34a]" : "text-gray-500"}>
                       {React.cloneElement(tab.icon, { size: 20 })} 
                     </span>
                     {tab.label}

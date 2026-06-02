@@ -108,27 +108,58 @@ const Request = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-2 lg:px-2  font-sans">
+    <div className="max-w-screen-2xl mx-auto lg:px-2  font-sans">
       
       {/* HEADER */}
-<div className="mb-8 sm:-mt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gray-300 pb-5">
-  <div className="text-center sm:text-left">
-    <h1 className="text-xl sm:text-2xl font-bold sm:font-bold text-gray-800 tracking-tight">
-      Schedule Pickup
-    </h1>
-    <p className="text-gray-500 text-[13px] sm:text-[12px] font-medium">
-      Book a collector, earn eco-points, and save the planet.
-    </p>
-  </div>
+<div className="mb-6 sm:mb-8 -mt-2 sm:-mt-3 border-b border-gray-300 pb-4 sm:pb-5">
 
-  {/* Create Request Button */}
-  <button 
-    onClick={() => setIsModalOpen(true)}
-    className="bg-emerald-800 hover:bg-emerald-900 text-white px-5 py-2.5 rounded-xl font-semibold text-[14px] tracking-wide transition-all duration-200 shadow-md shadow-emerald-900/20 active:scale-[0.97] flex items-center justify-center gap-2 shrink-0"
-  >
-    <Plus size={18} />
-    Create Request
-  </button>
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+    {/* Left Section */}
+    <div className="flex items-center gap-3">
+
+      <div className="bg-green-50 p-2.5 rounded-xl border border-green-100 text-green-700 shrink-0">
+        <CalendarClock size={20} />
+      </div>
+
+      <div className="min-w-0">
+        <h1 className="text-[18px] sm:text-xl font-bold text-gray-900 leading-tight">
+          Schedule <span className="text-green-700">Pickup</span>
+        </h1>
+
+        <p className="text-gray-500 text-[12px] sm:text-[12px] font-medium mt-0.5 leading-relaxed">
+          Book a collector, earn eco-points, and save the planet.
+        </p>
+      </div>
+    </div>
+
+    {/* Mobile + Desktop Button */}
+    <button
+      onClick={() => setIsModalOpen(true)}
+      className="
+        w-full sm:w-auto
+        bg-emerald-800 hover:bg-emerald-900
+        text-white
+        px-4 sm:px-5
+        py-3 sm:py-2.5
+        rounded-xl
+        font-semibold
+        text-[13px] sm:text-[12px]
+        tracking-wide
+        transition-all
+        duration-200
+        shadow-md
+        shadow-emerald-900/20
+        active:scale-[0.98]
+        flex items-center justify-center gap-2
+        shrink-0
+      "
+    >
+      <Plus size={17} />
+      Create Request
+    </button>
+
+  </div>
 </div>
 
       {/* CREATE REQUEST MODAL (Ultra-Compact & Centered) */}
@@ -283,96 +314,158 @@ const Request = () => {
         </div>
       )}
 
-      {/* BOTTOM SECTION: COMPACT SQUARE-IMAGE CARDS */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-[650] text-gray-800">Your Requested Pickups</h2>
-          <span className="bg-emerald-200 text-emerald-800 font-[650] px-3 py-1 rounded-lg text-[12px] shadow-sm border border-emerald-800/60">
-            {requests.length} Total
-          </span>
+      {/* Requested Pickups Grid */}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+  {requests.map((req, index) => {
+    const isPending = req.status.toLowerCase() === "pending";
+
+    return (
+      <div
+        key={index}
+        className="
+          bg-white
+          border border-[darkgreen]
+          border-l-[5px] border-l-emerald-700
+          rounded-[20px]
+          p-3 sm:p-4
+          shadow-sm
+          hover:shadow-md
+          hover:border-l-emerald-500
+          lg:hover:-translate-y-1
+          transition-all
+          duration-300
+          relative
+          overflow-hidden
+          flex flex-col
+          h-full
+          gap-2.5 sm:gap-3
+        "
+      >
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent pointer-events-none -z-10"></div>
+
+        {/* Top Section */}
+        <div className="flex items-start gap-3">
+
+          {/* Image */}
+          <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-xl overflow-hidden bg-white border-2 border-emerald-50 shadow-sm">
+            {req.image ? (
+              <img
+                src={req.image}
+                alt="Waste"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-emerald-400">
+                <Recycle size={24} />
+              </div>
+            )}
+          </div>
+
+          {/* Header Content */}
+          <div className="flex-1 min-w-0">
+
+            {/* Title */}
+            <div className="flex items-center gap-1 flex-wrap">
+              <h3 className="font-[650] text-gray-900 text-[14px] sm:text-[15px] truncate">
+                {wasteNames[req.wasteType] || req.wasteType}
+              </h3>
+
+              <span className="text-[8px] text-gray-400 font-medium">
+                #{req.id}
+              </span>
+            </div>
+
+            {/* Badges */}
+<div className="flex flex-wrap items-center gap-1.5 mt-1">
+
+  {/* Quantity Badge */}
+  <span
+    className="
+      inline-flex
+      items-center
+      justify-center
+      min-h-[20px]
+      px-2
+      py-0.5
+      rounded-md
+      text-[9px]
+      font-[650]
+      text-emerald-900
+      bg-emerald-100
+      border border-emerald-400
+    "
+  >
+    {req.quantity} kg
+  </span>
+
+  {/* Status Badge */}
+  <span
+    className={`
+      inline-flex
+      items-center
+      justify-center
+      min-h-[20px]
+      px-2
+      py-0.5
+      rounded-md
+      text-[8.5px]
+      font-[650]
+      uppercase
+      tracking-wider
+      ${
+        isPending
+          ? "bg-amber-500 text-white"
+          : "bg-emerald-600 text-white"
+      }
+    `}
+  >
+    {req.status}
+  </span>
+
+</div>
+          </div>
         </div>
 
-        {/* 1 on Mobile, 2 on Tablet, 3 or 4 on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-          {requests.map((req, index) => {
-            const isPending = req.status.toLowerCase() === 'pending';
+        {/* Details */}
+        <div className="bg-gray-50/80 rounded-lg p-1.5 sm:p-2 border border-gray-100 shadow-sm space-y-1">
 
-            return (
-              <div 
-                key={index} 
-                // Mobile: p-3, gap-3 | Desktop: p-4, gap-3.5 (Prevents vertical stretch on mobile)
-                className="bg-white border border-[darkgreen] border-l-[5px] border-l-emerald-700 rounded-[20px] p-3 sm:p-4 shadow-sm hover:shadow-md hover:border-l-emerald-500 transition-all duration-300 group flex flex-col gap-3 sm:gap-3.5 relative overflow-hidden"
-              >
-                
-                {/* Subtle gradient background for the card */}
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent pointer-events-none -z-10"></div>
+          <div className="flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-semibold text-gray-700">
+            <User size={12} className="shrink-0" />
+            <span className="truncate">{req.name}</span>
+          </div>
 
-                {/* Top Row: Square Image + Title & Status */}
-                <div className="flex items-start gap-3 sm:gap-3.5">
-                  {/* Square Image Box - Fixed to w-20 h-20 for BOTH mobile and desktop so it's perfectly visible */}
-                  <div className="w-16 h-16 shrink-0 rounded-[12px] overflow-hidden bg-white relative border-2 border-emerald-50 shadow-sm">
-                    {req.image ? (
-                      <img src={req.image} alt="Waste" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-emerald-400">
-                        <Recycle size={28} />
-                      </div>
-                    )}
-                  </div>
+          <div className="flex items-start gap-2 text-[10.5px] sm:text-[11.5px] font-semibold text-gray-700">
+            <MapPin size={12} className="mt-[2px] shrink-0" />
+            <span className="line-clamp-1 sm:line-clamp-2">
+              {req.location} - {req.pincode}
+            </span>
+          </div>
 
-                  {/* Header Info */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-                    <div className="flex justify-between items-start gap-1.5 sm:gap-2 mb-1">
-                      {/* Mobile font slightly adjusted to prevent weird wrapping */}
-                      <h3 className="font-[650] text-gray-900 text-[14px] sm:text-[15px] truncate">
-                        {wasteNames[req.wasteType] || req.wasteType}
-                      </h3>
-                      <span className="font-[650] text-emerald-900 bg-emerald-100/80 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] border border-emerald-500 shrink-0">
-                        {req.quantity} kg
-                      </span>
-                    </div>
-                    
-                    <span className="text-[10px] font-[600] text-gray-600 block mb-1.5 sm:mb-2">{req.id}</span>
-                    
-                    <div>
-                      <span className={`px-2 py-0.5 rounded-md shadow-sm font-[600] text-[8.5px] sm:text-[9px] uppercase tracking-widest inline-block
-                        ${isPending ? 'bg-amber-600 text-white animate-pulse' : 'bg-emerald-600 text-white'}
-                      `}>
-                        {req.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <div className="flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-bold text-emerald-700">
+            <CalendarClock size={12} className="shrink-0" />
+            <span>{req.date}</span>
+          </div>
+        </div>
 
-                {/* Details Section - Tighter padding and text sizes for mobile */}
-                <div className="space-y-1 bg-gray-50/80 rounded-lg p-2 border border-gray-100 shadow-sm mt-0.5">
-                  <p className="text-[10.5px] sm:text-[11.5px] font-semibold text-gray-700 flex items-center gap-2">
-                    <User size={13} className="text-gray-700 shrink-0" /> 
-                    <span className="truncate">{req.name}</span>
-                  </p>
-                  <p className="text-[10.5px] sm:text-[11.5px] font-semibold text-gray-700 flex items-start gap-2">
-                    <MapPin size={13} className="mt-0.5 text-gray-700 shrink-0" /> 
-                    <span className="line-clamp-1">{req.location} - {req.pincode}</span>
-                  </p>
-                  <p className="text-[10.5px] sm:text-[11.5px] font-bold text-emerald-700 flex items-center gap-2">
-                    <CalendarClock size={13} className="text-emerald-700 shrink-0" /> 
-                    <span>{req.date}</span>
-                  </p>
-                </div>
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-2 mt-auto border-t border-gray-100">
 
-                {/* Card Footer (Points) - Mobile specific typography to fit everything inline */}
-                <div className="flex items-center justify-between pt-2 sm:pt-1.5 mt-auto border-t border-gray-100">
-                  <span className="text-[9px] sm:text-[10px] font-[650] text-gray-700 uppercase tracking-widest">Reward</span>
-                  <div className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 sm:px-2.5 py-1 rounded-lg border border-amber-500 font-black text-[11px] sm:text-[12px] shadow-sm">
-                    <Award size={14} /> +{req.points} Pts
-                  </div>
-                </div>
-                
-              </div>
-            );
-          })}
+          <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+            <Award size={12} />
+            Reward
+          </div>
+
+          <div className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-400 font-bold text-[11px] sm:text-[12px] shadow-sm">
+            <Award size={13} />
+            +{req.points} Pts
+          </div>
+
         </div>
       </div>
+    );
+  })}
+</div>
     </div>
   );
 };

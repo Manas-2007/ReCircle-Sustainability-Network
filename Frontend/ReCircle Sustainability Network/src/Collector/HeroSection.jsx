@@ -4,7 +4,7 @@ import { Package, Truck,Clock,TrendingUp ,FileText,Leaf, CheckCircle, Trophy, Ma
 
 const HeroSection = () => {
   return (
-    <div className="p-3 md:p-4 space-y-5 bg-gray-50 min-h-screen -mt-6">
+    <div className="p-3  md:p-4 space-y-5 bg-gray-50  min-h-screen -mt-6">
       
      {/* =========================================
     1. HERO & STATS SECTION (Top Row - 60/40 Split)
@@ -12,74 +12,80 @@ const HeroSection = () => {
 <div className="flex flex-col xl:flex-row gap-4 w-full items-stretch">
   
   {/* LEFT SIDE: 60% Profile Banner */}
-<div className="relative w-full xl:w-[60%] bg-white rounded-3xl p-5 md:p-6 border border-gray-300 shadow-sm overflow-hidden flex flex-col justify-center min-h-[220px]">
-    
-    {/* BACKGROUND IMAGE LAYER */}
-    <div 
-      className="absolute right-0 bottom-0 top-0 w-full sm:w-1/2 md:w-[45%] z-0"
-      style={{
-        backgroundImage: `url('/CollectorBanner.jpg')`, 
-        backgroundSize: 'cover', // Desktop ke liye cover hi rakha hai
-        backgroundPosition: 'right bottom',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      {/* MOBILE SPECIFIC OVERRIDE: Image ko mobile par 'contain' kiya aur position adjust ki */}
-      <style>{`
-        @media (max-width: 640px) {
-          .mobile-img-adjust {
-            background-size: contain !important;
-            background-position: 80% bottom !important;
-          }
+<div className="relative w-full xl:w-[60%] bg-white rounded-3xl p-4 md:p-6 border border-gray-300 shadow-sm overflow-hidden flex flex-col justify-center min-h-[200px] md:min-h-[220px]">
+
+  {/* BACKGROUND IMAGE */}
+  <div
+    className="absolute right-0 bottom-0 top-0 w-full sm:w-1/2 md:w-[45%] z-0"
+    style={{
+      backgroundImage: `url('/CollectorBanner.jpg')`,
+      backgroundSize: "cover",
+      backgroundPosition: "right bottom",
+      backgroundRepeat: "no-repeat",
+    }}
+  >
+    <style>{`
+      @media (max-width: 640px) {
+        .mobile-img-adjust {
+          background-size: contain !important;
+          background-position: 90% bottom !important;
         }
-      `}</style>
-      <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 sm:via-white/20 to-transparent w-full h-full mobile-img-adjust"></div>
-    </div>
+      }
+    `}</style>
 
-    {/* CONTENT AREA */}
-    <div className="relative z-10 w-full sm:w-[65%] pr-2 sm:pr-0">
-      <h1 className="text-xl md:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight">
-        Welcome Back <br />
-        <span className="text-green-700 inline-flex items-center gap-1.5 mt-1">
-          Ramesh Verma
+    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/70 sm:via-white/25 to-transparent mobile-img-adjust"></div>
+  </div>
+
+  {/* CONTENT */}
+  <div className="relative z-10 w-full sm:w-[65%] pr-1">
+
+    {/* HEADING */}
+    <h1 className="text-xl md:text-3xl xl:text-4xl font-bold text-gray-900 leading-[1.15]">
+      Welcome Back
+      <br />
+      <span className="text-green-700 mt-1 inline-block">
+        Ramesh Verma
+      </span>
+    </h1>
+
+    {/* PROFILE DETAILS */}
+    <div className="mt-3 space-y-2">
+
+      {/* Email */}
+      <div className="flex items-center gap-2">
+        <div className="bg-gray-100 p-1.5 rounded-lg border border-gray-200 text-gray-700 shrink-0">
+          <Mail size={14} />
+        </div>
+
+        <span className="text-[12px] md:text-sm font-medium text-gray-700 truncate bg-white/80 sm:bg-transparent px-2 py-1 rounded-md">
+          ramesh.collector@ecoloop.com
         </span>
-      </h1>
-      
-      {/* Profile Fields */}
-      <div className="mt-4 space-y-1.5 text-xs md:text-sm font-semibold">
-        
-        {/* Email Field */}
-        <div className="flex items-center gap-2 py-0.5 max-w-fit">
-          <div className="bg-white/80 sm:bg-gray-100 p-1.5 rounded-lg border border-gray-200 sm:border-gray-300 text-gray-700 shrink-0 shadow-sm sm:shadow-none">
-            <Mail size={14} className="md:w-4 md:h-4" />
-          </div>
-          <span className="text-gray-900 md:text-gray-700 truncate max-w-[180px] sm:max-w-none px-1 py-0.5 rounded-md bg-white/50 backdrop-blur-[2px] sm:bg-transparent sm:backdrop-blur-none">
-            ramesh.collector@ecoloop.com
-          </span>
-        </div>
-        
-        {/* Location Field */}
-        <div className="flex items-center gap-2 py-0.5 max-w-fit">
-          <div className="bg-white/80 sm:bg-gray-100 p-1.5 rounded-lg border border-gray-200 sm:border-gray-300 text-gray-700 shrink-0 shadow-sm sm:shadow-none">
-            <MapPin size={14} className="md:w-4 md:h-4" />
-          </div>
-          <span className="text-gray-900 md:text-gray-700 px-1 py-0.5 rounded-md bg-white/50 backdrop-blur-[2px] sm:bg-transparent sm:backdrop-blur-none">
-            78 MG Road, Indore, MP
-          </span>
-        </div>
-        
-        {/* Pincode Field */}
-        <div className="flex items-center gap-2 py-0.5 max-w-fit">
-          <div className="bg-white/80 sm:bg-gray-100 p-1.5 rounded-lg border border-gray-200 sm:border-gray-300 text-gray-700 shrink-0 shadow-sm sm:shadow-none">
-            <Compass size={14} className="md:w-4 md:h-4" /> 
-          </div>
-          <span className="text-gray-900 md:text-gray-700 px-1 py-0.5 rounded-md bg-white/50 backdrop-blur-[2px] sm:bg-transparent sm:backdrop-blur-none">
-            Pincode: 452001
-          </span>
+      </div>
+
+      {/* Location */}
+      <div className="flex items-center gap-2">
+        <div className="bg-gray-100 p-1.5 rounded-lg border border-gray-200 text-gray-700 shrink-0">
+          <MapPin size={14} />
         </div>
 
+        <span className="text-[12px] md:text-sm font-medium text-gray-700 bg-white/80 sm:bg-transparent px-2 py-1 rounded-md">
+          78 MG Road, Indore, MP
+        </span>
       </div>
+
+      {/* Pincode */}
+      <div className="flex items-center gap-2">
+        <div className="bg-gray-100 p-1.5 rounded-lg border border-gray-200 text-gray-700 shrink-0">
+          <Compass size={14} />
+        </div>
+
+        <span className="text-[12px] md:text-sm font-medium text-gray-700 bg-white/80 sm:bg-transparent px-2 py-1 rounded-md">
+          Pincode: 452001
+        </span>
+      </div>
+
     </div>
+  </div>
 </div>
 
   {/* RIGHT SIDE: 40% Collector Performance Banner (Enhanced & Filled) */}
@@ -506,7 +512,7 @@ const HeroSection = () => {
             E-Waste
           </td>
           <td className="py-4">0.8 kg</td>
-          <td className="py-4 text-[11px] text-gray-400">May 18, 09:15 AM</td>
+          <td className="py-4 text-[11px] text-gray-600">May 18, 09:15 AM</td>
           <td className="py-4 text-right pr-2"><span className="text-[10px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">Completed</span></td>
         </tr>
 

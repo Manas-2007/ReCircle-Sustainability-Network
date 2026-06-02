@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar'; 
-
-// SARE COMPONENTS IMPORT KIYE HAIN (Folder structure ke hisaab se)
 import Profile from './Profile';
 import Notifications from './Notifications';
 import HeroSection from './HeroSection';
@@ -11,11 +9,8 @@ import Analytics from './Analytics';
 import History from './History';
 
 const FinalUI = () => {
-  // Default tab humne 'Notifications' ya 'HeroSection' rakh sakte hain. 
-  // Abhi Notifications check kar rahe ho toh yahi default rakha hai.
   const [activeTab, setActiveTab] = useState('Notifications');
 
-  // Active tab ke hisaab se component render karne ka logic
   const renderContent = () => {
     switch (activeTab) {
       case 'Profile':
@@ -32,9 +27,6 @@ const FinalUI = () => {
         return <Analytics />;
       case 'History':
         return <History />;
-      
-      // Agar koi aisa tab click ho gaya jiska component abhi ready nahi hai, 
-      // toh ye default placeholder dikhega.
       default:
         return (
           <div className="p-10 text-center bg-white rounded-3xl border border-gray-100 shadow-sm mt-10">
@@ -42,7 +34,6 @@ const FinalUI = () => {
               Welcome to {activeTab} 🚀
             </h2>
             <p className="text-gray-500">
-              Is section ka UI abhi ban banana baaki hai. Work in progress!
             </p>
           </div>
         );

@@ -85,7 +85,7 @@ const NearbyReq = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-0 sm:px-4">
+    <div className="max-w-7xl mx-auto px-0 sm:px-4 -mt-3">
 
      {/* HEADER SECTION */}
 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between w-full mb-8 ">
@@ -96,7 +96,7 @@ const NearbyReq = () => {
       <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
       LIVE FEED
     </div>
-    <h1 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+    <h1 className="text-[17px] sm:text-xl font-bold text-gray-900 leading-none flex items-center gap-2">
       <MapPin size={22} className="text-emerald-600 flex-shrink-0" />
       Nearby <span className="text-emerald-700">Requests</span>
     </h1>
@@ -134,77 +134,91 @@ const NearbyReq = () => {
   </div>
 </div>
 
-     {/* GRID */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {/* GRID */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
   {requests.map((req) => (
     <div
       key={req.id}
-      className="bg-white  border-emerald-600 bg-green-100/50 border border-green-400 border-l-4 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col"
+      className="bg-green-100/50 border border-green-400 border-l-4 border-emerald-600 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full"
     >
       {/* TOP: Image & Title */}
-      <div className="flex gap-4">
+      <div className="flex gap-3">
         <img
           src={req.image}
           alt={req.wasteType}
-          className="w-16 h-16 rounded-xl object-cover shrink-0"
+          className="w-14 h-14 rounded-lg object-cover shrink-0"
         />
+
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-gray-800 text-[16px] truncate">
+          <h3 className="font-bold text-gray-800 text-[15px] leading-tight truncate">
             {req.wasteType}
           </h3>
-          <p className="text-emerald-500 font-semibold text-[15px]">
+
+          <p className="text-emerald-600 font-semibold text-[13px] mt-1">
             {req.quantity} Kg
           </p>
         </div>
       </div>
 
-      {/* DETAILS: Address wraps, others in grid */}
-<div className="mt-4 space-y-3">
-  
-  {/* Location: Full width, wraps naturally */}
-  <div className="flex items-start gap-2 text-xs text-gray-800">
-    <MapPin size={14} className="text-emerald-600 shrink-0 mt-0.5" />
-    <span className="leading-snug">{req.location}</span>
-  </div>
+      {/* DETAILS */}
+      <div className="mt-3 space-y-2 flex-1">
+        {/* Location */}
+        <div className="flex items-start gap-2 text-[11px] text-gray-700">
+          <MapPin
+            size={13}
+            className="text-emerald-600 shrink-0 mt-0.5"
+          />
+          <span className="leading-snug line-clamp-2">
+            {req.location}
+          </span>
+        </div>
 
-  {/* Grid for short data: Pincode, Time, Date */}
-  <div className="grid grid-cols-2 gap-2 p-2 bg-white/50 rounded-lg border border-emerald-50">
-    <div className="flex items-center gap-2 text-[11px] text-gray-600">
-      <span>📮</span>
-      <span>{req.pincode}</span>
-    </div>
-    <div className="flex items-center gap-2 text-[11px] text-gray-600">
-      <Clock size={12} className="text-emerald-600 shrink-0" />
-      <span>{req.time}</span>
-    </div>
-    <div className="flex items-center gap-2 text-[11px] text-gray-600 col-span-2">
-      <Calendar size={12} className="text-emerald-600 shrink-0" />
-      <span>{req.date}</span>
-    </div>
-  </div>
-</div>
+        {/* Meta Data */}
+        <div className="grid grid-cols-2 gap-1.5 p-2 bg-white/60 rounded-md border border-emerald-100">
+          <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
+            <span>📮</span>
+            <span>{req.pincode}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
+            <Clock
+              size={11}
+              className="text-emerald-600 shrink-0"
+            />
+            <span>{req.time}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[11px] text-gray-600 col-span-2">
+            <Calendar
+              size={11}
+              className="text-emerald-600 shrink-0"
+            />
+            <span>{req.date}</span>
+          </div>
+        </div>
+      </div>
 
       {/* ACTIONS */}
       <div className="mt-3">
         {req.status === "pending" ? (
           <button
             onClick={() => handleAccept(req.id)}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-semibold transition-all"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg text-[11px] font-semibold transition-all"
           >
             Accept Request
           </button>
         ) : (
           <div className="flex gap-2">
-            {/* Replace this specific button block inside your else condition */}
             <button
               onClick={() => handleCancel(req.id)}
-              className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-xs font-semibold transition-all"
+              className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-[11px] font-semibold transition-all"
             >
               Cancel
             </button>
+
             <button
               onClick={() => openScheduleModal(req)}
-              className="flex-1 bg-gray-900 hover:bg-black text-white py-2.5 rounded-xl text-xs font-semibold transition-all"
+              className="flex-1 bg-gray-900 hover:bg-black text-white py-2 rounded-lg text-[11px] font-semibold transition-all"
             >
               Schedule
             </button>

@@ -113,7 +113,7 @@ const History = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 font-sans pb-10 ">
+    <div className="max-w-screen-2xl mx-auto sm:px-6 lg:px-8 font-sans pb-10 -mt-2 sm:-mt-0 ">
       
       {/* HEADER (Hidden on Desktop 'lg:hidden', Visible on Mobile) */}
     <div className="flex flex-row items-center justify-between gap-3 mb-6 lg:hidden">
@@ -123,7 +123,7 @@ const History = () => {
           <HistoryIcon size={20} className="text-emerald-600" />
         </div>
         <div className="truncate">
-          <h1 className="text-base font-semibold text-gray-900 leading-tight truncate">Pickup History</h1>
+          <h1 className="text-base  font-bold sm:font-semibold text-gray-900 leading-tight truncate">Pickup History</h1>
           <p className="text-gray-500 text-[11px] font-normal truncate">Your journey of impact</p>
         </div>
       </div>
@@ -217,47 +217,93 @@ const History = () => {
   </div>
 </div>
 
-     {/* 2. MOBILE PREMIUM CARD LAYOUT (Visible only on Mobile) */}
+     {/* 2. MOBILE PREMIUM CARD LAYOUT */}
 <div className="lg:hidden my-2">
-  <div className="bg-white rounded-3xl p-4 border border-gray-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group">
-    
-    {/* Subtle Accent Stripe on Left */}
-    <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${item.status === 'Completed' ? 'bg-emerald-500' : 'bg-amber-400'}`}></div>
+  <div className="relative overflow-hidden bg-white rounded-3xl p-3.5 border border-gray-200 shadow-[0_8px_24px_rgba(0,0,0,0.04)]">
 
-    {/* Header: Status + Points */}
-    <div className="flex justify-between items-center mb-4 pl-2">
-      <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${item.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
-        <CheckCircle2 size={10} /> {item.status}
+    {/* Accent Bar */}
+    <div
+      className={`absolute left-0 top-0 bottom-0 w-1.5 ${
+        item.status === "Completed"
+          ? "bg-emerald-500"
+          : "bg-amber-400"
+      }`}
+    />
+
+    {/* Header */}
+    <div className="flex items-center justify-between mb-3 pl-2">
+      <span
+        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+          item.status === "Completed"
+            ? "bg-emerald-50 text-emerald-700"
+            : "bg-amber-50 text-amber-700"
+        }`}
+      >
+        <CheckCircle2 size={10} />
+        {item.status}
       </span>
-      <div className="flex items-center gap-1 text-[11px] font-[600] text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-300">
-        <TrendingUp size={12} /> +{item.points} Pts
+
+      <div className="flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+        <TrendingUp size={11} />
+        +{item.points} Pts
       </div>
     </div>
 
-    {/* Body: Image + Info */}
-    <div className="flex gap-4 items-start pl-2">
-      <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-inner shrink-0 border border-gray-100">
-        <img src={item.image} alt={item.type} className="w-full h-full object-cover" />
+    {/* Body */}
+    <div className="flex gap-3 pl-2">
+      {/* Image */}
+      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 border border-gray-100">
+        <img
+          src={item.image}
+          alt={item.type}
+          className="w-full h-full object-cover"
+        />
       </div>
-      
+
+      {/* Content */}
       <div className="flex-1 min-w-0">
-        <h4 className="font-[600] text-gray-900 text-[16px] truncate leading-tight">{item.type}</h4>
-        
-        <div className="mt-2 space-y-1.5">
-          <div className="text-[12px] text-gray-500 font-medium flex items-center gap-2">
-            <Clock size={13} className="text-gray-400" /> {item.date} • {item.time}
+        <h4 className="font-semibold text-gray-900 text-[15px] leading-tight truncate">
+          {item.type}
+        </h4>
+
+        <div className="mt-2 space-y-1">
+          <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
+            <Clock size={12} className="shrink-0" />
+            <span className="truncate">
+              {item.date} • {item.time}
+            </span>
           </div>
-          <div className="text-[12px] text-gray-500 font-medium flex items-center gap-2">
-            <MapPin size={13} className="text-gray-400" /> <span className="truncate">{item.location}</span>
+
+          <div className="flex items-start gap-1.5 text-[11px] text-gray-500">
+            <MapPin
+              size={12}
+              className="shrink-0 mt-[2px]"
+            />
+
+            <span
+              className="leading-snug overflow-hidden"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+              }}
+            >
+              {item.location}
+            </span>
           </div>
         </div>
       </div>
     </div>
 
-    {/* Footer: Collector Info */}
-    <div className="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center pl-2">
-      <div className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Collector</div>
-      <div className="text-[12px] font-bold text-gray-800">{item.collector}</div>
+    {/* Footer */}
+    <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between pl-2">
+      <span className="text-[10px] uppercase tracking-[0.15em] text-gray-400 font-semibold">
+        Collector
+      </span>
+
+      <span className="text-[12px] font-semibold text-gray-800 truncate max-w-[140px]">
+        {item.collector}
+      </span>
     </div>
   </div>
 </div>

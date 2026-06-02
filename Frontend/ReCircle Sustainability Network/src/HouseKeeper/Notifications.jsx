@@ -100,64 +100,101 @@ const Notifications = () => {
       )}
     </div>
 
-      {/* 2. BALANCED CARDS GRID */}
-      {/* Optimized Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
+     {/* BALANCED NOTIFICATIONS GRID */}
 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
   {notifications.map((notif) => (
     <div
       key={notif.id}
-      className={`relative flex flex-col bg-white rounded-2xl p-4 transition-all duration-300 border ${
-        notif.isUnread 
-          ? 'border-emerald-500/30 shadow-sm' 
-          : 'border-gray-200 shadow-sm'
-      }`}
+      className={`
+        relative
+        flex flex-col
+        h-full
+        bg-white
+        rounded-2xl
+        p-3 sm:p-4
+        border
+        transition-all
+        duration-300
+        hover:shadow-md
+        lg:hover:-translate-y-1
+        ${
+          notif.isUnread
+            ? "border-emerald-400/40 shadow-sm"
+            : "border-gray-200 shadow-sm"
+        }
+      `}
     >
       {/* Unread Indicator */}
       {notif.isUnread && (
-        <div className="absolute top-4 right-4 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+        <div className="absolute top-3 right-3 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
       )}
 
+      {/* TOP SECTION */}
       <div className="flex gap-3 items-start">
-        {/* IMAGE / ICON - Fixed size to prevent layout pushing */}
-        <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center bg-gray-50">
+
+        {/* IMAGE / ICON */}
+        <div className="relative w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center">
+
           {notif.image ? (
-            <img src={notif.image} alt="notif" className="w-full h-full object-cover" />
+            <img
+              src={notif.image}
+              alt="notif"
+              className="w-full h-full object-cover"
+            />
           ) : (
-            <div className={`w-full h-full flex items-center justify-center ${notif.iconBg}`}>
+            <div
+              className={`w-full h-full flex items-center justify-center ${notif.iconBg}`}
+            >
               {React.cloneElement(notif.icon, { size: 20 })}
             </div>
           )}
         </div>
 
-        {/* CONTENT - min-w-0 is crucial for text wrapping */}
+        {/* CONTENT */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-bold text-[14px] text-gray-900 leading-tight break-words">
-              {notif.title}
-            </h3>
-          </div>
-          
+
+          {/* Status */}
           {notif.status && (
-            <span className="inline-block px-1.5 py-0.5 mb-1.5 text-[9px] font-bold rounded-md uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
+            <span className="inline-flex items-center justify-center px-2 py-0.5 mb-1.5 text-[9px] font-bold rounded-md uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
               {notif.status}
             </span>
           )}
 
-          <p className="text-[12px] text-gray-500 font-medium leading-relaxed break-words">
+          {/* Title */}
+          <h3 className="font-bold text-[14px] sm:text-[15px] text-gray-900 leading-tight">
+            {notif.title}
+          </h3>
+
+          {/* Message */}
+          <p className="mt-1 text-[12px] text-gray-500 font-medium leading-relaxed line-clamp-2">
             {notif.message}
           </p>
         </div>
       </div>
 
       {/* FOOTER */}
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
+      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+
+        {/* Time */}
         <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-semibold">
           <Clock size={11} />
           {notif.time}
         </div>
 
+        {/* Action */}
         {notif.actionText && (
-          <button className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all shadow-sm ${getButtonStyles(notif.type)}`}>
+          <button
+            className={`
+              flex items-center gap-1.5
+              px-2.5 py-1.5
+              rounded-lg
+              text-[10px] sm:text-[11px]
+              font-bold
+              transition-all
+              shadow-sm
+              ${getButtonStyles(notif.type)}
+            `}
+          >
             {React.cloneElement(notif.actionIcon, { size: 12 })}
             {notif.actionText}
           </button>

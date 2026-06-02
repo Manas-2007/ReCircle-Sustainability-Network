@@ -86,7 +86,7 @@ return (
           onClick={() => setIsOpen(true)} 
           className="lg:hidden text-gray-900 p-2 focus:outline-none"
         >
-          <HiOutlineMenu className="w-8 h-8 text-[#15803d]" />
+          <HiOutlineMenu className="w-6 h-6 text-[#15803d]" />
         </button>
       </div>
 
@@ -96,20 +96,20 @@ return (
         {/* Close Button */}
         <button 
           onClick={() => setIsOpen(false)} 
-          className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-md text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
+          className="absolute top-6 right-6 p-1 bg-white rounded-full shadow-md text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
         >
-          <HiX className="w-7 h-7" />
+          <HiX className="w-5 h-5" />
         </button>
 
         {/* Mobile Menu Content */}
-        <div className="flex flex-col pt-12 pb-10 px-8">
+        <div className="flex flex-col pt-7 pb-5 px-5">
           
           {/* Mobile Logo & Name (Left Aligned) */}
           <div className="flex items-center gap-3 mb-10">
             <img 
               src="main logo.jpg" 
               alt="ReCircle Logo" 
-              className="w-14 h-14 object-contain bg-white p-1.5 rounded-full shadow-md"
+              className="w-12 h-12 object-contain bg-white p-1.5 rounded-full shadow-md"
             />
             <div>
               <h2 className="text-2xl font-bold text-green-950 leading-none">Re<span className='text-green-800'>Circle</span></h2>
@@ -155,7 +155,7 @@ return (
 
           {/* Mobile Single Auth Button */}
           <div className="w-full">
-            <button onClick={onOpenAuth} className="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white font-medium text-lg rounded-full shadow-md active:scale-95 transition-transform">
+            <button onClick={onOpenAuth} className="flex items-center justify-center gap-2 w-full py-1.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white font-medium text-lg rounded-full shadow-md active:scale-95 transition-transform">
               <FiUser className="text-xl" /> Join Movement 🌿
             </button>
           </div>

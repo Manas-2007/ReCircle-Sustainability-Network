@@ -42,69 +42,91 @@ const EcoPoints = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
 
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto px-1 sm:px-6 lg:px-8">
         
         {/* HERO SECTION */}
-        <div className="relative bg-[#064e3b] rounded-[24px] sm:rounded-[28px] p-5 sm:p-8 text-white mb-8 shadow-sm border border-emerald-900/50 overflow-hidden flex flex-col gap-4 sm:gap-5 lg:max-w-5xl lg:mx-auto">
-          
-          <div 
-            className="absolute top-0 right-0 w-full sm:w-1/2 h-full opacity-40 pointer-events-none"
-            style={{ 
-              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)', 
-              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)' 
-            }}
-          >
-            <img 
-              src="miniEarth.jpg" 
-              alt="Eco Background" 
-              className="w-full h-full object-cover" 
-            />
-          </div>
+<div className="relative bg-[#064e3b] rounded-[24px] sm:rounded-[28px] p-4 sm:p-8 text-white mb-8 shadow-sm border border-emerald-900/50 overflow-hidden flex flex-col gap-4 sm:gap-5 lg:max-w-5xl lg:mx-auto">
 
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+  {/* Background Image */}
+  <div
+    className="absolute top-0 right-0 w-[65%] sm:w-1/2 h-full opacity-25 sm:opacity-40 pointer-events-none"
+    style={{
+      maskImage:
+        "linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
+      WebkitMaskImage:
+        "linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
+    }}
+  >
+    <img
+      src="miniEarth.jpg"
+      alt="Eco Background"
+      className="w-full h-full object-cover"
+    />
+  </div>
 
-          <div className="relative z-10 flex items-center justify-between">
-            <h1 className="text-[18px] sm:text-[22px] font-semibold tracking-tight text-white/95">Eco Points Dashboard</h1>
-            
-            <button
-              onClick={() => setShowInfoModal(true)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl text-xs sm:text-sm font-medium text-white transition-all active:scale-95 backdrop-blur-sm"
-            >
-              <Star size={14} className="text-amber-400" /> 
-              <span>How it Works</span>
-            </button>
-          </div>
+  {/* Glow Effect */}
+  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
 
-          <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 sm:gap-0 mt-2">
-            <div>
-              <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl text-xs font-medium mb-3 text-emerald-50 shadow-sm">
-                <Trophy size={13} className="text-amber-400" /> {currentLevel}
-              </div>
-              <div className="text-3xl sm:text-[40px] font-semibold tracking-tighter text-white leading-none">{totalPoints}</div>
-              <p className="text-emerald-100/80 text-sm mt-2">Total Available Eco Points</p>
-            </div>
+  {/* Header */}
+  <div className="relative z-10 flex items-center justify-between gap-2">
+    <h1 className="text-[16px] sm:text-[22px] font-semibold tracking-tight text-white/95">
+      Eco Points Dashboard
+    </h1>
 
-            <div className="w-full sm:w-[260px]">
-              <div className="flex justify-between text-sm text-emerald-100/90 font-medium">
-                <span>Next: Planet Protector</span>
-                <span className="text-emerald-200/70">{nextLevelPoints - totalPoints} pts left</span>
-              </div>
-              
-              <div className="mt-3 w-full">
-                <div className="h-2 bg-black/25 rounded-full overflow-hidden border border-white/5">
-                  <div 
-                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-300 rounded-full transition-all duration-1000" 
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-                <div className="flex justify-between text-xs text-emerald-200/60 mt-1.5 font-medium tracking-wider">
-                  <span>{totalPoints}</span>
-                  <span>{nextLevelPoints}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+    <button
+      onClick={() => setShowInfoModal(true)}
+      className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl text-xs sm:text-sm font-medium text-white transition-all active:scale-95 backdrop-blur-sm shrink-0"
+    >
+      <Star size={13} className="text-amber-400" />
+      <span className="hidden xs:inline">How it Works</span>
+    </button>
+  </div>
+
+  {/* Main Content */}
+  <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-0 mt-1">
+
+    {/* Left Side */}
+    <div>
+      <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl text-xs font-medium mb-2 text-emerald-50 shadow-sm">
+        <Trophy size={13} className="text-amber-400" />
+        {currentLevel}
+      </div>
+
+      <div className="text-[34px] sm:text-[40px] font-semibold tracking-tighter text-white leading-none">
+        {totalPoints}
+      </div>
+
+      <p className="text-emerald-100/80 text-[13px] sm:text-sm mt-1.5">
+        Total Available Eco Points
+      </p>
+    </div>
+
+    {/* Progress Section */}
+    <div className="w-full sm:w-[260px] bg-white/5 sm:bg-transparent border border-white/10 sm:border-0 rounded-2xl p-3 sm:p-0 backdrop-blur-sm">
+
+      <div className="flex justify-between text-[12px] sm:text-sm text-emerald-100/90 font-medium">
+        <span>Next: Planet Protector</span>
+        <span className="text-emerald-200/70">
+          {nextLevelPoints - totalPoints} pts left
+        </span>
+      </div>
+
+      <div className="mt-2.5 w-full">
+        <div className="h-1.5 bg-black/25 rounded-full overflow-hidden border border-white/5">
+          <div
+            className="h-full bg-gradient-to-r from-emerald-400 to-emerald-300 rounded-full transition-all duration-1000"
+            style={{ width: `${progress}%` }}
+          />
         </div>
+
+        <div className="flex justify-between text-[10px] text-emerald-200/60 mt-1.5 font-medium tracking-wider">
+          <span>{totalPoints}</span>
+          <span>{nextLevelPoints}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* REDEEM REWARDS */}
       <div className="mb-4">

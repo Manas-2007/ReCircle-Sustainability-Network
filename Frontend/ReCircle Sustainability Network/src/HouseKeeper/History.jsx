@@ -15,7 +15,7 @@ const History = () => {
       badgeBg: 'bg-emerald-500/20',
       badgeText: 'text-emerald-300',
       badgeBorder: 'border-emerald-500/30',
-      image: 'H2.jpg'
+      image: '/H2.jpg'
     },
     { 
       title: 'Eco Points Earned', 
@@ -28,7 +28,7 @@ const History = () => {
       badgeBg: 'bg-amber-500/20',
       badgeText: 'text-amber-300',
       badgeBorder: 'border-amber-500/30',
-      image: 'eco.jpg'
+      image: '/eco.jpg'
     },
     { 
       title: 'Waste Recycled', 
@@ -41,7 +41,7 @@ const History = () => {
       badgeBg: 'bg-sky-500/20',
       badgeText: 'text-sky-300',
       badgeBorder: 'border-sky-500/30',
-      image: 'H5.jpg'
+      image: '/H5.jpg'
     },
   ];
 

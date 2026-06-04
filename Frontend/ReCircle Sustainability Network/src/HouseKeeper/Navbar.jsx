@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom"; // ✨ React Router Superpowers
 import {
   Bell,
   Search,
@@ -7,19 +8,20 @@ import {
   ClipboardList,
   Users,
   Leaf,
-  Menu, // Hamburger icon (3 lines)
-  X,    // Close icon
+  Menu, 
+  X,  
 } from "lucide-react";
 
-const Navbar = ({ activeTab, setActiveTab }) => {
-  const [isOpen, setIsOpen] = useState(false); // Mobile Menu State
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false); 
 
+  // ✨ MODIFIED TABS: Ab yahan 'id' nahi, seedha URL 'path' hai
   const tabs = [
-    { id: "HeroSection", label: "My Circle", icon: <Users size={18} /> },
-    { id: "Request", label: "Requests", icon: <ClipboardList size={18} /> },
-    { id: "Eco", label: "Eco Points", icon: <Leaf size={18} /> },
-    { id: "History", label: "History", icon: <History size={18} /> },
-    { id: "LeaderBoard", label: "Leaderboard", icon: <Trophy size={18} /> },
+    { path: "/housekeeper", label: "My Circle", icon: <Users size={18} /> },
+    { path: "/housekeeper/requests", label: "Requests", icon: <ClipboardList size={18} /> },
+    { path: "/housekeeper/eco", label: "Eco Points", icon: <Leaf size={18} /> },
+    { path: "/housekeeper/history", label: "History", icon: <History size={18} /> },
+    { path: "/housekeeper/leaderboard", label: "Leaderboard", icon: <Trophy size={18} /> },
   ];
 
   return (
@@ -28,13 +30,12 @@ const Navbar = ({ activeTab, setActiveTab }) => {
       <header className="sticky top-0 z-50 w-full bg-white border-b border-green-400 font-sans antialiased">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-5 lg:px-8 h-[76px] sm:h-[88px] flex items-center justify-between">
           
-          {/* LEFT SIDE (LOGO + NAME ALONE ON MOBILE) */}
+          {/* LEFT SIDE (LOGO) */}
           <div className="flex-1 flex items-center justify-start">
-            <div
-              onClick={() => setActiveTab("HeroSection")}
+            <Link
+              to="/housekeeper"
               className="flex items-center gap-2 sm:gap-3.5 cursor-pointer group"
             >
-              {/* Logo Image */}
               <div
                 className="
                   w-[38px] h-[38px] sm:w-[50px] sm:h-[50px] rounded-xl overflow-hidden bg-gray-50
@@ -49,7 +50,6 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                 />
               </div>
 
-              {/* Text is now flex by default (visible on mobile) */}
               <div className="flex flex-col justify-center">
                 <h1 className="text-[20px] sm:text-[26px] font-[700] tracking-tight text-gray-900 leading-none">
                   Re<span className="text-[#16a34a]">Circle</span>
@@ -58,38 +58,40 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                   Sustainability Network
                 </p>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* CENTER NAVIGATION (Hidden on Mobile) */}
           <div className="hidden lg:flex justify-center shrink-0 items-center gap-1.5 xl:gap-3">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-[13.5px] font-bold transition-all duration-300 ease-out border
-                    ${isActive
-                        ? "bg-green-50 border-green-200 text-[#166534] shadow-sm"
-                        : "bg-transparent border-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-                    }
-                  `}
-                >
-                  <span className={`${isActive ? "text-[#16a34a]" : "text-gray-700 group-hover:text-gray-700"} transition-colors`}>
-                    {tab.icon}
-                  </span>
-                  {tab.label}
-                </button>
-              );
-            })}
+            {tabs.map((tab) => (
+              <NavLink
+                key={tab.path}
+                to={tab.path}
+                end={tab.path === "/housekeeper"} // Taaki default route fix rahe
+                className={({ isActive }) => `
+                  flex items-center gap-3 px-4 py-1.5 rounded-xl text-[13.5px] font-bold transition-all duration-300 ease-out border
+                  ${isActive
+                      ? "bg-green-50 border-green-300 text-[#166534] shadow-sm"
+                      : "bg-transparent border-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  }
+                `}
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className={`${isActive ? "text-[#16a34a]" : "text-gray-700 group-hover:text-gray-700"} transition-colors`}>
+                      {tab.icon}
+                    </span>
+                    {tab.label}
+                  </>
+                )}
+              </NavLink>
+            ))}
           </div>
 
           {/* RIGHT SIDE (ACTIONS & GREEN HAMBURGER) */}
           <div className="flex-1 flex items-center justify-end gap-2 sm:gap-7">
             
-            {/* ECO SCORE PILL (Hidden on mobile) */}
+            {/* ECO SCORE PILL */}
             <div
               className="
                 hidden xl:flex items-center gap-2 px-4 py-2 rounded-xl
@@ -106,33 +108,33 @@ const Navbar = ({ activeTab, setActiveTab }) => {
             <div className="flex items-center gap-2 sm:gap-6">
               
               {/* NOTIFICATION */}
-            <div 
-              onClick={() => setActiveTab('Notifications')} 
-              className="flex flex-col items-center justify-center gap-1 mt-1 cursor-pointer group"
-            >
-              <button
-                className="
-                  relative w-[40px] h-[40px] rounded-xl
-                  bg-gray-50 border border-gray-200
-                  flex items-center justify-center
-                  group-hover:bg-gray-100 group-hover:border-gray-300
-                  transition-all duration-200 active:scale-95 shadow-sm
-                "
+              <Link 
+                to="/housekeeper/notifications"
+                className="flex flex-col items-center justify-center gap-1 mt-1 cursor-pointer group"
               >
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
-                <Bell size={18} className="text-gray-600 group-hover:text-gray-900 transition-colors" />
-              </button>
-              <span className="text-[12px] font-bold text-gray-700 group-hover:text-gray-800 transition-colors leading-none hidden sm:block">
-                Alerts
-              </span>
-            </div>
+                <div
+                  className="
+                    relative w-[40px] h-[40px] rounded-xl
+                    bg-gray-50 border border-gray-200
+                    flex items-center justify-center
+                    group-hover:bg-gray-100 group-hover:border-gray-300
+                    transition-all duration-200 active:scale-95 shadow-sm
+                  "
+                >
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
+                  <Bell size={18} className="text-gray-600 group-hover:text-gray-900 transition-colors" />
+                </div>
+                <span className="text-[12px] font-bold text-gray-700 group-hover:text-gray-800 transition-colors leading-none hidden sm:block">
+                  Alerts
+                </span>
+              </Link>
 
               {/* SEPARATOR */}
               <div className="hidden sm:block w-px h-10 bg-gray-200 rounded-full"></div>
 
-              {/* PROFILE (Initials) */}
-              <div 
-                onClick={() => setActiveTab('Profile')} 
+              {/* PROFILE */}
+              <Link 
+                to="/housekeeper/profile"
                 className="flex flex-col items-center justify-center gap-1 mt-1 cursor-pointer group"
               >
                 <div
@@ -149,13 +151,12 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                     JD
                   </span>
                 </div>
-                {/* Label hidden on mobile to save space */}
                 <span className="text-[12px] font-bold text-gray-700 group-hover:text-[#16a34a] transition-colors leading-none hidden sm:block">
                   John Doe
                 </span>
-              </div>
+              </Link>
 
-              {/* MOBILE HAMBURGER MENU BUTTON - NOW PROMINENT & GREEN */}
+              {/* MOBILE HAMBURGER MENU BUTTON */}
               <button 
                 onClick={() => setIsOpen(true)} 
                 className="lg:hidden ml-1 p-2 bg-[#f0fdf4] border border-[#bbf7d0] shadow-sm rounded-xl text-[#16a34a] focus:outline-none hover:bg-green-100 active:scale-95 transition-all"
@@ -168,10 +169,9 @@ const Navbar = ({ activeTab, setActiveTab }) => {
         </div>
       </header>
 
-      {/* 2. MOBILE OFF-CANVAS MENU (TOP-DOWN SLIDE) */}
+      {/* 2. MOBILE OFF-CANVAS MENU */}
       <div className={`fixed top-0 left-0 w-full bg-gradient-to-b from-green-50 via-white to-white  transition-transform duration-500 ease-in-out z-[70] rounded-b-[2rem] border-b-4 border-[#4ade80] font-sans ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}>
         
-        {/* Close Button */}
         <button 
           onClick={() => setIsOpen(false)} 
           className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-sm border border-gray-100 text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
@@ -179,10 +179,8 @@ const Navbar = ({ activeTab, setActiveTab }) => {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Mobile Menu Content */}
         <div className="flex flex-col pt-5 pb-8 px-6">
           
-          {/* Mobile Logo in Offcanvas */}
           <div className="flex items-center gap-3 mb-8">
             <img 
               src="/main logo.jpg" 
@@ -195,12 +193,9 @@ const Navbar = ({ activeTab, setActiveTab }) => {
             </div>
           </div>
 
-          {/* Mobile Profile & Eco Summary */}
-         <div 
-            onClick={() => {
-              setActiveTab('Profile');
-              setIsOpen(false);
-            }}
+          <Link 
+            to="/housekeeper/profile"
+            onClick={() => setIsOpen(false)}
             className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <div className="w-[46px] h-[46px] rounded-xl bg-gradient-to-br from-green-500 to-[#166534] flex items-center justify-center shadow-inner">
@@ -212,41 +207,39 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                 <Leaf size={12} /> 850 Eco Points
               </p>
             </div>
-          </div>
+          </Link>
 
-          {/* Mobile Navigation Tabs */}
           <ul className="flex flex-col gap-2 w-full">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <li key={tab.id} className="w-full">
-                  <button
-                    onClick={() => {
-                      setActiveTab(tab.id);
-                      setIsOpen(false); 
-                    }}
-                    className={`
-                      w-full flex items-center gap-3 p-4 rounded-2xl text-[13px] font-bold transition-all duration-300
-                      ${isActive 
-                        ? 'bg-green-100/80 text-[#166534] border-l-[5px] border-[#166534] shadow-sm' 
-                        : 'bg-transparent text-gray-600 hover:bg-gray-50 border-l-[5px] border-transparent hover:border-gray-300'
-                      }
-                    `}
-                  >
-                    <span className={isActive ? "text-[#16a34a]" : "text-gray-400"}>
-                      {React.cloneElement(tab.icon, { size: 20 })} 
-                    </span>
-                    {tab.label}
-                  </button>
-                </li>
-              );
-            })}
+            {tabs.map((tab) => (
+              <li key={tab.path} className="w-full">
+                <NavLink
+                  to={tab.path}
+                  end={tab.path === "/housekeeper"}
+                  onClick={() => setIsOpen(false)} 
+                  className={({ isActive }) => `
+                    w-full flex items-center gap-3 p-4 rounded-2xl text-[13px] font-bold transition-all duration-300
+                    ${isActive 
+                      ? 'bg-green-100/80 text-[#166534] border-l-[5px] border-[#166534] shadow-sm' 
+                      : 'bg-transparent text-gray-600 hover:bg-gray-50 border-l-[5px] border-transparent hover:border-gray-300'
+                    }
+                  `}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span className={isActive ? "text-[#16a34a]" : "text-gray-400"}>
+                        {React.cloneElement(tab.icon, { size: 20 })} 
+                      </span>
+                      {tab.label}
+                    </>
+                  )}
+                </NavLink>
+              </li>
+            ))}
           </ul>
           
         </div>
       </div>
 
-      {/* 3. OVERLAY (Dims background when menu is open) */}
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)} 

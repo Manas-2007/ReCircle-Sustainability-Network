@@ -9,21 +9,29 @@ import AuthModal from './modals/AuthModal';
 const HomeDash = ({onLogin}) => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   
-
   return (
-    <div className="relative w-full min-h-screen bg-white">
-      <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
+    // 1. Poori screen lock, browser ka ganda scroll band
+    <div className="fixed inset-0 bg-white overflow-hidden">
       
-      <main>
-       <HeroSection onOpenAuth={() => setIsAuthOpen(true)} />
-        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onLoginSuccess={onLogin} />
-        <ImpactStats />
-        <Process/>
+      {/* 2. Ye hai tera premium green scroller wala dabba */}
+      <div className="h-full w-full overflow-y-auto custom-scroll relative">
         
+        {/* 3. Navbar (Ye absolute hai, toh Hero ke upar baithega aur scroll hone pe gayab hoga) */}
+        <Navbar onOpenAuth={() => setIsAuthOpen(true)} />
         
-      </main>
+        {/* 4. Tera saara content */}
+        <main>
+          <HeroSection onOpenAuth={() => setIsAuthOpen(true)} />
+          <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onLoginSuccess={onLogin} />
+          <ImpactStats />
+          <Process />
+        </main>
+        
+        {/* 5. Footer */}
+        <Footer />
+        
+      </div>
       
-      <Footer />
     </div>
   );
 };

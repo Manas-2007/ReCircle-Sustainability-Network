@@ -40,7 +40,7 @@ const HeroSection = ({onOpenAuth}) => {
             <button onClick={() => {
     onOpenAuth();
 }}
-  className="flex items-center justify-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 group w-fit mx-auto md:mx-0">
+  className="flex items-center justify-center gap-3 px-6 py-2.5 bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 group w-fit mx-auto md:mx-0">
               <span className="font-medium text-sm md:text-base tracking-wide">Get Started Now</span>
               <FaArrowRight className="text-sm transition-transform duration-300 group-hover:translate-x-1" />
             </button>

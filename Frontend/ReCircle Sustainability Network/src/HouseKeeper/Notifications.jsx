@@ -10,7 +10,7 @@ const Notifications = () => {
       message: 'Rajesh (Green Partner) has accepted your request for 12kg Recyclables. He will reach your location in approx 20 mins.',
       time: 'Just now',
       isUnread: true,
-      image: 'H2.jpg',
+      image: '/H2.jpg',
       actionText: 'Track Collector',
       actionIcon: <MapPin size={14} />,
       status: 'In Transit'
@@ -22,7 +22,7 @@ const Notifications = () => {
       message: 'Amazing! 150 Eco Points have been added to your balance for yesterday’s plastic waste contribution.',
       time: '2 hours ago',
       isUnread: true,
-      image: 'eco.jpg',
+      image: '/eco.jpg',
       actionText: 'View Balance',
       actionIcon: <Wallet size={14} />,
       status: 'Completed'

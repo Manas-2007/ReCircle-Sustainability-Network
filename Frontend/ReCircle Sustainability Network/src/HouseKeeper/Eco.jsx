@@ -12,10 +12,10 @@ const EcoPoints = () => {
   const progress = Math.min((totalPoints / nextLevelPoints) * 100, 100);
 
   const rewards = [
-    { id: 1, title: "Amazon Gift Card", points: 800, image: "amazonvoucher.jpg", category: "Shopping" },
-    { id: 2, title: "Blinkit Grocery Voucher", points: 450, image: "blinkitvoucher.jpg", category: "Grocery" },
-    { id: 3, title: "Zomato Food Voucher", points: 300, image: "zomatovoucher.jpg", category: "Food & Dishes" },
-    { id: 4, title: "Travel Voucher", points: 150, image: "makemytripvoucher.jpg", category: "Travel" },
+    { id: 1, title: "Amazon Gift Card", points: 800, image: "/amazonvoucher.jpg", category: "Shopping" },
+    { id: 2, title: "Blinkit Grocery Voucher", points: 450, image: "/blinkitvoucher.jpg", category: "Grocery" },
+    { id: 3, title: "Zomato Food Voucher", points: 300, image: "/zomatovoucher.jpg", category: "Food & Dishes" },
+    { id: 4, title: "Travel Voucher", points: 150, image: "/makemytripvoucher.jpg", category: "Travel" },
   ];
 
   const badges = [

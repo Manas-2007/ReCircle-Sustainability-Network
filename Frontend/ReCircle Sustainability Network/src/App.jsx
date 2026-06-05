@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
-import HomeDash from './homepage/HomeDash'; 
+import HomeDash from './homepage/homeDash'; 
 import FinalUI from './HouseKeeper/FinalUI'; 
 import CollectorUI from './Collector/FinalUI'; 
 

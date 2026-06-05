@@ -20,7 +20,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto px-2 font-sans">
+    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
 
       {/* Header */}
     <div className="-mt-2 sm:-mt-4 mb-6 flex flex-row items-center justify-between gap-x-3 border-b border-gray-300 pb-5 overflow-hidden whitespace-nowrap">

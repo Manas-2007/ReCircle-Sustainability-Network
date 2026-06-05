@@ -43,7 +43,7 @@ const WhyChooseUs = () => {
     // Added significant bottom padding (pb-24 md:pb-32) to expose the parent background grass
     <div className="relative w-full pt-8 pb-24 md:pb-32">
       
-      <div className="max-w-[1350px] mx-auto px-4 lg:px-8 relative z-10">
+      <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 relative z-10">
         
         <div className="flex flex-col xl:flex-row gap-8 xl:gap-6 items-center">
           

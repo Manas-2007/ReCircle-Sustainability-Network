@@ -13,7 +13,7 @@ const [amount, setAmount] = useState("");
   ];
 
   return (
-    <div className="space-y-6 px-1 md:mx-4 -mt-3">
+    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0 space-y-6">
       
       {/* 1. HERO SECTION: Balance & Withdraw */}
       <div className="bg-emerald-900 text-white rounded-3xl p-6 md:p-8 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

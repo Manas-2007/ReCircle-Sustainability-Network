@@ -14,7 +14,7 @@ const FinalUI = () => {
       
       {/* Main Scrollable Content Area */}
       <div className="flex-1 custom-scroll relative">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="w-full py-6 sm:py-8">
           {/* ✨ YAHAN AAYEGA TERA MAGIC! URL ke hisaab se pages yahan load honge */}
           <Outlet />
         </main>

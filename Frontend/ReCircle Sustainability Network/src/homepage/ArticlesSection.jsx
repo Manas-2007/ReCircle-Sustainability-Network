@@ -29,7 +29,7 @@ const ArticlesSection = () => {
   ];
 
   return (
-    <div className="w-full max-w-[1350px] mx-auto px-4 lg:px-8 py-10 relative z-20">
+    <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 py-10 relative z-20">
       
       {/* Container holding left text and right cards */}
       <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 items-center xl:items-center">

@@ -16,7 +16,7 @@ const HeroSection = ({onOpenAuth}) => {
       </div>
 
       {/* Main Content Container */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10 flex flex-col md:flex-row items-center justify-between gap-12 md:gap-0">
+      <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12 md:gap-0">
         
        {/* Left Column Text and Button */}
         <div className="w-full md:w-3/5 max-w-2xl md:ml-16 lg:ml-32 xl:ml-15 flex flex-col items-center md:items-start text-center md:text-left">

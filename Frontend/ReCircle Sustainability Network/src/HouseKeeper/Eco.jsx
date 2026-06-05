@@ -42,7 +42,7 @@ const EcoPoints = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
 
-      <div className="max-w-screen-2xl mx-auto px-1 sm:px-6 lg:px-8">
+      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 pb-10 -mt-2 sm:-mt-0">
         
         {/* HERO SECTION */}
 <div className="relative bg-[#064e3b] rounded-[24px] sm:rounded-[28px] p-4 sm:p-8 text-white mb-8 shadow-sm border border-emerald-900/50 overflow-hidden flex flex-col gap-4 sm:gap-5 lg:max-w-5xl lg:mx-auto">

@@ -4,7 +4,7 @@ import { Package, Truck,Clock,TrendingUp ,FileText,Leaf, CheckCircle, Trophy, Ma
 
 const HeroSection = () => {
   return (
-    <div className="p-3  md:p-4 space-y-5 bg-gray-50  min-h-screen -mt-6">
+    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 pb-10 -mt-2 sm:-mt-0 space-y-5">
       
      {/* =========================================
     1. HERO & STATS SECTION (Top Row - 60/40 Split)

@@ -9,7 +9,7 @@ const PromoSection = () => {
   ];
 
   return (
-    <div className="w-full max-w-[1350px] mx-auto px-4 lg:px-8 -mt-8 md:-mt-16 relative z-20">
+    <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 -mt-8 md:-mt-16 relative z-20">
       <div className="flex flex-col xl:flex-row gap-6">
 
         {/* Web Platform Promo Section */}

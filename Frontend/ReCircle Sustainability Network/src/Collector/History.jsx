@@ -84,7 +84,7 @@ const History = () => {
   ];
 
   return (
-    <div className="w-full mb-8 md:px-6 -mt-3">
+   <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
       {/* HEADER SECTION (Responsive) */}
       <div className="flex flex-row items-center justify-between mb-8 w-full px-3 ">
         

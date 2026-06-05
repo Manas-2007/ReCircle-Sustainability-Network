@@ -108,7 +108,7 @@ const Request = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto lg:px-2  font-sans">
+   <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
       
       {/* HEADER */}
 <div className="mb-6 sm:mb-8 -mt-2 sm:-mt-3 border-b border-gray-300 pb-4 sm:pb-5">

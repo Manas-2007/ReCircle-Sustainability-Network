@@ -34,7 +34,7 @@ const Profile = () => {
 
   return (
     // Single View Container
-    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8  lg:h-[calc(100vh-110px)] font-sans">
+   <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 lg:h-[calc(100vh-110px)] font-sans pb-10 -mt-2 sm:-mt-0">
       
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-6 h-full">
         

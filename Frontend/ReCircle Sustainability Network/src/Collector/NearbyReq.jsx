@@ -85,7 +85,7 @@ const NearbyReq = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-0 sm:px-4 -mt-3">
+    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
 
      {/* HEADER SECTION */}
 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between w-full mb-8 ">

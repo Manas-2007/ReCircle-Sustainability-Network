@@ -35,7 +35,7 @@ const Process = () => {
   return (
     <section className="relative w-full -mt-12 md:-mt-10 pt-2 pb-16 md:pb-20 bg-white overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('Hbglower.jpg')" }}>
       
-      <div className="max-w-6xl mx-auto px-4 lg:px-8 relative z-10">
+      <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 relative z-10">
         
         {/* Section Header */}
         <div className="text-center mb-10 flex flex-col items-center">

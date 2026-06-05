@@ -3,7 +3,7 @@ import { FaArrowRight } from 'react-icons/fa';
 
 const ImpactStats = () => {
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-20 -mt-12 sm:-mt-16 md:-mt-20 lg:-mt-24 mb-16">
+    <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 relative z-20 -mt-12 sm:-mt-16 md:-mt-20 lg:-mt-24 mb-16">
       <div className="flex flex-col lg:flex-row items-center justify-center">
 
         <div className="w-full lg:w-3/4 bg-[#0a2e13] rounded-3xl p-6 lg:p-8 lg:pr-16 shadow-2xl z-0">

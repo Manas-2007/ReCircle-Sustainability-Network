@@ -11,7 +11,7 @@ const HeroSection = () => {
 };
 
   return (
-    <div className="p-2 sm:p-0 bg-gray-50 min-h-screen -mt-4">
+    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
 
     {/* HERO SECTION */}
 <div className="relative w-full overflow-hidden rounded-3xl mb-6 bg-[#f2fdf5] shadow-sm border border-emerald-100 font-sans">

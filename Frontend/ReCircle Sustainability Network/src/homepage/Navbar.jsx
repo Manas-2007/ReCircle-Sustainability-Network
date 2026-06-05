@@ -20,7 +20,7 @@ return (
     <nav className="absolute top-0 left-0 w-full z-50">
       
       {/* Desktop & Tablet Navbar */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex justify-between items-center">
+      <div className="w-full max-w-[1500px] mx-auto px-6 lg:px-16 py-6 flex justify-between items-center">
         
         {/* Logo Section */}
         <div className="flex items-center gap-2">

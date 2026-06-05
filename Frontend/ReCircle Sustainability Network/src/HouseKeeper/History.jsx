@@ -113,7 +113,7 @@ const History = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto sm:px-6 lg:px-8 font-sans pb-10 -mt-2 sm:-mt-0 ">
+   <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
       
       {/* HEADER (Hidden on Desktop 'lg:hidden', Visible on Mobile) */}
     <div className="flex flex-row items-center justify-between gap-3 mb-6 lg:hidden">

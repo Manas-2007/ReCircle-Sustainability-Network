@@ -49,7 +49,7 @@ const Notifications = () => {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-4 sm:px-5 lg:px-8 font-sans pb-10 -mt-3">
+    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
       
       {/* 1. HEADER */}
       <div className="flex items-center justify-between mb-6">

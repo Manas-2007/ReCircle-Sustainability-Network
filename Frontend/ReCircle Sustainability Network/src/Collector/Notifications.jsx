@@ -1,46 +1,88 @@
-import React, { useState } from 'react';
-import { Clock, CheckCheck, Wallet, Bell, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, CheckCheck, Wallet, Bell, ArrowRight, XCircle } from 'lucide-react';
 
 const Notifications = () => {
-  // Collector specific notifications (Kamai aur successful collection)
-  const [notifications, setNotifications] = useState([
+  // --- STATIC NOTIFICATIONS (Purana data) ---
+  const staticNotifications = [
     {
-      id: 1,
+      id: 'static-1',
+      type: 'delivered',
       title: 'Payment Credited! 💸',
       message: 'Successfully collected from John Doe. ₹450 has been added to your wallet.',
       time: 'Just now',
       isUnread: true,
-      image: '/H2.jpg', // Mandatory vehicle image
+      image: '/H2.jpg',
       amount: '₹450'
     },
     {
-      id: 2,
+      id: 'static-2',
+      type: 'delivered',
       title: 'Collection Done ✅',
       message: 'Successfully collected from Anita Sharma. ₹320 has been added to your wallet.',
       time: '2 hours ago',
       isUnread: true,
       image: '/H2.jpg',
       amount: '₹320'
-    },
-    {
-      id: 3,
-      title: 'Payment Credited! 💸',
-      message: 'Successfully collected from Rahul Verma. ₹150 has been added to your wallet.',
-      time: 'Yesterday, 2:30 PM',
-      isUnread: false,
-      image: '/H2.jpg',
-      amount: '₹150'
-    },
-    {
-      id: 4,
-      title: 'Collection Done ✅',
-      message: 'Successfully collected from Priya Singh. ₹500 has been added to your wallet.',
-      time: '2 days ago',
-      isUnread: false,
-      image: '/H2.jpg',
-      amount: '₹500'
     }
-  ]);
+  ];
+
+  const [notifications, setNotifications] = useState(staticNotifications);
+
+  // --- FETCH REAL NOTIFICATIONS (Dynamic Logic) ---
+  useEffect(() => {
+    const fetchRealNotifications = async () => {
+      try {
+        const res = await fetch('http://localhost:2007/api/requests/my-requests', { credentials: 'include' });
+        const data = await res.json();
+        
+        if (res.ok) {
+          const realNotifs = data
+            // Ab 'Delivered' ko bhi filter mein allow karenge
+            .filter(req => req.status === 'Accepted' || req.status === 'Scheduled' || req.status === 'Delivered')
+            .map(req => {
+              // 1. Agar request Delivered ho chuki hai, toh REWARD NOTIFICATION dikhao
+              if (req.status === 'Delivered') {
+                return {
+                  id: req._id,
+                  type: 'points_earned',
+                  title: 'Eco Points Credited ✅',
+                  message: `Amazing! ${req.points || req.quantity * 10} Eco Points have been added to your balance for your ${req.quantity}kg ${req.wasteType} contribution.`,
+                  time: 'Just updated',
+                  isUnread: true,
+                  image: '/eco.jpg', // Tumhari points wali image
+                  actionText: 'View History',
+                  actionIcon: <Wallet size={14} />,
+                  status: 'Completed'
+                };
+              }
+
+              // 2. Default logic for Accepted & Scheduled
+              return {
+                id: req._id,
+                collectorId: req.collectorId,
+                type: 'collector_accepted',
+                title: req.status === 'Accepted' ? 'Pickup Accepted!' : 'Pickup Scheduled!',
+                message: req.status === 'Accepted' 
+                  ? `A collector has accepted your request for ${req.quantity}kg ${req.wasteType}.` 
+                  : `Your pickup is scheduled for ${req.scheduledDate} at ${req.scheduledTime}.`,
+                time: 'Just updated',
+                isUnread: true,
+                image: req.image?.startsWith('http') ? req.image : `http://localhost:2007${req.image}`,
+                actionText: 'View Collector',
+                actionIcon: <MapPin size={14} />,
+                status: req.status
+              };
+            });
+
+          setNotifications([...realNotifs, ...staticNotifications]);
+        }
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+      }
+    };
+
+    fetchRealNotifications();
+  }, []);
 
   const unreadCount = notifications.filter(n => n.isUnread).length;
 
@@ -48,10 +90,29 @@ const Notifications = () => {
     setNotifications(prev => prev.map(notif => ({ ...notif, isUnread: false })));
   };
 
+  // --- DYNAMIC STYLING FUNCTION ---
+  const getStyles = (type, isUnread) => {
+    if (type === 'cancelled') {
+      return {
+        card: isUnread ? 'border-red-400/50 shadow-sm bg-red-50/20' : 'border-gray-200 shadow-sm',
+        badge: 'bg-red-100 text-red-800 border-red-200',
+        dot: 'bg-red-500',
+        button: 'bg-red-600 hover:bg-red-700'
+      };
+    }
+    // Default / Delivered
+    return {
+      card: isUnread ? 'border-emerald-500/40 shadow-sm bg-emerald-50/10' : 'border-gray-200 shadow-sm',
+      badge: 'bg-green-100 text-green-800 border-green-200',
+      dot: 'bg-emerald-500',
+      button: 'bg-emerald-600 hover:bg-emerald-700'
+    };
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
       
-      {/* 1. HEADER */}
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-100 shrink-0">
@@ -75,58 +136,65 @@ const Notifications = () => {
         )}
       </div>
 
-      {/* 2. BALANCED CARDS GRID (Mobile: 2 Columns, Desktop: 3 Columns) */}
+      {/* BALANCED CARDS GRID */}
       <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-        {notifications.map((notif) => (
-          <div
-            key={notif.id}
-            className={`relative flex flex-col bg-white rounded-2xl p-3 sm:p-4 transition-all duration-300 border h-full ${
-              notif.isUnread 
-                ? 'border-emerald-500/40 shadow-sm bg-emerald-50/10' 
-                : 'border-gray-200 shadow-sm'
-            }`}
-          >
-            {/* Unread Indicator */}
-            {notif.isUnread && (
-              <div className="absolute top-3 right-3 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            )}
+        {notifications.map((notif) => {
+          const styles = getStyles(notif.type, notif.isUnread);
 
-            <div className="flex flex-col sm:flex-row gap-3 items-start mb-3 flex-1">
-              {/* MANDATORY VEHICLE IMAGE */}
-              <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-                <img src={notif.image} alt="Vehicle" className="w-full h-full object-cover" />
+          return (
+            <div
+              key={notif.id}
+              className={`relative flex flex-col bg-white rounded-2xl p-3 sm:p-4 transition-all duration-300 border h-full ${styles.card}`}
+            >
+              {/* Unread Indicator */}
+              {notif.isUnread && (
+                <div className={`absolute top-3 right-3 w-2 h-2 rounded-full animate-pulse ${styles.dot}`} />
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3 items-start mb-3 flex-1">
+                {/* VEHICLE / REQUEST IMAGE */}
+                <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex items-center justify-center">
+                  {notif.image ? (
+                     <img src={notif.image} alt="Thumbnail" className="w-full h-full object-cover" />
+                  ) : (
+                     <Bell size={20} className="text-gray-400" />
+                  )}
+                </div>
+
+                {/* CONTENT */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-[12px] sm:text-[14px] text-gray-900 leading-tight mb-1 pr-3 truncate">
+                    {notif.title}
+                  </h3>
+                  
+                  {/* Amount/Status Badge */}
+                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 mb-1.5 text-[10px] font-bold rounded-md border ${styles.badge}`}>
+                    {notif.type === 'cancelled' ? <XCircle size={10} /> : <Wallet size={10} />} 
+                    {notif.type === 'cancelled' ? 'Cancelled' : `+${notif.amount}`}
+                  </span>
+
+                  <p className="text-[10px] sm:text-[12px] text-gray-500 font-medium leading-snug line-clamp-3">
+                    {notif.message}
+                  </p>
+                </div>
               </div>
 
-              {/* CONTENT */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-[12px] sm:text-[14px] text-gray-900 leading-tight mb-1 pr-3 truncate">
-                  {notif.title}
-                </h3>
-                
-                {/* Amount Badge */}
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 mb-1.5 text-[10px] font-bold rounded-md bg-green-100 text-green-800 border border-green-200">
-                  <Wallet size={10} /> +{notif.amount}
-                </span>
+              {/* FOOTER */}
+              <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-gray-400 font-semibold">
+                  <Clock size={10} />
+                  {notif.time}
+                </div>
 
-                <p className="text-[10px] sm:text-[12px] text-gray-500 font-medium leading-snug line-clamp-3">
-                  {notif.message}
-                </p>
+                {notif.type === 'delivered' && (
+                  <button className={`flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-white rounded-lg text-[9px] sm:text-[11px] font-bold transition-all shadow-sm ${styles.button}`}>
+                    Wallet <ArrowRight size={10} />
+                  </button>
+                )}
               </div>
             </div>
-
-            {/* FOOTER */}
-            <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-              <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-gray-400 font-semibold">
-                <Clock size={10} />
-                {notif.time}
-              </div>
-
-              <button className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[9px] sm:text-[11px] font-bold transition-all shadow-sm">
-                Wallet <ArrowRight size={10} />
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       
     </div>

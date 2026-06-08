@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Award, Clock, MapPin, CheckCheck, Sparkles, Wallet, CalendarPlus, Bell } from 'lucide-react';
+import { Truck, Award, Clock, MapPin, CheckCheck, Sparkles, Wallet, CalendarPlus, Bell, X, Phone, User } from 'lucide-react';
 
 const Notifications = () => {
-  // Static notifications ko alag rakha hai
+  // --- MODAL STATES ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [collector, setCollector] = useState(null);
+  const [selectedNotif, setSelectedNotif] = useState(null); 
+
+  // --- STATIC NOTIFICATIONS ---
   const staticNotifications = [
     {
       id: 'static-1',
@@ -11,7 +16,7 @@ const Notifications = () => {
       message: 'Amazing! 150 Eco Points have been added to your balance for yesterday’s plastic waste contribution.',
       time: '2 hours ago',
       isUnread: true,
-      image: '/eco.jpg', // Make sure this image exists in public folder
+      image: '/eco.jpg', 
       actionText: 'View Balance',
       actionIcon: <Wallet size={14} />,
       status: 'Completed'
@@ -46,7 +51,7 @@ const Notifications = () => {
 
   const [notifications, setNotifications] = useState(staticNotifications);
 
-  // FETCH REAL NOTIFICATIONS FROM DB
+  // --- FETCH REAL NOTIFICATIONS ---
   useEffect(() => {
     const fetchRealNotifications = async () => {
       try {
@@ -54,11 +59,11 @@ const Notifications = () => {
         const data = await res.json();
         
         if (res.ok) {
-          // Filter only Accepted or Scheduled requests
           const realNotifs = data
             .filter(req => req.status === 'Accepted' || req.status === 'Scheduled')
             .map(req => ({
               id: req._id,
+              collectorId: req.collectorId, // Added collectorId here
               type: 'collector_accepted',
               title: req.status === 'Accepted' ? 'Pickup Accepted!' : 'Pickup Scheduled!',
               message: req.status === 'Accepted' 
@@ -72,7 +77,6 @@ const Notifications = () => {
               status: req.status
             }));
 
-          // Nayi (real) notifications upar, purani (static) neeche
           setNotifications([...realNotifs, ...staticNotifications]);
         }
       } catch (err) {
@@ -98,6 +102,42 @@ const Notifications = () => {
     }
   };
 
+  // --- MODAL FUNCTIONS ---
+  const viewCollector = async (collectorId, notif) => {
+    if (!collectorId) return alert("Collector details not available yet.");
+    try {
+      const res = await fetch(`http://localhost:2007/api/users/collector/${collectorId}`, { credentials: 'include' });
+      const data = await res.json();
+      if (res.ok) {
+        setCollector(data);
+        setSelectedNotif(notif);
+        setIsModalOpen(true);
+      }
+    } catch (err) {
+      console.error("Error fetching collector:", err);
+    }
+  };
+
+  const updateRequestStatus = async (id, status) => {
+    try {
+      const res = await fetch(`http://localhost:2007/api/requests/update-status/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+        credentials: 'include'
+      });
+      
+      if (res.ok) {
+        alert(`Request successfully marked as ${status}!`);
+        setIsModalOpen(false);
+        // Remove the processed notification from UI
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      }
+    } catch (err) {
+      alert("Failed to update status.");
+    }
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
       
@@ -113,7 +153,6 @@ const Notifications = () => {
           </div>
         </div>
 
-        {/* Mark All Read Button */}
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllRead}
@@ -130,10 +169,7 @@ const Notifications = () => {
         {notifications.map((notif) => (
           <div
             key={notif.id}
-            className={`
-              relative flex flex-col h-full bg-white rounded-2xl p-3 sm:p-4 border transition-all duration-300 hover:shadow-md lg:hover:-translate-y-1
-              ${notif.isUnread ? "border-emerald-400/40 shadow-sm" : "border-gray-200 shadow-sm"}
-            `}
+            className={`relative flex flex-col h-full bg-white rounded-2xl p-3 sm:p-4 border transition-all duration-300 hover:shadow-md lg:hover:-translate-y-1 ${notif.isUnread ? "border-emerald-400/40 shadow-sm" : "border-gray-200 shadow-sm"}`}
           >
             {notif.isUnread && (
               <div className="absolute top-3 right-3 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -175,10 +211,13 @@ const Notifications = () => {
 
               {notif.actionText && (
                 <button
-                  className={`
-                    flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all shadow-sm
-                    ${getButtonStyles(notif.type)}
-                  `}
+                  // Dynamic onClick based on notification type
+                  onClick={() => {
+                    if (notif.type === 'collector_accepted') {
+                      viewCollector(notif.collectorId, notif);
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all shadow-sm ${getButtonStyles(notif.type)}`}
                 >
                   {notif.actionIcon && React.cloneElement(notif.actionIcon, { size: 12 })}
                   {notif.actionText}
@@ -188,6 +227,70 @@ const Notifications = () => {
           </div>
         ))}
       </div>
+
+     {/* COLLECTOR DETAILS MODAL */}
+{isModalOpen && collector && selectedNotif && (
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    {/* Container: Mobile pe 90% width, Laptop/Desktop pe max-w-sm */}
+    <div className="bg-white w-full max-w-[90%] sm:max-w-sm rounded-3xl p-5 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+      
+      {/* Close Button: Mobile pe thoda bada touch target */}
+      <button 
+        onClick={() => setIsModalOpen(false)} 
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
+      >
+        <X size={20} />
+      </button>
+
+      {/* Modal Header */}
+      <div className="flex flex-col items-center mt-2 mb-6 text-center">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
+          <User size={24} className="text-emerald-600" />
+        </div>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">Collector Assigned</h2>
+        <p className="text-[10px] sm:text-xs font-medium text-gray-500 mt-1 uppercase tracking-wide">
+          {selectedNotif.title}
+        </p>
+      </div>
+
+      {/* Collector Details Box */}
+      <div className="bg-gray-50 rounded-2xl p-4 space-y-4 mb-6 border border-gray-100">
+        <div className="flex items-center gap-3">
+          <User size={18} className="text-emerald-600 shrink-0" />
+          <div>
+            <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Name</p>
+            <p className="text-sm sm:text-base font-semibold text-gray-800">{collector.firstName} {collector.lastName}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Phone size={18} className="text-emerald-600 shrink-0" />
+          <div>
+            <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Contact</p>
+            <p className="text-sm sm:text-base font-semibold text-gray-800">{collector.phone}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons: Mobile pe vertical stack, Desktop pe side-by-side */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button 
+          onClick={() => updateRequestStatus(selectedNotif.id, 'Cancelled')}
+          className="flex-1 py-3 sm:py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-bold transition-colors border border-red-200"
+        >
+          Cancel Pickup
+        </button>
+        <button 
+          onClick={() => updateRequestStatus(selectedNotif.id, 'Delivered')}
+          className="flex-1 py-3 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-200 transition-colors"
+        >
+          Mark Delivered
+        </button>
+      </div>
+      
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

@@ -54,7 +54,16 @@ const garbageRequestSchema = new mongoose.Schema({
   status: { type: String, default: 'Pending' }, 
   image: { type: String },
   createdAt: { type: Date, default: Date.now },
-  collectorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  collectorId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User',
+    default: null
+  },
+  previousCollectorId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User',
+    default: null
+  },
   scheduledDate: { type: String },
   scheduledTime: { type: String },
 });
@@ -307,4 +316,93 @@ app.patch('/api/requests/cancel/:id', authMiddleware, async (req, res) => {
     );
     res.json(updatedReq);
   } catch (err) { res.status(500).json({ error: "Failed to cancel" }); }
+});
+
+// 1. Fetch Collector Info
+app.get('/api/users/collector/:id', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('firstName lastName email phone');
+    res.json(user);
+  } catch (err) { res.status(500).json({ error: "Fail" }); }
+});
+
+
+// 2. Status Update (Delivered / Cancelled)
+app.patch('/api/requests/update-status/:id', authMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const request = await GarbageRequests.findById(req.params.id);
+
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    if (request.status === 'Delivered' && status === 'Delivered') {
+      return res.status(400).json({ message: "Request is already marked as Delivered!" });
+    }
+
+    if (status === 'Cancelled') {
+      request.status = 'Pending'; 
+      request.previousCollectorId = request.collectorId; 
+      request.collectorId = null; 
+    } else if (status === 'Delivered') {
+      request.status = 'Delivered';
+      
+      const housekeeper = await User.findById(request.housekeeperId);
+      if (housekeeper) {
+        // Agar points field request mein nahi hai, toh default quantity * 10 de rahe hain
+        const earnedPoints = request.points || (request.quantity * 10); 
+        housekeeper.ecoPoints = (housekeeper.ecoPoints || 0) + earnedPoints;
+        await housekeeper.save();
+      }
+    } else {
+      request.status = status;
+    }
+
+    await request.save();
+    res.json(request);
+  } catch (err) { 
+    res.status(500).json({ error: "Update failed" }); 
+  }
+});
+
+// GET COLLECTOR SPECIFIC UPDATES
+app.get('/api/requests/collector-updates', authMiddleware, async (req, res) => {
+  try {
+    // 1. Safe User ID Check (kabhi id hota hai, kabhi _id)
+    const userId = req.user.id || req.user._id; 
+
+    if (!userId) {
+      console.log("🚨 User ID nahi mili. Check auth middleware!");
+      return res.status(401).json({ error: "Unauthorized: User ID missing" });
+    }
+
+    // 2. Database Query
+    const requests = await GarbageRequests.find({
+      $or: [
+        { collectorId: userId, status: 'Delivered' },
+        { previousCollectorId: userId, status: 'Pending' }
+      ]
+    }).sort({ createdAt: -1 });
+
+    // 3. Mapping and Status Change
+    const formattedRequests = requests.map(request => {
+      const reqObj = request.toObject();
+      
+      // Safe string comparison
+      if (
+        reqObj.previousCollectorId && 
+        reqObj.previousCollectorId.toString() === userId.toString() && 
+        reqObj.status === 'Pending'
+      ) {
+        reqObj.status = 'Cancelled';
+      }
+      return reqObj;
+    });
+
+    res.json(formattedRequests);
+    
+  } catch (err) {
+    // 🔥 ASLI ERROR YAHAN PRINT HOGA TERMINAL MEIN
+    console.error("🔥 CRITICAL ERROR in collector-updates:", err.message);
+    console.error(err.stack);
+    res.status(500).json({ error: "Failed to fetch updates", details: err.message });
+  }
 });

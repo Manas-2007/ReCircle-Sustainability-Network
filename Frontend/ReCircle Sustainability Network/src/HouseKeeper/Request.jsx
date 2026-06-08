@@ -122,7 +122,8 @@ const Request = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        setRequests(data); // DB se ayi hui requests state mein update ho jayengi
+       const onlyActiveRequests = data.filter(req => req.status !== 'Delivered');
+          setRequests(onlyActiveRequests);
       }
     } catch (err) { console.error("Error fetching requests:", err); }
   };

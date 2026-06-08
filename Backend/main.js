@@ -91,8 +91,7 @@ app.post('/api/auth/register', registerValidation, async (req, res) => {
 
 
 //Login Routes of Housekeeper side
-app.post('/api/auth/login',loginValidation, async (req, res) => {
-    // 1. Validation check
+app.post('/api/auth/login', loginValidation, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -102,23 +101,23 @@ app.post('/api/auth/login',loginValidation, async (req, res) => {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message:'Invalid email or password'});
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        // 2. JWT Token banao (User ki ID aur Role daal rahe hain)
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
-        
-        // 3. Cookie mein token save karo
-        res.cookie('token', token, { 
-            httpOnly: true, 
-            secure: false,  
-            sameSite: 'lax', 
+
+        // LOGIN ROUTE: Yahan hum Cookie SET kar rahe hain
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false, 
+            sameSite: 'lax',
+            path:'/',
             maxAge: 86400000 
         });
 
         res.json({ message: 'Login successful', user: { id: user._id, firstName: user.firstName, role: user.role } });
     } catch (err) {
-        res.status(500).json({ message:'Server error, try later' });
+        res.status(500).json({ message: 'Server error, try later' });
     }
 });
 
@@ -150,8 +149,12 @@ app.listen(PORT,()=>{
     console.log(`Server is Live at http://localhost:${PORT}`);
 });
 
-//Logout Function of Housekeeper
+//Logout Function
 app.post('/api/auth/logout', (req, res) => {
-    res.clearCookie('token'); 
+    res.cookie('token', '', {
+        httpOnly: true,
+        expires: new Date(0), 
+        path: '/'
+    });
     res.json({ message: 'Logged out successfully' });
 });

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { Camera, Mail, Phone, MapPin, Shield, Leaf, Award, LogOut, Edit2, CheckCircle2, Bell, Lock,ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,8 +6,31 @@ const Profile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState(null); // Naya state image ke liye
-  const fileInputRef = useRef(null); // Image input click trigger karne ke liye
+  const [profileImage, setProfileImage] = useState(null); 
+  const fileInputRef = useRef(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 1. Fetching logic
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch('http://localhost:2007/api/auth/me', {
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUserData(data.user);
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchProfile();
+}, []);
 
   // USER DATA (Dynamic Badge Logic Based on Eco Points)
   const totalPoints = 1250; 
@@ -37,10 +60,20 @@ const Profile = () => {
   // Logout function
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:2007/api/auth/logout', { method: 'POST' });
-      navigate('/');
+      const res = await fetch('http://localhost:2007/api/auth/logout', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include' // <--- YE THA ASLI HERO!
+      });
+
+      if (res.ok) {
+        navigate('/'); // Redirect to Home
+      } else {
+        alert("Logout failed, try again!");
+      }
     } catch (err) {
-      alert("Logout failed, try again!");
+      console.error("Logout error:", err);
+      alert("Something went wrong during logout");
     }
   };
 
@@ -95,7 +128,7 @@ const Profile = () => {
             
             {/* Name, Role & Dynamic Badge */}
             <h1 className="text-xl sm:text-[22px] font-bold text-gray-900 tracking-tight flex items-center gap-1.5 justify-center sm:justify-start w-full">
-              John Doe <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
+             {userData?.firstName} {userData?.lastName} <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
             </h1>
             
             <p className="text-gray-500 font-medium text-[13.5px] mt-0.5 tracking-wide">
@@ -113,7 +146,7 @@ const Profile = () => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mb-2.5 border border-gray-200 shadow-sm bg-white p-0.5">
                 <img src="/eco.jpg" alt="Eco Points" className="w-full h-full object-cover rounded-full" />
               </div>
-              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{totalPoints}</div>
+              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{userData?.points || 0}</div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Points</div>
             </div>
 
@@ -194,8 +227,9 @@ const Profile = () => {
                     <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Full Name</label>
                     <input 
                       type="text" 
-                      defaultValue="John Doe"
+                      value={userData?.firstName || ''}
                       disabled={!isEditing}
+                      onChange={(e) => setUserData({...userData, firstName: e.target.value})}
                       className="w-full px-4 py-3 bg-white lg:bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                     />
                   </div>
@@ -205,8 +239,9 @@ const Profile = () => {
                       <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         type="email" 
-                        defaultValue="john.doe@example.com"
+                        value={userData?.email || ''}
                         disabled={!isEditing}
+                        onChange={(e) => setUserData({...userData, email: e.target.value})}
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                       />
                     </div>
@@ -217,8 +252,9 @@ const Profile = () => {
                       <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         type="tel" 
-                        defaultValue="+91 98765 43210"
+                        value={userData?.phone || ''}
                         disabled={!isEditing}
+                        onChange={(e) => setUserData({...userData, phone: e.target.value})}
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                       />
                     </div>
@@ -228,8 +264,9 @@ const Profile = () => {
                     <div className="relative">
                       <MapPin size={16} className="absolute left-4 top-4 text-gray-400" />
                       <textarea 
-                        defaultValue="12B, Green Park Avenue, Block C, Metro Station Road, New Delhi - 110016"
+                       value={userData?.address ? `${userData.address},  Pincode: ${userData.pincode}` : ''}
                         disabled={!isEditing}
+                        onChange={(e) => setUserData({...userData, pincode: e.target.value})}
                         rows="2"
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all resize-none shadow-sm leading-relaxed"
                       />

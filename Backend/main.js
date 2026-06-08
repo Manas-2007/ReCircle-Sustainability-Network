@@ -55,17 +55,19 @@ const loginValidation = [
 ];
 
 //Registration Routes of Housekeeper side
-app.post('/api/auth/register',registerValidation, async (req, res) => {
+app.post('/api/auth/register', registerValidation, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         const { firstName, lastName, address, pincode, email, phone, password, role } = req.body;
+        
         const existingUser = await User.findOne({ 
             $or: [{ email: email }, { phone: phone }] 
         });
-       if (existingUser) {
+        
+        if (existingUser) {
             if (existingUser.email === email) return res.status(400).json({ message: 'Email already exists' });
             if (existingUser.phone === phone) return res.status(400).json({ message: 'Phone already exists' });
         }
@@ -73,12 +75,16 @@ app.post('/api/auth/register',registerValidation, async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ firstName, lastName, address, pincode, email, phone, password: hashedPassword, role });
         
+        // 👇 PERMANENT FIX: Ye line missing thi! Iske bina DB mein kuch nahi jayega.
+        await newUser.save(); 
+        
         res.status(201).json({ 
-    message: 'Registration successful', 
-    user: { id: newUser._id, firstName: newUser.firstName, role: newUser.role } 
-});
+            message: 'Registration successful', 
+            user: { id: newUser._id, firstName: newUser.firstName, role: newUser.role } 
+        });
 
     } catch (err) {
+        console.error(err); // Debugging ke liye isse add kar lo
         res.status(500).json({ message: 'Server error, try later' });
     }
 });

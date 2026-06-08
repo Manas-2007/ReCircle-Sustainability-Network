@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Mail, Phone, MapPin, LogOut, Edit2, CheckCircle2, Bell, Lock, ChevronDown, Wallet, Truck, BarChart3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   // COLLECTOR DOMAIN DATA
   const totalEarnings = 14250; // In Rupees
@@ -28,6 +30,25 @@ const Profile = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+    }
+  };
+
+  // Logout Function
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('http://localhost:2007/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include' // Cookie clear karne ke liye zaroori hai
+      });
+
+      if (res.ok) {
+        navigate('/'); 
+        } else {
+        console.error("Logout failed on server");
+      }
+    } catch (err) {
+      console.error("Network error during logout:", err);
     }
   };
 
@@ -129,7 +150,9 @@ const Profile = () => {
               <Edit2 size={15} />
               {isEditing ? 'Save Profile' : 'Edit Profile'}
             </button>
-            <button className="px-4 py-2.5 bg-red-50 hover:bg-red-100 border border-red-100 rounded-xl text-[13px] font-semibold text-red-600 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+            <button
+            onClick={handleLogout}
+            className="px-4 py-2.5 bg-red-50 hover:bg-red-100 border border-red-100 rounded-xl text-[13px] font-semibold text-red-600 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
               <LogOut size={15} />
               <span className="hidden sm:inline">Logout</span>
             </button>

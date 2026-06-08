@@ -1,14 +1,41 @@
-import React from 'react';
-// Saare zaroori icons import kar liye hain (Navigation ki jagah Compass hai)
+import React, { useState, useEffect } from 'react';
 import { Package, Truck,Clock,TrendingUp ,FileText,Leaf, CheckCircle, Trophy, MapPin, Mail, Compass, ArrowRight, Calendar } from 'lucide-react';
 
 const HeroSection = () => {
+  const [user, setUser] = useState(null);
+
+  // 2. Greeting logic time ke hisaab se
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "Good Morning";
+    if (hour >= 12 && hour < 17) return "Good Afternoon";
+    if (hour >= 17 && hour < 21) return "Good Evening";
+    return "Good Night";
+  };
+
+  // 3. API se Data fetch
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch('http://localhost:2007/api/auth/me', {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include' // Ye bahut zaroori hai!
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error("Error fetching hero data:", err);
+      }
+    };
+    fetchUserData();
+  }, []);
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 pb-10 -mt-2 sm:-mt-0 space-y-5">
       
-     {/* =========================================
-    1. HERO & STATS SECTION (Top Row - 60/40 Split)
-============================================= */}
+    {/* Hero Section */}
 <div className="flex flex-col xl:flex-row gap-4 w-full items-stretch">
   
   {/* LEFT SIDE: 60% Profile Banner */}
@@ -41,10 +68,10 @@ const HeroSection = () => {
 
     {/* HEADING */}
     <h1 className="text-xl md:text-3xl xl:text-4xl font-bold text-gray-900 leading-[1.15]">
-      Welcome Back
+      {getGreeting()},
       <br />
       <span className="text-green-700 mt-1 inline-block">
-        Ramesh Verma
+       {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
       </span>
     </h1>
 
@@ -58,7 +85,7 @@ const HeroSection = () => {
         </div>
 
         <span className="text-[12px] md:text-sm font-medium text-gray-700 truncate bg-white/80 sm:bg-transparent px-2 py-1 rounded-md">
-          ramesh.collector@ecoloop.com
+         {user?.email || "Loading..."}
         </span>
       </div>
 
@@ -69,7 +96,7 @@ const HeroSection = () => {
         </div>
 
         <span className="text-[12px] md:text-sm font-medium text-gray-700 bg-white/80 sm:bg-transparent px-2 py-1 rounded-md">
-          78 MG Road, Indore, MP
+          {user?.address || "Loading..."}
         </span>
       </div>
 
@@ -80,7 +107,7 @@ const HeroSection = () => {
         </div>
 
         <span className="text-[12px] md:text-sm font-medium text-gray-700 bg-white/80 sm:bg-transparent px-2 py-1 rounded-md">
-          Pincode: 452001
+          Pincode: {user?.pincode || "..."}
         </span>
       </div>
 

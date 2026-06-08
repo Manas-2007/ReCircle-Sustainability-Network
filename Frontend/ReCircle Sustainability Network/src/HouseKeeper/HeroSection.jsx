@@ -1,13 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Leaf, Recycle, Truck, CheckCircle2,UploadCloud,MapPin,UserPlus, ChevronRight, ArrowRight, Phone,ChevronDown,Check,Calendar,Package,Star,Clock,Search,Scale,Globe, Sparkles } from 'lucide-react';
 
 const HeroSection = () => {
+  const [user, setUser] = useState(null);
 
-  const user = {
-  name: "Priya",
-  email: "priya@gmail.com",
-  location: "Bhopal, MP",
-  pincode: "462001",
+//Fetch info from the DB
+useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch('http://localhost:2007/api/auth/me', {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error("Error fetching hero data:", err);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  //Day Sentence
+  const getGreeting = () => {
+  const hour = new Date().getHours(); // Current hour mil jayega
+  if (hour >= 5 && hour < 12) return "Good Morning";
+  if (hour >= 12 && hour < 17) return "Good Afternoon";
+  if (hour >= 17 && hour < 21) return "Good Evening";
+  return "Good Night";
 };
 
   return (
@@ -43,11 +65,11 @@ const HeroSection = () => {
     <div className="max-w-xl">
 
       <h1 className="text-[22px] sm:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900">
-        Good Morning,
+       {getGreeting()},
       </h1>
 
       <h2 className="mt-1 text-[18px] sm:text-xl font-bold text-emerald-700">
-        {user?.name || "Priya"} 
+       {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
       </h2>
 
       <p className="text-gray-700 font-medium text-[13px] sm:text-[14px] max-w-[280px] sm:max-w-sm mt-2 mb-5 sm:mb-7 leading-relaxed">
@@ -70,7 +92,7 @@ const HeroSection = () => {
           </p>
 
           <p className="text-[13px] font-semibold text-gray-800 max-w-[150px] truncate">
-            {user?.email || "priya@gmail.com"}
+           {user?.email || "Loading..."}
           </p>
         </div>
       </div>
@@ -87,7 +109,7 @@ const HeroSection = () => {
           </p>
 
           <p className="text-[13px] font-semibold text-gray-800">
-            {user?.location || "Bhopal, MP"}
+            {user?.address || "Loading..."}
           </p>
         </div>
       </div>
@@ -104,7 +126,7 @@ const HeroSection = () => {
           </p>
 
           <p className="text-[13px] font-semibold text-gray-800">
-            {user?.pincode || "462001"}
+            {user?.pincode || "Loading..."}
           </p>
         </div>
       </div>

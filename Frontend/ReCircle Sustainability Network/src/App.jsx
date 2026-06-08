@@ -98,7 +98,13 @@ const HomeWrapper = () => {
         
       </div>
 
-      <HomeDash onLogin={() => navigate('/dashboard')} />
+      <HomeDash onLogin={(user) => {
+        if (user.role === 'collector') {
+          navigate('/dashboard');
+        } else {
+          navigate('/housekeeper');
+        }
+      }} />
       
     </div>
   );

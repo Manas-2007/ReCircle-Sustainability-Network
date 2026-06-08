@@ -9,9 +9,11 @@ import {
 } from "lucide-react";
 
 const NearbyReq = () => {
-  const [requests, setRequests] = useState([]); // Empty initial state is better for real DB
+  const [requests, setRequests] = useState([]); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReq, setSelectedReq] = useState(null);
+  const [scheduleDate, setScheduleDate] = useState("");
+const [scheduleTime, setScheduleTime] = useState("");
 
   // 1. useEffect: Data fetch karne ke liye
   useEffect(() => {
@@ -42,18 +44,56 @@ const NearbyReq = () => {
     } catch (err) { console.error("Error accepting request:", err); }
   };
 
-  const handleCancel = (id) => {
-    setRequests((prev) =>
-      prev.map((req) =>
-        req._id === id ? { ...req, status: "Pending" } : req
-      )
-    );
-  };
+  // 3. Cancel the accepted requests
+const handleCancel = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:2007/api/requests/cancel/${id}`, {
+      method: 'PATCH',
+      credentials: 'include'
+    });
+    
+    if (res.ok) {
+      // Backend se update hone ke baad local UI update karo
+      setRequests((prev) =>
+        prev.map((req) => req._id === id ? { ...req, status: "Pending" } : req)
+      );
+    }
+  } catch (err) { console.error("Error cancelling request:", err); }
+};
 
   const openScheduleModal = (req) => {
     setSelectedReq(req);
     setIsModalOpen(true);
   };
+
+  //Pickup Schedule
+  const confirmSchedule = async () => {
+  if (!scheduleDate || !scheduleTime) return alert("Please select Date and Time!");
+
+  try {
+    const res = await fetch(`http://localhost:2007/api/requests/schedule/${selectedReq._id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ date: scheduleDate, time: scheduleTime })
+    });
+
+    if (!res.ok) throw new Error("Failed to update status.");
+
+    alert("Scheduled Successfully!");
+    setIsModalOpen(false);
+    
+    // Update UI
+    setRequests((prev) => prev.map(r => 
+      r._id === selectedReq._id 
+        ? { ...r, status: "Scheduled", scheduledDate: scheduleDate, scheduledTime: scheduleTime } 
+        : r
+    ));
+  } catch (err) {
+    console.error("Scheduling error:", err);
+    alert("Something went wrong. Please try again.");
+  }
+};
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
@@ -129,6 +169,14 @@ const NearbyReq = () => {
                 </span>
               </div>
 
+              {req.status === "Scheduled" && (
+              <div className="mt-2 p-2 bg-emerald-100 rounded-lg border border-emerald-200">
+                <p className="text-[10px] font-bold text-emerald-800 uppercase text-center">
+                   📅 {req.scheduledDate} | ⏰ {req.scheduledTime}
+                </p>
+              </div>
+            )}
+
               <div className="grid grid-cols-2 gap-1.5 p-2 bg-white/60 rounded-md border border-emerald-100">
                 <div className="flex items-center gap-1.5 text-[12px] font-[700] text-gray-700">
                   <span>📮</span>
@@ -202,6 +250,7 @@ const NearbyReq = () => {
                 </label>
                 <input
                   type="date"
+                  onChange={(e) => setScheduleDate(e.target.value)}
                   className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-300 text-sm font-medium text-gray-800 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 />
               </div>
@@ -212,12 +261,16 @@ const NearbyReq = () => {
                 </label>
                 <input
                   type="time"
+                  onChange={(e) => setScheduleTime(e.target.value)}
                   className="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-300 text-sm font-medium text-gray-800 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 />
               </div>
             </div>
 
-            <button className="w-full mt-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold text-sm transition-all shadow-lg shadow-emerald-600/20">
+            <button
+            type="button"
+            onClick={confirmSchedule}
+            className="w-full mt-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold text-sm transition-all shadow-lg shadow-emerald-600/20">
               Confirm Schedule
             </button>
           </div>

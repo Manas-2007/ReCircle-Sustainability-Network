@@ -44,7 +44,7 @@ const User = mongoose.model('User', userSchema);
 
 //SCHEMA OF GARBAGE REQUESTS
 const garbageRequestSchema = new mongoose.Schema({
-  housekeeperId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Kaun request kar raha hai?
+  housekeeperId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   requesterName: { type: String, required: true },
   wasteType: { type: String, required: true },
   quantity: { type: Number, required: true },
@@ -53,7 +53,10 @@ const garbageRequestSchema = new mongoose.Schema({
   points: { type: Number },
   status: { type: String, default: 'Pending' }, 
   image: { type: String },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  collectorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  scheduledDate: { type: String },
+  scheduledTime: { type: String },
 });
 const GarbageRequests = mongoose.model('GarbageRequests', garbageRequestSchema);
 
@@ -247,26 +250,61 @@ app.get('/api/requests/my-requests', authMiddleware, async (req, res) => {
 // 1. Get ALL Pending Requests
 app.get('/api/requests/pending', authMiddleware, async (req, res) => {
   try {
-    // Sirf 'Pending' status wali requests lao
-    const requests = await GarbageRequests.find({ status: 'Pending' }).sort({ createdAt: -1 });
+    const requests = await GarbageRequests.find({
+      $or: [
+        { status: 'Pending' },
+        { status: 'Accepted', collectorId: req.user.id }
+      ]
+    }).sort({ createdAt: -1 });
+    
     res.json(requests);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch pending requests" });
+    res.status(500).json({ error: "Failed to fetch" });
   }
 });
 
 // 2. Accept Request
 app.patch('/api/requests/accept/:id', authMiddleware, async (req, res) => {
   try {
-    const { id } = req.params;
     const updatedReq = await GarbageRequests.findByIdAndUpdate(
-      id, 
-      { status: 'Accepted' }, 
+      req.params.id, 
+      { status: 'Accepted', collectorId: req.user.id }, // Collector ID yahan save ho rahi hai
       { new: true }
     );
-    res.json({ message: "Request Accepted!", request: updatedReq });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to accept request" });
+    res.json({ message: "Accepted!", request: updatedReq });
+  } catch (err) { 
+    res.status(500).json({ error: "Failed to accept request" }); 
   }
 });
 
+// 3. Route: Schedule Pickup
+app.patch('/api/requests/schedule/:id', authMiddleware, async (req, res) => {
+  try {
+    const { date, time } = req.body;
+    const updatedReq = await GarbageRequests.findByIdAndUpdate(
+      req.params.id,
+      { scheduledDate: date, scheduledTime: time, status: 'Scheduled' },
+      { new: true }
+    );
+    res.json(updatedReq);
+  } catch (err) { 
+    res.status(500).json({ error: "Failed to schedule pickup" }); 
+  }
+});
+
+// 4. Cancel the Request (collector)
+app.patch('/api/requests/cancel/:id', authMiddleware, async (req, res) => {
+  try {
+    const updatedReq = await GarbageRequests.findByIdAndUpdate(
+      req.params.id,
+      { 
+        status: 'Pending', 
+        collectorId: null, 
+        scheduledDate: null, 
+        scheduledTime: null 
+      },
+      { new: true }
+    );
+    res.json(updatedReq);
+  } catch (err) { res.status(500).json({ error: "Failed to cancel" }); }
+});

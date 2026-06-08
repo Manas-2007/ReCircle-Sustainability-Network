@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, NavLink } from "react-router-dom"; // ✨ React Router Superpowers
 import {
   Bell,
@@ -14,6 +14,7 @@ import {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); 
+   const [user, setUser] = useState(null);
 
   // ✨ MODIFIED TABS: Ab yahan 'id' nahi, seedha URL 'path' hai
   const tabs = [
@@ -23,6 +24,31 @@ const Navbar = () => {
     { path: "/housekeeper/history", label: "History", icon: <History size={18} /> },
     { path: "/housekeeper/leaderboard", label: "Leaderboard", icon: <Trophy size={18} /> },
   ];
+ 
+
+  //Fetching Name from the DB
+useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      const res = await fetch('http://localhost:2007/api/auth/me', {
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUser(data.user);
+      }
+    } catch (err) {
+      console.error("Error fetching user for navbar:", err);
+    }
+  };
+  fetchUserData();
+}, []);
+
+// Helper function for Initials
+const getInitials = (firstName, lastName) => {
+  return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
+};
 
   return (
     <>
@@ -148,11 +174,11 @@ const Navbar = () => {
                   "
                 >
                   <span className="text-white font-extrabold text-[13px] sm:text-[15px] tracking-wide">
-                    JD
+                   {getInitials(user?.firstName, user?.lastName)}
                   </span>
                 </div>
                 <span className="text-[12px] font-bold text-gray-700 group-hover:text-[#16a34a] transition-colors leading-none hidden sm:block">
-                  John Doe
+                  {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
                 </span>
               </Link>
 
@@ -199,10 +225,10 @@ const Navbar = () => {
             className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <div className="w-[46px] h-[46px] rounded-xl bg-gradient-to-br from-green-500 to-[#166534] flex items-center justify-center shadow-inner">
-              <span className="text-white font-extrabold text-[16px] tracking-wide">JD</span>
+              <span className="text-white font-extrabold text-[16px] tracking-wide">{getInitials(user?.firstName, user?.lastName)}</span>
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">John Doe</p>
+              <p className="text-sm font-bold text-gray-900">{user ? `${user.firstName} ${user.lastName}` : "Loading..."}</p>
               <p className="text-xs font-semibold text-[#16a34a] mt-0.5 flex items-center gap-1">
                 <Leaf size={12} /> 850 Eco Points
               </p>

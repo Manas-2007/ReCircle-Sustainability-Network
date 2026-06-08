@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { Camera, Mail, Phone, MapPin, LogOut, Edit2, CheckCircle2, Bell, Lock, ChevronDown, Wallet, Truck, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,6 +8,8 @@ const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const [collectorData, setCollectorData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // COLLECTOR DOMAIN DATA
   const totalEarnings = 14250; // In Rupees
@@ -32,6 +34,27 @@ const Profile = () => {
       setProfileImage(imageUrl);
     }
   };
+
+  //Profile fetching from DB
+  useEffect(() => {
+    const fetchCollectorData = async () => {
+      try {
+        const res = await fetch('http://localhost:2007/api/auth/me', {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include' 
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setCollectorData(data.user);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCollectorData();
+  }, []);
 
   // Logout Function
   const handleLogout = async () => {
@@ -99,7 +122,7 @@ const Profile = () => {
             
             {/* Name, Role & Dynamic Badge */}
             <h1 className="text-xl sm:text-[22px] font-bold text-gray-900 tracking-tight flex items-center gap-1.5 justify-center sm:justify-start w-full">
-              Ramesh Verma <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
+            {loading ? "Loading..." : `${collectorData?.firstName} ${collectorData?.lastName}`} <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
             </h1>
             
             <p className="text-gray-500 font-medium text-[13.5px] mt-0.5 tracking-wide">
@@ -118,7 +141,7 @@ const Profile = () => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mb-2.5 bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm">
                 <Wallet size={20} />
               </div>
-              <div className="text-base sm:text-[17px] font-bold text-gray-900 leading-none">₹{totalEarnings}</div>
+              <div className="text-base sm:text-[17px] font-bold text-gray-900 leading-none">₹{collectorData?.earnings || 0}</div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Earnings</div>
             </div>
 
@@ -127,7 +150,7 @@ const Profile = () => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mb-2.5 bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shadow-sm">
                 <Truck size={20} />
               </div>
-              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{totalCollections}</div>
+              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{collectorData?.totalCollections || 0}</div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Pickups</div>
             </div>
 
@@ -136,7 +159,7 @@ const Profile = () => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2.5 bg-sky-50 rounded-full border border-sky-100 text-sky-600 shadow-sm">
                 <BarChart3 size={20} />
               </div>
-              <div className="text-base sm:text-[17px] font-bold text-gray-900 leading-none">{totalWeightCollected}</div>
+              <div className="text-base sm:text-[17px] font-bold text-gray-900 leading-none">{collectorData?.totalWeightCollected || "0 Ton"}</div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Processed</div>
             </div>
           </div>
@@ -195,8 +218,8 @@ const Profile = () => {
                     <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Full Name</label>
                     <input 
                       type="text" 
-                      defaultValue="Ramesh Verma"
-                      disabled={!isEditing}
+                      value={collectorData ? `${collectorData.firstName} ${collectorData.lastName}` : "Loading..."}
+                      disabled
                       className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                     />
                   </div>
@@ -206,8 +229,8 @@ const Profile = () => {
                       <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         type="email" 
-                        defaultValue="ramesh.verma@recircle.com"
-                        disabled={!isEditing}
+                       value={collectorData?.email || ''}
+                        disabled
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                       />
                     </div>
@@ -218,8 +241,8 @@ const Profile = () => {
                       <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         type="text" 
-                        defaultValue="+91 98765 43210"
-                        disabled={!isEditing}
+                        value={collectorData?.phone || ''}
+                        disabled
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                       />
                     </div>
@@ -230,8 +253,8 @@ const Profile = () => {
                       <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         type="text" 
-                        defaultValue="Indore Core Zone - MP"
-                        disabled={true} // Zone generally remains fixed unless admin changes
+                       value={collectorData ? `${collectorData.address},  Pincode: ${collectorData.pincode}` : "Loading..."}
+                        disabled
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-500 font-semibold text-[13.5px] cursor-not-allowed outline-none shadow-sm"
                       />
                     </div>

@@ -228,7 +228,7 @@ useEffect(() => {
                     <input 
                       type="text" 
                       value={userData?.firstName || ''}
-                      disabled={!isEditing}
+                      disabled
                       onChange={(e) => setUserData({...userData, firstName: e.target.value})}
                       className="w-full px-4 py-3 bg-white lg:bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                     />
@@ -240,7 +240,7 @@ useEffect(() => {
                       <input 
                         type="email" 
                         value={userData?.email || ''}
-                        disabled={!isEditing}
+                        disabled
                         onChange={(e) => setUserData({...userData, email: e.target.value})}
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                       />
@@ -253,7 +253,7 @@ useEffect(() => {
                       <input 
                         type="tel" 
                         value={userData?.phone || ''}
-                        disabled={!isEditing}
+                        disabled
                         onChange={(e) => setUserData({...userData, phone: e.target.value})}
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all shadow-sm"
                       />
@@ -265,7 +265,7 @@ useEffect(() => {
                       <MapPin size={16} className="absolute left-4 top-4 text-gray-400" />
                       <textarea 
                        value={userData?.address ? `${userData.address},  Pincode: ${userData.pincode}` : ''}
-                        disabled={!isEditing}
+                        disabled
                         onChange={(e) => setUserData({...userData, pincode: e.target.value})}
                         rows="2"
                         className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-semibold text-[13.5px] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none disabled:opacity-60 disabled:bg-gray-50 transition-all resize-none shadow-sm leading-relaxed"

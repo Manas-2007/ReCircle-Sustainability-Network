@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { Link, NavLink } from "react-router-dom"; // ✨ MAGIC IMPORTS
+import { Link, NavLink } from "react-router-dom";
 import {
   Bell,
   MapPin, 
@@ -44,7 +44,7 @@ const Navbar = () => {
   // MODIFIED TABS: 'id' ki jagah ab 'path' aagaya hai
   const tabs = [
     { path: "/dashboard", label: "My Circle", icon: <Users size={18} /> },
-    { path: "/dashboard/nearby", label: "Nearby Req", icon: <MapPin size={18} /> },
+    { path: "/dashboard/nearby", label: "Requests", icon: <MapPin size={18} /> },
     { path: "/dashboard/earnings", label: "Earnings", icon: <Wallet size={18} /> },
     { path: "/dashboard/analytics", label: "Analytics", icon: <BarChart3 size={18} /> },
     { path: "/dashboard/history", label: "History", icon: <History size={18} /> },

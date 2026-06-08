@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { 
   MapPin, 
   Recycle, 
@@ -10,8 +10,8 @@ import {
   ChevronRight, 
   Award,
   CalendarClock,
-  Plus, // New Icon for Create Button
-  X // New Icon for Modal Close
+  Plus, 
+  X 
 } from 'lucide-react';
 
 const Request = () => {
@@ -80,32 +80,54 @@ const Request = () => {
   const calculatedPoints = (Number(formData.quantity) || 0) * pointsMultiplier[formData.wasteType];
 
   // Submit Handler
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newRequest = {
-      id: `RC-${Math.floor(1000 + Math.random() * 9000)}`,
-      ...formData,
-      points: calculatedPoints,
-      status: "Pending",
-      date: "Scheduling...",
-    };
-    
-    // Add to top of the list
-    setRequests([newRequest, ...requests]);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      wasteType: 'plastic',
-      quantity: '',
-      location: '',
-      pincode: '',
-      image: null
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // FormData create karo
+  const data = new FormData();
+  data.append('name', formData.name);
+  data.append('wasteType', formData.wasteType);
+  data.append('quantity', formData.quantity);
+  data.append('location', formData.location);
+  data.append('pincode', formData.pincode);
+  data.append('points', calculatedPoints);
+  if (fileInputRef.current.files[0]) {
+    data.append('image', fileInputRef.current.files[0]); // File add ki
+  }
+
+  try {
+    const res = await fetch('http://localhost:2007/api/requests/create', {
+      method: 'POST',
+      credentials: 'include',
+      body: data // JSON.stringify mat karna, FormData direct bhejo
+      // 'Content-Type' header mat bhejo, fetch apne aap handle karega
     });
-    
-    // Close the Modal after submission
-    setIsModalOpen(false);
+
+    if (res.ok) {
+      const result = await res.json();
+      setRequests([result.request, ...requests]);
+      setIsModalOpen(false);
+      setFormData({ name: '', wasteType: 'plastic', quantity: '', location: '', pincode: '', image: null });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+  //Fetch data from DB
+  useEffect(() => {
+  const fetchMyRequests = async () => {
+    try {
+      const res = await fetch('http://localhost:2007/api/requests/my-requests', { 
+        credentials: 'include' 
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setRequests(data); // DB se ayi hui requests state mein update ho jayengi
+      }
+    } catch (err) { console.error("Error fetching requests:", err); }
   };
+  fetchMyRequests();
+}, []);
 
   return (
    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0">
@@ -317,30 +339,32 @@ const Request = () => {
       {/* Requested Pickups Grid */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
   {requests.map((req, index) => {
-    const isPending = req.status.toLowerCase() === "pending";
+  // Safe check lagaya hai taaki status na hone par error na aaye
+  const isPending = req.status ? req.status.toLowerCase() === "pending" : false;
 
-    return (
-      <div
-        key={index}
-        className="
-          bg-white
-          border border-[darkgreen]
-          border-l-[5px] border-l-emerald-700
-          rounded-[20px]
-          p-3 sm:p-4
-          shadow-sm
-          hover:shadow-md
-          hover:border-l-emerald-500
-          lg:hover:-translate-y-1
-          transition-all
-          duration-300
-          relative
-          overflow-hidden
-          flex flex-col
-          h-full
-          gap-2.5 sm:gap-3
-        "
-      >
+  return (
+    <div
+      // MongoDB ki ID (_id) ko priority di hai
+      key={req._id || req.id || index}
+      className="
+        bg-white
+        border border-[darkgreen]
+        border-l-[5px] border-l-emerald-700
+        rounded-[20px]
+        p-3 sm:p-4
+        shadow-sm
+        hover:shadow-md
+        hover:border-l-emerald-500
+        lg:hover:-translate-y-1
+        transition-all
+        duration-300
+        relative
+        overflow-hidden
+        flex flex-col
+        h-full
+        gap-2.5 sm:gap-3
+      "
+    >
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent pointer-events-none -z-10"></div>
 
@@ -351,7 +375,7 @@ const Request = () => {
           <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-xl overflow-hidden bg-white border-2 border-emerald-50 shadow-sm">
             {req.image ? (
               <img
-                src={req.image}
+              src={req.image?.startsWith('http') ? req.image : `http://localhost:2007${req.image}`}
                 alt="Waste"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
@@ -432,7 +456,7 @@ const Request = () => {
 
           <div className="flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-semibold text-gray-700">
             <User size={12} className="shrink-0" />
-            <span className="truncate">{req.name}</span>
+            <span className="truncate">{req.requesterName}</span>
           </div>
 
           <div className="flex items-start gap-2 text-[10.5px] sm:text-[11.5px] font-semibold text-gray-700">
@@ -444,7 +468,7 @@ const Request = () => {
 
           <div className="flex items-center gap-2 text-[10.5px] sm:text-[11.5px] font-bold text-emerald-700">
             <CalendarClock size={12} className="shrink-0" />
-            <span>{req.date}</span>
+          <span>{req.date || new Date(req.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
 

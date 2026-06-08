@@ -1,6 +1,8 @@
 let express=require('express');
 const PORT=2007;
 const app=express();
+const multer = require('multer');
+const path = require('path');
 const cors=require('cors');
 const mongoose=require('mongoose');
 const dns=require('dns');
@@ -14,6 +16,15 @@ dns.setServers(['1.1.1.1'],['8.8.8.8']);
 mongoose.connect('mongodb+srv://ishanvi:ishanvi123@recircle-sustainability.ln71odq.mongodb.net/recircle_db?appName=Recircle-Sustainability-Network')
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('DB Error:', err));
+
+  //Image storage by Multer
+  const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
 
   //SCHEMA OF REGISTRATION OF HOUSEKEEPER SIDE
   const userSchema = new mongoose.Schema({
@@ -30,14 +41,49 @@ mongoose.connect('mongodb+srv://ishanvi:ishanvi123@recircle-sustainability.ln71o
 
 const User = mongoose.model('User', userSchema);
 
+
+//SCHEMA OF GARBAGE REQUESTS
+const garbageRequestSchema = new mongoose.Schema({
+  housekeeperId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Kaun request kar raha hai?
+  requesterName: { type: String, required: true },
+  wasteType: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  location: { type: String, required: true },
+  pincode: { type: String, required: true },
+  points: { type: Number },
+  status: { type: String, default: 'Pending' }, 
+  image: { type: String },
+  createdAt: { type: Date, default: Date.now }
+});
+const GarbageRequests = mongoose.model('GarbageRequests', garbageRequestSchema);
+
+
 //Middlewares
 app.use(cors({
     origin:'http://localhost:5173',
     credentials:true
 }));
 const JWT_SECRET = 'recircle_secure_key_2026';
+app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 app.use(cookieParser());
+
+// Auth Middleware
+const authMiddleware = (req, res, next) => {
+  const token = req.cookies.token;
+  
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized: No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET); 
+    req.user = decoded; 
+    next();
+  } catch (err) {
+    res.status(401).json({ error: "Unauthorized: Invalid token" });
+  }
+};
 
 // Validation rules
 const registerValidation = [
@@ -158,3 +204,69 @@ app.post('/api/auth/logout', (req, res) => {
     });
     res.json({ message: 'Logged out successfully' });
 });
+
+
+                    //GARBAGE MODEL DEALINGS  (HOUSEKEEPER)
+ // Create Request Route
+app.post('/api/requests/create', authMiddleware, upload.single('image'),async (req, res) => {
+  try {
+    const { name, wasteType, quantity, location, pincode, points } = req.body;
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    
+    const newRequest = new GarbageRequests({
+      housekeeperId: req.user.id,
+      requesterName: name,
+      wasteType,
+      quantity,
+      location,
+      pincode,
+      points,
+      image: imageUrl
+    });
+
+    await newRequest.save();
+    res.status(201).json({ message: "Request created successfully!", request: newRequest });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get My Requests Route
+app.get('/api/requests/my-requests', authMiddleware, async (req, res) => {
+  try {
+    const myRequests = await GarbageRequests.find({ housekeeperId: req.user.id }).sort({ createdAt: -1 });
+    res.json(myRequests);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch requests" });
+  }
+});
+
+
+                    //GARBAGE CARDS DEALING  (COLLECTOR)
+// 1. Get ALL Pending Requests
+app.get('/api/requests/pending', authMiddleware, async (req, res) => {
+  try {
+    // Sirf 'Pending' status wali requests lao
+    const requests = await GarbageRequests.find({ status: 'Pending' }).sort({ createdAt: -1 });
+    res.json(requests);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch pending requests" });
+  }
+});
+
+// 2. Accept Request
+app.patch('/api/requests/accept/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedReq = await GarbageRequests.findByIdAndUpdate(
+      id, 
+      { status: 'Accepted' }, 
+      { new: true }
+    );
+    res.json({ message: "Request Accepted!", request: updatedReq });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to accept request" });
+  }
+});
+

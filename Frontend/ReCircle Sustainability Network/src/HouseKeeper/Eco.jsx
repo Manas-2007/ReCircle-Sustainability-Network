@@ -1,12 +1,29 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Award, Star, CheckCircle, X, Trophy,Sparkles } from 'lucide-react';
 
 const EcoPoints = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
-  const [redeemedRewards, setRedeemedRewards] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [totalPoints, setTotalPoints] = useState(0);
+const [redeemedRewards, setRedeemedRewards] = useState([]);
 
-  const totalPoints = 1250;
+const user = JSON.parse(localStorage.getItem('user'));
+// Agar user collector hai, toh return kuch mat karo ya redirect kar do
+if (user && user.role === 'collector') {
+  return <div className="p-10 text-center">This page is for Housekeepers only!</div>;
+}
+
+//Fetch user points and redeemed rewards on component mount
+useEffect(() => {
+  fetch('http://localhost:2007/api/user/profile', { credentials: 'include' })
+    .then(res => res.json())
+    .then(data => {
+      setTotalPoints(data.points || 0);
+      setRedeemedRewards(data.redeemedRewards || []);
+    })
+    .catch(err => console.log("Error fetching points"));
+}, []);
+
   const nextLevelPoints = 2000;
   const currentLevel = "Green Warrior";
   const progress = Math.min((totalPoints / nextLevelPoints) * 100, 100);
@@ -19,26 +36,37 @@ const EcoPoints = () => {
   ];
 
   const badges = [
-    { icon: "🌱", name: "Eco Beginner", level: 1 },
-    { icon: "♻️", name: "Green Contributor", level: 2 },
-    { icon: "🌿", name: "Green Warrior", level: 3, current: true },
-    { icon: "🌍", name: "Planet Protector", level: 4 },
-    { icon: "👑", name: "Champion", level: 5 },
-  ];
+  { icon: "🌱", name: "Eco Beginner", level: 1 },
+  { icon: "♻️", name: "Green Contributor", level: 2 },
+  { icon: "🌿", name: "Green Warrior", level: 3 },
+  { icon: "🌍", name: "Planet Protector", level: 4 },
+  { icon: "👑", name: "Champion", level: 5 },
+].map(b => ({ ...b, current: b.level === Math.min(Math.floor(totalPoints / 500) + 1, 5) }));
 
-  const handleRedeem = (reward) => {
-  if (totalPoints < reward.points) return;
+  // Handle reward redemption with backend integration
+ const handleRedeem = async (reward) => {
+  if (totalPoints < reward.points) return alert("Not enough points!");
+  if (redeemedRewards.includes(reward.id)) return alert("Already redeemed!");
 
-  if (redeemedRewards.includes(reward.id)) return;
+  try {
+    const res = await fetch('http://localhost:2007/api/rewards/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rewardId: reward.id, pointsCost: reward.points }),
+      credentials: 'include'
+    });
 
-  setRedeemedRewards((prev) => [...prev, reward.id]);
-
-  setShowSuccess(true);
-
-  setTimeout(() => {
-    setShowSuccess(false);
-  }, 2000);
+    if (res.ok) {
+      setTotalPoints(prev => prev - reward.points);
+      setRedeemedRewards(prev => [...prev, reward.id]);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2000);
+    }
+  } catch (err) {
+    alert("Redemption failed");
+  }
 };
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
 

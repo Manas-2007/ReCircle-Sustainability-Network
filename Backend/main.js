@@ -37,7 +37,8 @@ const upload = multer({ storage: storage });
     password: { type: String, required: true },
     role: { type: String, enum: ['household', 'collector'], default: 'household' },
     points: { type: Number, default: 0 },
-    walletBalance: { type: Number, default: 0 }
+    walletBalance: { type: Number, default: 0 },
+    redeemedRewards: { type: [String], default: [] }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
@@ -329,7 +330,7 @@ app.get('/api/users/collector/:id', authMiddleware, async (req, res) => {
 });
 
 
-// 2. Status Update (Delivered / Cancelled)
+// 2. Status Update (Delivered / Cancelled) - AUTOMATIC PROPER SOLUTION
 app.patch('/api/requests/update-status/:id', authMiddleware, async (req, res) => {
   try {
     const { status } = req.body;
@@ -347,21 +348,27 @@ app.patch('/api/requests/update-status/:id', authMiddleware, async (req, res) =>
     } else if (status === 'Delivered') {
       request.status = 'Delivered';
       
-      //1.housekeeper Eco-Points
+      // 1. Housekeeper Points (AUTOMATIC UPDATE)
       const housekeeper = await User.findById(request.housekeeperId);
       if (housekeeper) {
         const earnedPoints = request.points || (request.quantity * 10); 
-        housekeeper.ecoPoints = (housekeeper.ecoPoints || 0) + earnedPoints;
+        
+        console.log(`\n[SYSTEM] Housekeeper ke purane points: ${housekeeper.points || 0}`);
+        
+        // Tumhara proper logic jo points add karta hai
+        housekeeper.points = (housekeeper.points || 0) + earnedPoints; 
         await housekeeper.save();
+        
+        console.log(`[SYSTEM] ✅ SUCCESS! +${earnedPoints} points add hue. Naya Balance: ${housekeeper.points}\n`);
       }
 
-      //2.Collector capital earnings
+      // 2. Collector capital earnings
       const collector = await User.findById(request.collectorId);
-  if (collector) {
-    const earnings = request.points || (request.quantity * 10);
-    collector.walletBalance = (collector.walletBalance || 0) + earnings;
-    await collector.save();
-  }
+      if (collector) {
+        const earnings = request.points || (request.quantity * 10);
+        collector.walletBalance = (collector.walletBalance || 0) + earnings;
+        await collector.save();
+      }
     } else {
       request.status = status;
     }
@@ -369,6 +376,7 @@ app.patch('/api/requests/update-status/:id', authMiddleware, async (req, res) =>
     await request.save();
     res.json(request);
   } catch (err) { 
+    console.error("Status Update Error:", err);
     res.status(500).json({ error: "Update failed" }); 
   }
 });
@@ -461,6 +469,25 @@ app.delete('/api/requests/notification/:id', async (req, res) => {
     }
 
     res.status(200).json({ message: "Notification hidden successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+//Redeem Rewards Route
+app.post('/api/rewards/redeem', authMiddleware, async (req, res) => {
+  try {
+    const { rewardId, pointsCost } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (user.points < pointsCost) return res.status(400).json({ message: "Insufficient points" });
+    if (user.redeemedRewards.includes(rewardId)) return res.status(400).json({ message: "Already redeemed" });
+
+    user.points -= pointsCost;
+    user.redeemedRewards.push(rewardId);
+    await user.save();
+
+    res.json({ message: "Success", newPoints: user.points });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }

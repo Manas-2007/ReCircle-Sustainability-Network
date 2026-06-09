@@ -6,50 +6,7 @@ const Notifications = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [collector, setCollector] = useState(null);
   const [selectedNotif, setSelectedNotif] = useState(null); 
-
-  // --- STATIC NOTIFICATIONS ---
-  const staticNotifications = [
-    {
-      id: 'static-1',
-      type: 'points_earned',
-      title: 'Eco Points Credited',
-      message: 'Amazing! 150 Eco Points have been added to your balance for yesterday’s plastic waste contribution.',
-      time: '2 hours ago',
-      isUnread: true,
-      image: '/eco.jpg', 
-      actionText: 'View Balance',
-      actionIcon: <Wallet size={14} />,
-      status: 'Completed'
-    },
-    {
-      id: 'static-2',
-      type: 'system_alert',
-      title: 'Weekly Eco Tip',
-      message: 'Pro tip: Rinsing plastic containers before disposal can increase their recycling value by up to 2x!',
-      time: 'Yesterday',
-      isUnread: false,
-      icon: <LeafIcon />,
-      iconBg: 'bg-sky-50',
-      actionText: null,
-      actionIcon: null,
-      status: null
-    },
-    {
-      id: 'static-3',
-      type: 'welcome',
-      title: 'Welcome to ReCircle!',
-      message: 'Your eco journey begins here. Schedule your first pickup and start earning rewards.',
-      time: '2 days ago',
-      isUnread: false,
-      icon: <Sparkles size={18} className="text-violet-600" />,
-      iconBg: 'bg-violet-50',
-      actionText: 'Schedule Pickup',
-      actionIcon: <CalendarPlus size={14} />,
-      status: null
-    }
-  ];
-
-  const [notifications, setNotifications] = useState(staticNotifications);
+  const [notifications, setNotifications] = useState([]);
 
   // --- FETCH REAL NOTIFICATIONS ---
   useEffect(() => {
@@ -58,26 +15,28 @@ const Notifications = () => {
         const res = await fetch('http://localhost:2007/api/requests/my-requests', { credentials: 'include' });
         const data = await res.json();
         
-        if (res.ok) {
+        if (res.ok && Array.isArray(data)) {
+          // Sirf relevant statuses filter karo
           const realNotifs = data
-            .filter(req => req.status === 'Accepted' || req.status === 'Scheduled')
+            .filter(req => ['Pending', 'Accepted', 'Scheduled'].includes(req.status))
             .map(req => ({
               id: req._id,
-              collectorId: req.collectorId, // Added collectorId here
-              type: 'collector_accepted',
-              title: req.status === 'Accepted' ? 'Pickup Accepted!' : 'Pickup Scheduled!',
-              message: req.status === 'Accepted' 
-                ? `A collector has accepted your request for ${req.quantity}kg ${req.wasteType}.` 
-                : `Your pickup is scheduled for ${req.scheduledDate} at ${req.scheduledTime}.`,
+              collectorId: req.collectorId,
+              status: req.status,
+              type: req.status === 'Pending' ? 'pending' : 'collector_accepted',
+              title: req.status === 'Pending' ? 'Request Pending' : 
+                     req.status === 'Accepted' ? 'Pickup Accepted!' : 'Pickup Scheduled!',
+              message: req.status === 'Pending' ? `Your request for ${req.quantity}kg ${req.wasteType} is waiting for a collector.` :
+                       req.status === 'Accepted' ? `A collector has accepted your request for ${req.quantity}kg ${req.wasteType}.` : 
+                       `Your pickup is scheduled for ${req.scheduledDate} at ${req.scheduledTime}.`,
               time: 'Just updated',
               isUnread: true,
-              image: req.image?.startsWith('http') ? req.image : `http://localhost:2007${req.image}`,
-              actionText: 'View Collector',
-              actionIcon: <MapPin size={14} />,
-              status: req.status
+              image: req.image ? `http://localhost:2007${req.image}` : null,
+              actionText: req.collectorId ? 'View Collector' : null,
+              actionIcon: <MapPin size={14} />
             }));
 
-          setNotifications([...realNotifs, ...staticNotifications]);
+          setNotifications(realNotifs);
         }
       } catch (err) {
         console.error("Error fetching notifications:", err);

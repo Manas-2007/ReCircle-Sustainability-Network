@@ -67,6 +67,7 @@ const garbageRequestSchema = new mongoose.Schema({
   },
   scheduledDate: { type: String },
   scheduledTime: { type: String },
+  hiddenFromCollector: { type: Boolean, default: false },
 });
 const GarbageRequests = mongoose.model('GarbageRequests', garbageRequestSchema);
 
@@ -383,13 +384,17 @@ app.get('/api/requests/collector-updates', authMiddleware, async (req, res) => {
       return res.status(401).json({ error: "Unauthorized: User ID missing" });
     }
 
-    // 2. Database Query
     const requests = await GarbageRequests.find({
+  $and: [
+    {
       $or: [
         { collectorId: userId, status: 'Delivered' },
         { previousCollectorId: userId, status: 'Pending' }
       ]
-    }).sort({ createdAt: -1 });
+    },
+    { hiddenFromCollector: { $ne: true } } // Yeh line delete ki hui notification ko filter out kar degi
+  ]
+}).sort({ createdAt: -1 });
 
     // 3. Mapping and Status Change
     const formattedRequests = requests.map(request => {
@@ -438,5 +443,25 @@ app.get('/api/requests/history', authMiddleware, async (req, res) => {
     res.json(history);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch history" });
+  }
+});
+
+// DELETE Route (Notification COLLECTOR)
+app.delete('/api/requests/notification/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+  const updatedItem = await GarbageRequests.findByIdAndUpdate(
+      id, 
+      { hiddenFromCollector: true }, 
+      { new: true }
+    );
+   if (!updatedItem) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    res.status(200).json({ message: "Notification hidden successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
   }
 });

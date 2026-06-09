@@ -1,20 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package, Truck, Target, Layers, Calendar, BarChart3, Activity } from 'lucide-react';
 
 const Analytics = () => {
-  // Mock data (Assuming this comes from your state)
-  const historyData = [
-    { quantity: 15, wasteType: "Plastic Bottles" },
-    { quantity: 22, wasteType: "Paper Waste" },
-    { quantity: 12, wasteType: "Metal Scrap" },
-    { quantity: 8, wasteType: "E-Waste" },
-  ];
+  // 1. Setup State for Backend Data
+  const [historyData, setHistoryData] = useState([]);
 
-  // Calculations
-  const totalKg = historyData.reduce((sum, item) => sum + item.quantity, 0);
+  // 2. Fetch History Data from Backend
+  useEffect(() => {
+    fetch('http://localhost:2007/api/requests/history', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setHistoryData(Array.isArray(data) ? data : []))
+      .catch(err => console.log(err));
+  }, []);
+
+  // 3. KPI Calculations (Real Time)
+  const totalKg = historyData.reduce((sum, item) => sum + (item.quantity || 0), 0);
   const totalPickups = historyData.length;
-  const avgEfficiency = (totalKg / totalPickups).toFixed(1);
+  const avgEfficiency = totalPickups > 0 ? (totalKg / totalPickups).toFixed(1) : 0;
   const uniqueCategories = [...new Set(historyData.map(item => item.wasteType))].length;
+
+  // 4. Calculations for Waste Distribution (Top 3 Categories)
+  const colors = ["bg-emerald-600", "bg-blue-600", "bg-amber-600"];
+  const groupedWaste = historyData.reduce((acc, item) => {
+    const type = item.wasteType || 'Other';
+    acc[type] = (acc[type] || 0) + (item.quantity || 0);
+    return acc;
+  }, {});
+
+  const wasteStats = Object.keys(groupedWaste)
+    .sort((a, b) => groupedWaste[b] - groupedWaste[a])
+    .slice(0, 3) // Keeps top 3 to perfectly match your UI design
+    .map((type, index) => {
+      const val = totalKg > 0 ? Math.round((groupedWaste[type] / totalKg) * 100) : 0;
+      return {
+        name: type.charAt(0).toUpperCase() + type.slice(1),
+        val: val,
+        color: colors[index] || "bg-gray-500"
+      };
+    });
+
+  // 5. Calculations for 7-Day Collection Trends Graph
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  const weeklyChartData = last7Days.map((date) => {
+    const nextDay = new Date(date);
+    nextDay.setDate(date.getDate() + 1);
+
+    const dayData = historyData.filter(item => {
+      const itemDate = new Date(item.createdAt);
+      return itemDate >= date && itemDate < nextDay;
+    });
+
+    const totalForDay = dayData.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    
+    return {
+      day: date.toLocaleDateString('en-US', { weekday: 'short' }), // Converts date to 'Mon', 'Tue'
+      val: totalForDay
+    };
+  });
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 font-sans pb-10 -mt-2 sm:-mt-0 space-y-6">
@@ -92,25 +140,17 @@ const Analytics = () => {
 
             {/* Main Graph Area */}
             <div className="flex items-end justify-center md:justify-between gap-1.5 md:gap-0 w-full h-full border-b border-l border-gray-400 pb-2 px-2">
-              {[
-                { day: 'Day 1', val: 40 },
-                { day: 'Day 2', val: 70 },
-                { day: 'Day 3', val: 45 },
-                { day: 'Day 4', val: 90 },
-                { day: 'Day 5', val: 60 },
-                { day: 'Day 6', val: 85 },
-                { day: 'Day 7', val: 65 }
-              ].map((item, i) => (
+              {weeklyChartData.map((item, i) => (
                 <div key={i} className="flex flex-col items-center justify-end h-full group w-7 md:w-12">
                   {/* Peak Label */}
                   <span className="text-[9px] md:text-[11px] font-bold text-emerald-800 mb-1.5 md:mb-2">
                     {item.val}kg
                   </span>
                   
-                  {/* The Bar */}
+                  {/* The Bar - height calculated dynamically against a 100kg scale */}
                   <div 
                     className="w-full bg-emerald-600 hover:bg-emerald-600 rounded-t-md md:rounded-t-lg transition-all duration-500" 
-                    style={{ height: `${item.val}%` }} 
+                    style={{ height: `${Math.min((item.val / 100) * 100, 100)}%` }} 
                   />
                   
                   {/* X-Axis Label */}
@@ -121,38 +161,40 @@ const Analytics = () => {
           </div>
         </div>
 
-       {/* WASTE CATEGORY DISTRIBUTION - Enhanced with Visualizer */}
-<div className="bg-white p-5 md:p-6 rounded-3xl border border-gray-300 shadow-sm flex flex-col">
-  <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1">Waste Distribution</h3>
-  
-  {/* NEW: Visual Stacked Bar Graph */}
-  <div className="flex w-full h-4 rounded-full overflow-hidden my-6 border border-gray-50">
-    <div className="bg-emerald-600 h-full" style={{ width: '55%' }} title="Plastic: 55%"></div>
-    <div className="bg-blue-600 h-full" style={{ width: '25%' }} title="Paper: 25%"></div>
-    <div className="bg-amber-600 h-full" style={{ width: '20%' }} title="Metal: 20%"></div>
-  </div>
+        {/* WASTE CATEGORY DISTRIBUTION - Enhanced with Visualizer */}
+        <div className="bg-white p-5 md:p-6 rounded-3xl border border-gray-300 shadow-sm flex flex-col">
+          <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1">Waste Distribution</h3>
+          
+          {/* NEW: Visual Stacked Bar Graph (Dynamic) */}
+          <div className="flex w-full h-4 rounded-full overflow-hidden my-6 border border-gray-50 bg-gray-100">
+            {wasteStats.map((cat, i) => (
+              <div 
+                key={i}
+                className={`${cat.color} h-full transition-all duration-1000 ease-out`} 
+                style={{ width: `${cat.val}%` }} 
+                title={`${cat.name}: ${cat.val}%`}
+              ></div>
+            ))}
+          </div>
 
-  <div className="space-y-6 flex-1 flex flex-col justify-center">
-    {[
-      { name: "Plastic", val: 55, color: "bg-emerald-600" },
-      { name: "Paper", val: 25, color: "bg-blue-600" },
-      { name: "Metal", val: 20, color: "bg-amber-600" },
-    ].map((cat, i) => (
-      <div key={i} className="group">
-        <div className="flex justify-between text-sm mb-2.5">
-          <span className="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{cat.name}</span>
-          <span className="font-bold text-gray-900">{cat.val}%</span>
+          <div className="space-y-6 flex-1 flex flex-col justify-center">
+            {wasteStats.map((cat, i) => (
+              <div key={i} className="group">
+                <div className="flex justify-between text-sm mb-2.5">
+                  <span className="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{cat.name}</span>
+                  <span className="font-bold text-gray-900">{cat.val}%</span>
+                </div>
+                <div className="w-full h-2.5 md:h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full ${cat.color} rounded-full transition-all duration-1000 ease-out`} 
+                    style={{ width: `${cat.val}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
         </div>
-        <div className="w-full h-2.5 md:h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div 
-            className={`h-full ${cat.color} rounded-full transition-all duration-1000 ease-out`} 
-            style={{ width: `${cat.val}%` }}
-          ></div>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
 
       </div>
     </div>

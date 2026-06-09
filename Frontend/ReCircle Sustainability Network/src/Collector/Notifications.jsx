@@ -1,32 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, CheckCheck, Wallet, Bell, ArrowRight, XCircle } from 'lucide-react';
+import { Clock, CheckCheck, Wallet, Bell, ArrowRight, XCircle,Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Notifications = () => {
-  // --- STATIC NOTIFICATIONS (Purana data) ---
-  const staticNotifications = [
-    {
-      id: 'static-1',
-      type: 'delivered',
-      title: 'Payment Credited! 💸',
-      message: 'Successfully collected from John Doe. ₹450 has been added to your wallet.',
-      time: 'Just now',
-      isUnread: true,
-      image: '/H2.jpg',
-      amount: '₹450'
-    },
-    {
-      id: 'static-2',
-      type: 'delivered',
-      title: 'Collection Done ✅',
-      message: 'Successfully collected from Anita Sharma. ₹320 has been added to your wallet.',
-      time: '2 hours ago',
-      isUnread: true,
-      image: '/H2.jpg',
-      amount: '₹320'
-    }
-  ];
-
-  const [notifications, setNotifications] = useState(staticNotifications);
+  const [notifications, setNotifications] = useState([]);
 
   // --- FETCH REAL NOTIFICATIONS FOR COLLECTOR ---
 useEffect(() => {
@@ -36,25 +13,24 @@ useEffect(() => {
       const res = await fetch('http://localhost:2007/api/requests/collector-updates', { credentials: 'include' });
       const data = await res.json();
       
-      if (res.ok) {
+      if (res.ok && Array.isArray(data)) {
         const realNotifs = data
-          // Status 'Delivered' ko handle karenge
           .map(req => {
+            const imageUrl = req.image ? `http://localhost:2007${req.image}` : '/default-icon.png';
             if (req.status === 'Delivered') {
               return {
                 id: req._id,
-                type: 'delivered', // Green style ke liye
+                type: 'delivered',
                 title: 'Payment Credited! 💸',
                 message: `Delivery Successful! ₹${req.points || req.quantity * 10} has been added to your wallet for collecting ${req.quantity}kg of ${req.wasteType}.`,
                 time: 'Just now',
                 isUnread: true,
-                image: '/wallet-icon.png', // Tumhara wallet icon
-                amount: `₹${req.points || req.quantity * 10}`, // Amount yahan dikhega
+                image: imageUrl, 
+                amount: `₹${req.points || req.quantity * 10}`,
                 status: 'Completed'
               };
             }
             
-            // Baki statuses ke liye (jaise Accepted)
             return {
                id: req._id,
                type: 'pending',
@@ -62,11 +38,11 @@ useEffect(() => {
                message: `Pickup for ${req.quantity}kg ${req.wasteType} is ${req.status}.`,
                time: 'Just updated',
                isUnread: true,
-               image: '/delivery-truck.png' // Optional: Truck icon
+               image:imageUrl
             };
           });
 
-        setNotifications([...realNotifs, ...staticNotifications]);
+        setNotifications(realNotifs);
       }
     } catch (err) {
       console.error("Error fetching collector notifications:", err);
@@ -75,6 +51,26 @@ useEffect(() => {
 
   fetchRealNotifications();
 }, []);
+
+//Delete Notification 
+const deleteNotification = async (id) => {
+  try {
+    // Backend ka endpoint call karo
+    const res = await fetch(`http://localhost:2007/api/requests/notification/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    if (res.ok) {
+      // Success hua, toh local state se filter out kardo
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    } else {
+      alert("Delete nahi ho paaya, backend check karo.");
+    }
+  } catch (err) {
+    console.error("Error deleting notification:", err);
+  }
+};
 
   const unreadCount = notifications.filter(n => n.isUnread).length;
 
@@ -143,6 +139,15 @@ useEffect(() => {
                 <div className={`absolute top-3 right-3 w-2 h-2 rounded-full animate-pulse ${styles.dot}`} />
               )}
 
+              {/* Delete Button (Top Right) */}
+              <button 
+                onClick={() => deleteNotification(notif.id)}
+                className="absolute top-3 right-3 p-1 text-gray-400 hover:text-red-500 transition-colors bg-white/50 hover:bg-white rounded-full"
+              >
+                <Trash2 size={14} />
+              </button>
+
+
               <div className="flex flex-col sm:flex-row gap-3 items-start mb-3 flex-1">
                 {/* VEHICLE / REQUEST IMAGE */}
                 <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex items-center justify-center">
@@ -179,9 +184,9 @@ useEffect(() => {
                 </div>
 
                 {notif.type === 'delivered' && (
-                  <button className={`flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-white rounded-lg text-[9px] sm:text-[11px] font-bold transition-all shadow-sm ${styles.button}`}>
+                  <Link  to="/dashboard/earnings" className={`flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-white rounded-lg text-[9px] sm:text-[11px] font-bold transition-all shadow-sm ${styles.button}`}>
                     Wallet <ArrowRight size={10} />
-                  </button>
+                  </Link>
                 )}
               </div>
             </div>

@@ -281,7 +281,7 @@ const categoryTotals = historyData.reduce((acc, item) => {
 const grandTotal = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
 
 const categoryStats = Object.entries(categoryTotals).map(([name, val]) => ({
-  name,
+  name: name.charAt(0).toUpperCase() + name.slice(1),
   val: `₹${val}`,
   percent: grandTotal > 0 ? `${Math.round((val / grandTotal) * 100)}%` : '0%'
 }));
@@ -509,7 +509,7 @@ const performancePercentage = Math.min(Math.round((wasteSaved / 80) * 100), 100)
                   
                   {/* Content */}
                   <div>
-                    <p className="font-bold text-sm text-gray-900 group-hover:text-emerald-700 transition-colors">{t.method}</p>
+                    <p className="font-bold text-sm text-gray-900 group-hover:text-emerald-700 transition-colors">{t.method.charAt(0).toUpperCase() + t.method.slice(1)}</p>
                     <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t.date} • {t.type}</p>
                   </div>
                 </div>

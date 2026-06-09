@@ -1,23 +1,29 @@
 @keyframes float {
-  0%, 100% { transform: translateY(20px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(20px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
 
-/* ==========================================
+/*
    APP-LIKE LAYOUT: Body aur HTML ka scroll band!
-   ========================================== */
-html, body {
-  overflow: hidden; 
+   */
+html,
+body {
+  overflow: hidden;
   height: 100%;
 }
 
-/* ==========================================
+/*
    SCOPED: Custom Thin Green Scrollbar 
-   ========================================== */
+   */
 
 .custom-scroll {
   overflow-y: auto;
@@ -27,18 +33,18 @@ html, body {
 
 .custom-scroll::-webkit-scrollbar {
   width: 6px;
-  height: 6px; 
+  height: 6px;
 }
 
 .custom-scroll::-webkit-scrollbar-track {
-  background: transparent; 
+  background: transparent;
   margin-top: 8px;
   margin-bottom: 8px;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-  background-color: #16a34a; 
-  border-radius: 20px; 
+  background-color: #16a34a;
+  border-radius: 20px;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb:hover {
@@ -46,8 +52,12 @@ html, body {
 }
 
 @keyframes shine {
-  0% { transform: translateX(-150%); }
-  100% { transform: translateX(200%); }
+  0% {
+    transform: translateX(-150%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
 }
 
 .animate-shine {
@@ -59,7 +69,7 @@ html, body {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #16a34a transparent;
-  overscroll-behavior-y: contain; 
+  overscroll-behavior-y: contain;
 }
 
 html {

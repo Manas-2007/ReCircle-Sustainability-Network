@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   Bell,
@@ -8,52 +8,62 @@ import {
   ClipboardList,
   Users,
   Leaf,
-  Menu, 
-  X,  
+  Menu,
+  X,
 } from "lucide-react";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false); 
-   const [user, setUser] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   const tabs = [
     { path: "/housekeeper", label: "My Circle", icon: <Users size={18} /> },
-    { path: "/housekeeper/requests", label: "Requests", icon: <ClipboardList size={18} /> },
+    {
+      path: "/housekeeper/requests",
+      label: "Requests",
+      icon: <ClipboardList size={18} />,
+    },
     { path: "/housekeeper/eco", label: "Eco Points", icon: <Leaf size={18} /> },
-    { path: "/housekeeper/history", label: "History", icon: <History size={18} /> },
-    { path: "/housekeeper/leaderboard", label: "Leaderboard", icon: <Trophy size={18} /> },
+    {
+      path: "/housekeeper/history",
+      label: "History",
+      icon: <History size={18} />,
+    },
+    {
+      path: "/housekeeper/leaderboard",
+      label: "Leaderboard",
+      icon: <Trophy size={18} />,
+    },
   ];
- 
 
   //Fetching Name from the DB
-useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      const res = await fetch('http://localhost:2007/api/auth/me', {
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setUser(data.user);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch("http://localhost:2007/api/auth/me", {
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error("Error fetching user for navbar:", err);
       }
-    } catch (err) {
-      console.error("Error fetching user for navbar:", err);
-    }
-  };
-  fetchUserData();
-}, []);
+    };
+    fetchUserData();
+  }, []);
 
-// Helper function for Initials
-const getInitials = (firstName, lastName) => {
-  return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
-};
+  // Helper function for Initials
+  const getInitials = (firstName, lastName) => {
+    return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
+  };
 
   return (
     <>
       <header className="sticky top-0 z-50 w-full bg-white border-b border-green-400 font-sans antialiased">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-5 lg:px-8 h-[76px] sm:h-[88px] flex items-center justify-between">
-          
           {/* LEFT SIDE (LOGO) */}
           <div className="flex-1 flex items-center justify-start">
             <Link
@@ -67,9 +77,9 @@ const getInitials = (firstName, lastName) => {
                   group-hover:scale-105 group-hover:shadow-md transition-all duration-300
                 "
               >
-                <img 
-                  src="/main logo.jpg" 
-                  alt="ReCircle Logo" 
+                <img
+                  src="/main logo.jpg"
+                  alt="ReCircle Logo"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -91,10 +101,11 @@ const getInitials = (firstName, lastName) => {
               <NavLink
                 key={tab.path}
                 to={tab.path}
-                end={tab.path === "/housekeeper"} 
+                end={tab.path === "/housekeeper"}
                 className={({ isActive }) => `
                   flex items-center gap-3 px-4 py-1.5 rounded-xl text-[13.5px] font-bold transition-all duration-300 ease-out border
-                  ${isActive
+                  ${
+                    isActive
                       ? "bg-green-50 border-green-300 text-[#166534] shadow-sm"
                       : "bg-transparent border-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                   }
@@ -102,7 +113,9 @@ const getInitials = (firstName, lastName) => {
               >
                 {({ isActive }) => (
                   <>
-                    <span className={`${isActive ? "text-[#16a34a]" : "text-gray-700 group-hover:text-gray-700"} transition-colors`}>
+                    <span
+                      className={`${isActive ? "text-[#16a34a]" : "text-gray-700 group-hover:text-gray-700"} transition-colors`}
+                    >
                       {tab.icon}
                     </span>
                     {tab.label}
@@ -114,7 +127,6 @@ const getInitials = (firstName, lastName) => {
 
           {/* RIGHT SIDE */}
           <div className="flex-1 flex items-center justify-end gap-2 sm:gap-7">
-            
             {/* ECO SCORE PILL */}
             <div
               className="
@@ -130,9 +142,8 @@ const getInitials = (firstName, lastName) => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-6">
-              
               {/* NOTIFICATION */}
-              <Link 
+              <Link
                 to="/housekeeper/notifications"
                 className="flex flex-col items-center justify-center gap-1 mt-1 cursor-pointer group"
               >
@@ -146,7 +157,10 @@ const getInitials = (firstName, lastName) => {
                   "
                 >
                   <span className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full border-2 border-white" />
-                  <Bell size={18} className="text-gray-600 group-hover:text-gray-900 transition-colors" />
+                  <Bell
+                    size={18}
+                    className="text-gray-600 group-hover:text-gray-900 transition-colors"
+                  />
                 </div>
                 <span className="text-[12px] font-bold text-gray-700 group-hover:text-gray-800 transition-colors leading-none hidden sm:block">
                   Alerts
@@ -156,7 +170,7 @@ const getInitials = (firstName, lastName) => {
               <div className="hidden sm:block w-px h-10 bg-gray-200 rounded-full"></div>
 
               {/* PROFILE */}
-              <Link 
+              <Link
                 to="/housekeeper/profile"
                 className="flex flex-col items-center justify-center gap-1 mt-1 cursor-pointer group"
               >
@@ -171,7 +185,7 @@ const getInitials = (firstName, lastName) => {
                   "
                 >
                   <span className="text-white font-extrabold text-[13px] sm:text-[15px] tracking-wide">
-                   {getInitials(user?.firstName, user?.lastName)}
+                    {getInitials(user?.firstName, user?.lastName)}
                   </span>
                 </div>
                 <span className="text-[12px] font-bold text-gray-700 group-hover:text-[#16a34a] transition-colors leading-none hidden sm:block">
@@ -180,52 +194,59 @@ const getInitials = (firstName, lastName) => {
               </Link>
 
               {/* MOBILE HAMBURGER MENU BUTTON */}
-              <button 
-                onClick={() => setIsOpen(true)} 
+              <button
+                onClick={() => setIsOpen(true)}
                 className="lg:hidden ml-1 p-2 bg-[#f0fdf4] border border-[#bbf7d0] shadow-sm rounded-xl text-[#16a34a] focus:outline-none hover:bg-green-100 active:scale-95 transition-all"
               >
                 <Menu size={17} strokeWidth={2.5} />
               </button>
-              
             </div>
           </div>
         </div>
       </header>
 
       {/* 2. MOBILE OFF-CANVAS MENU */}
-      <div className={`fixed top-0 left-0 w-full bg-gradient-to-b from-green-50 via-white to-white  transition-transform duration-500 ease-in-out z-[70] rounded-b-[2rem] border-b-4 border-[#4ade80] font-sans ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}>
-        
-        <button 
-          onClick={() => setIsOpen(false)} 
+      <div
+        className={`fixed top-0 left-0 w-full bg-gradient-to-b from-green-50 via-white to-white  transition-transform duration-500 ease-in-out z-[70] rounded-b-[2rem] border-b-4 border-[#4ade80] font-sans ${isOpen ? "translate-y-0" : "-translate-y-full"}`}
+      >
+        <button
+          onClick={() => setIsOpen(false)}
           className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-sm border border-gray-100 text-[#15803d] hover:bg-red-50 hover:text-red-500 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex flex-col pt-5 pb-8 px-6">
-          
           <div className="flex items-center gap-3 mb-8">
-            <img 
-              src="/main logo.jpg" 
-              alt="ReCircle Logo" 
+            <img
+              src="/main logo.jpg"
+              alt="ReCircle Logo"
               className="w-12 h-12 object-cover bg-white rounded-2xl shadow-sm border border-gray-200"
             />
             <div>
-              <h2 className="text-2xl font-[800] text-gray-900 leading-none tracking-tight">Re<span className='text-[#16a34a]'>Circle</span></h2>
-              <p className="text-[10px] font-bold text-[#15803d] tracking-widest mt-1 uppercase">Sustainability Network</p>
+              <h2 className="text-2xl font-[800] text-gray-900 leading-none tracking-tight">
+                Re<span className="text-[#16a34a]">Circle</span>
+              </h2>
+              <p className="text-[10px] font-bold text-[#15803d] tracking-widest mt-1 uppercase">
+                Sustainability Network
+              </p>
             </div>
           </div>
 
-          <Link 
+          <Link
             to="/housekeeper/profile"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-4 mb-8 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <div className="w-[46px] h-[46px] rounded-xl bg-gradient-to-br from-green-500 to-[#166534] flex items-center justify-center shadow-inner">
-              <span className="text-white font-extrabold text-[16px] tracking-wide">{getInitials(user?.firstName, user?.lastName)}</span>
+              <span className="text-white font-extrabold text-[16px] tracking-wide">
+                {getInitials(user?.firstName, user?.lastName)}
+              </span>
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">{user ? `${user.firstName} ${user.lastName}` : "Loading..."}</p>
+              <p className="text-sm font-bold text-gray-900">
+                {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
+              </p>
               <p className="text-xs font-semibold text-[#16a34a] mt-0.5 flex items-center gap-1">
                 <Leaf size={12} /> {user ? user.points : 0} Eco Points
               </p>
@@ -238,19 +259,24 @@ const getInitials = (firstName, lastName) => {
                 <NavLink
                   to={tab.path}
                   end={tab.path === "/housekeeper"}
-                  onClick={() => setIsOpen(false)} 
+                  onClick={() => setIsOpen(false)}
                   className={({ isActive }) => `
                     w-full flex items-center gap-3 p-4 rounded-2xl text-[13px] font-bold transition-all duration-300
-                    ${isActive 
-                      ? 'bg-green-100/80 text-[#166534] border-l-[5px] border-[#166534] shadow-sm' 
-                      : 'bg-transparent text-gray-600 hover:bg-gray-50 border-l-[5px] border-transparent hover:border-gray-300'
+                    ${
+                      isActive
+                        ? "bg-green-100/80 text-[#166534] border-l-[5px] border-[#166534] shadow-sm"
+                        : "bg-transparent text-gray-600 hover:bg-gray-50 border-l-[5px] border-transparent hover:border-gray-300"
                     }
                   `}
                 >
                   {({ isActive }) => (
                     <>
-                      <span className={isActive ? "text-[#16a34a]" : "text-gray-400"}>
-                        {React.cloneElement(tab.icon, { size: 20 })} 
+                      <span
+                        className={
+                          isActive ? "text-[#16a34a]" : "text-gray-400"
+                        }
+                      >
+                        {React.cloneElement(tab.icon, { size: 20 })}
                       </span>
                       {tab.label}
                     </>
@@ -259,13 +285,12 @@ const getInitials = (firstName, lastName) => {
               </li>
             ))}
           </ul>
-          
         </div>
       </div>
 
       {isOpen && (
-        <div 
-          onClick={() => setIsOpen(false)} 
+        <div
+          onClick={() => setIsOpen(false)}
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] lg:hidden transition-opacity"
         ></div>
       )}

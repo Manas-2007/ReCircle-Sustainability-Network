@@ -36,7 +36,8 @@ const upload = multer({ storage: storage });
     phone: { type: String, required: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['household', 'collector'], default: 'household' },
-    points: { type: Number, default: 0 }
+    points: { type: Number, default: 0 },
+    walletBalance: { type: Number, default: 0 }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
@@ -345,13 +346,21 @@ app.patch('/api/requests/update-status/:id', authMiddleware, async (req, res) =>
     } else if (status === 'Delivered') {
       request.status = 'Delivered';
       
+      //1.housekeeper Eco-Points
       const housekeeper = await User.findById(request.housekeeperId);
       if (housekeeper) {
-        // Agar points field request mein nahi hai, toh default quantity * 10 de rahe hain
         const earnedPoints = request.points || (request.quantity * 10); 
         housekeeper.ecoPoints = (housekeeper.ecoPoints || 0) + earnedPoints;
         await housekeeper.save();
       }
+
+      //2.Collector capital earnings
+      const collector = await User.findById(request.collectorId);
+  if (collector) {
+    const earnings = request.points || (request.quantity * 10);
+    collector.walletBalance = (collector.walletBalance || 0) + earnings;
+    await collector.save();
+  }
     } else {
       request.status = status;
     }
@@ -404,5 +413,30 @@ app.get('/api/requests/collector-updates', authMiddleware, async (req, res) => {
     console.error("🔥 CRITICAL ERROR in collector-updates:", err.message);
     console.error(err.stack);
     res.status(500).json({ error: "Failed to fetch updates", details: err.message });
+  }
+});
+
+// Profile Route
+app.get('/api/user/profile', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user); 
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// GET COMPLETED HISTORY (collector)
+app.get('/api/requests/history', authMiddleware, async (req, res) => {
+  try {
+    const history = await GarbageRequests.find({
+      collectorId: req.user.id,
+      status: 'Delivered'
+    }).sort({ createdAt: -1 }); // Nayi history upar dikhegi
+    
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch history" });
   }
 });

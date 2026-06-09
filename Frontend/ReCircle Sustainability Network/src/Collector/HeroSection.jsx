@@ -1,10 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Truck,Clock,TrendingUp ,FileText,Leaf, CheckCircle, Trophy, MapPin, Mail, Compass, ArrowRight, Calendar } from 'lucide-react';
+import { Package, Truck, Clock, TrendingUp, FileText, Leaf, CheckCircle, Trophy, MapPin, Mail, Compass, ArrowRight, Calendar } from 'lucide-react';
+import { useNavigate,Link } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  
+  // ==========================================
+  // 1. ALL STATES (Hamesha top par hote hain)
+  // ==========================================
   const [user, setUser] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [nearbyCount, setNearbyCount] = useState(0);
+  const [acceptedCount, setAcceptedCount] = useState(0);
 
-  // 2. Greeting logic time ke hisaab se
+  // ==========================================
+  // 2. API FETCHING (useEffect)
+  // ==========================================
+  
+  // Fetch User Data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch('http://localhost:2007/api/auth/me', {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+        const data = await res.json();
+        if (res.ok) setUser(data.user);
+      } catch (err) {
+        console.error("Error fetching hero data:", err);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  // Fetch Pending & Accepted Requests (MEGA useEffect)
+  useEffect(() => {
+    fetch('http://localhost:2007/api/requests/pending', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // Filter Pending
+          const onlyPending = data.filter(req => req.status?.toLowerCase() === 'pending');
+          setNearbyCount(onlyPending.length); 
+          setPendingRequests(onlyPending); // List ke liye data
+
+          // Filter Accepted
+          const onlyAccepted = data.filter(req => req.status?.toLowerCase() === 'accepted');
+          setAcceptedCount(onlyAccepted.length); 
+        }
+      })
+      .catch(err => console.log(err));
+  }, []);
+
+  // Fetch History (Completed Requests)
+  useEffect(() => {
+    fetch('http://localhost:2007/api/requests/history', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setHistoryData(Array.isArray(data) ? data : []))
+      .catch(err => console.log(err));
+  }, []);
+
+  // ==========================================
+  // 3. LOGIC & CALCULATIONS
+  // ==========================================
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) return "Good Morning";
@@ -13,25 +74,63 @@ const HeroSection = () => {
     return "Good Night";
   };
 
-  // 3. API se Data fetch
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const res = await fetch('http://localhost:2007/api/auth/me', {
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include' // Ye bahut zaroori hai!
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data.user);
-        }
-      } catch (err) {
-        console.error("Error fetching hero data:", err);
-      }
-    };
-    fetchUserData();
-  }, []);
+  const now = new Date();
+  const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+  
+  // Weekly Data
+  const currentWeekData = historyData.filter(h => new Date(h.createdAt) >= startOfThisWeek);
+  const wasteSaved = currentWeekData.reduce((acc, item) => acc + (item.quantity || 0), 0);
+  const pickupCount = currentWeekData.length;
+  const performancePercentage = Math.min(Math.round((wasteSaved / 80) * 100), 100) || 0;
 
+  // Overall Data (Total Completed & Earnings)
+  const totalCompleted = historyData; 
+  const totalEarningsAllTime = totalCompleted.reduce((acc, item) => {
+    return acc + (item.points || (item.quantity * 10) || 0);
+  }, 0);
+
+  // Earnings Summary Metrics
+  const avgPerJob = totalCompleted.length > 0 
+    ? Math.round(totalEarningsAllTime / totalCompleted.length) 
+    : 0;
+
+  const weeklyEarnings = currentWeekData.reduce((acc, item) => {
+    return acc + (item.points || item.amount || item.price || (item.quantity * 10) || 0);
+  }, 0);
+
+  const weeklyGoal = 2000; 
+  const earningProgress = Math.min(Math.round((weeklyEarnings / weeklyGoal) * 100), 100) || 0;
+
+  const startOfLastWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() - 7);
+  const lastWeekData = totalCompleted.filter(h => {
+    const d = new Date(h.updatedAt || h.createdAt);
+    return d >= startOfLastWeek && d < startOfThisWeek;
+  });
+  const lastWeekEarnings = lastWeekData.reduce((acc, item) => acc + (item.points || item.amount || item.price || (item.quantity * 10) || 0), 0);
+  
+  const earningTrend = lastWeekEarnings > 0 
+    ? Math.round(((weeklyEarnings - lastWeekEarnings) / lastWeekEarnings) * 100) 
+    : (weeklyEarnings > 0 ? 100 : 0);
+
+  // ==========================================
+  // 4. ACTION HANDLERS
+  // ==========================================
+  
+  const handleAccept = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:2007/api/requests/accept/${id}`, {
+        method: 'PATCH',
+        credentials: 'include'
+      });
+      
+      if (res.ok) {
+        alert("Accepted!");
+        window.location.reload(); 
+      }
+    } catch (err) { console.error("Error:", err); }
+  };
+
+  
   return (
     <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 pb-10 -mt-2 sm:-mt-0 space-y-5">
       
@@ -145,7 +244,7 @@ const HeroSection = () => {
           />
           <path
             className="text-emerald-500 animate-[spin_1.5s_ease-out_forwards]"
-            strokeDasharray="85, 100"
+           strokeDasharray={`${performancePercentage}, 100`}
             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             fill="none"
             stroke="currentColor"
@@ -154,7 +253,7 @@ const HeroSection = () => {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-bold text-lg sm:text-xl md:text-2xl xl:text-xl text-gray-900 leading-none">85%</span>
+          <span className="font-bold text-lg sm:text-xl md:text-2xl xl:text-xl text-gray-900 leading-none">{performancePercentage}%</span>
         </div>
       </div>
       {/* New Trend Badge to fill vertical space */}
@@ -186,7 +285,7 @@ const HeroSection = () => {
         <div className="pl-0 pr-2 xl:pr-1">
           <p className="text-[8px] sm:text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Waste Saved</p>
           <p className="font-bold text-sm sm:text-base md:text-lg xl:text-base text-gray-900 truncate">
-            68.5 <span className="text-[8px] md:text-[9px] text-gray-500 font-semibold">kg</span>
+            {wasteSaved} <span className="text-[8px] md:text-[9px] text-gray-500 font-semibold">kg</span>
           </p>
         </div>
 
@@ -194,7 +293,7 @@ const HeroSection = () => {
         <div className="px-2 xl:px-2">
           <p className="text-[8px] sm:text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Pickups</p>
           <p className="font-bold text-sm sm:text-base md:text-lg xl:text-base text-gray-900 truncate">
-            24
+            {pickupCount}
           </p>
         </div>
 
@@ -202,7 +301,7 @@ const HeroSection = () => {
         <div className="pl-2 xl:pl-2">
           <p className="text-[8px] sm:text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Earnings</p>
           <p className="font-bold text-sm sm:text-base md:text-lg xl:text-base text-emerald-600 truncate">
-            ₹2,450
+            ₹{weeklyEarnings}
           </p>
         </div>
 
@@ -215,8 +314,8 @@ const HeroSection = () => {
 </div>
       
 
-      {/* =========================================
-    2. STATS ROW (Sleek, Light & Responsive)
+     {/* =========================================
+    2. STATS ROW (Overall / All Time)
 ============================================= */}
 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full py-4">
   
@@ -226,7 +325,7 @@ const HeroSection = () => {
       <Package size={25} strokeWidth={2} />
     </div>
     <div>
-      <h3 className="text-lg md:text-2xl font-bold leading-none">12</h3>
+      <h3 className="text-lg md:text-2xl font-bold leading-none">{nearbyCount}</h3>
       <p className="text-emerald-50 text-[9px] md:text-[12px] font-semibold mt-1 uppercase tracking-wider">Requests Nearby</p>
       <p className="text-emerald-100/80 text-[9px] mt-0.5 cursor-pointer hover:text-white transition-colors">View all →</p>
     </div>
@@ -238,33 +337,33 @@ const HeroSection = () => {
       <Truck size={25} strokeWidth={2} />
     </div>
     <div>
-      <h3 className="text-lg md:text-2xl font-bold leading-none">8</h3>
+      <h3 className="text-lg md:text-2xl font-bold leading-none">{acceptedCount}</h3>
       <p className="text-blue-50 text-[9px] md:text-[12px] font-semibold mt-1 uppercase tracking-wider">Accepted Pickups</p>
       <p className="text-blue-100/80 text-[9px] mt-0.5">In Progress</p>
     </div>
   </div>
 
-  {/* Card 3: Completed Today */}
+  {/* Card 3: Total Completed (All Time) */}
   <div className="bg-violet-600 text-white p-3.5 md:p-4 rounded-2xl shadow-sm flex items-center gap-3 hover:bg-violet-700 transition-colors">
     <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/20 flex items-center justify-center shrink-0">
       <CheckCircle size={25} strokeWidth={2} />
     </div>
     <div>
-      <h3 className="text-lg md:text-xl font-bold leading-none">7</h3>
-      <p className="text-violet-50 text-[9px] md:text-[12px] font-medium mt-1 uppercase tracking-wider">Completed Today</p>
-      <p className="text-violet-200/80 text-[9px] mt-0.5">+2 from yesterday</p>
+      <h3 className="text-lg md:text-xl font-bold leading-none">{totalCompleted.length}</h3>
+      <p className="text-violet-50 text-[9px] md:text-[12px] font-medium mt-1 uppercase tracking-wider">Total Completed</p>
+      <p className="text-violet-200/80 text-[9px] mt-0.5">All time</p>
     </div>
   </div>
 
-  {/* Card 4: Earnings Today */}
+  {/* Card 4: Total Earnings (All Time) */}
   <div className="bg-amber-500 text-white p-3.5 md:p-4 rounded-2xl shadow-sm flex items-center gap-3 hover:bg-amber-600 transition-colors">
     <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/20 flex items-center justify-center shrink-0">
       <Trophy size={25} strokeWidth={2} />
     </div>
     <div>
-      <h3 className="text-lg md:text-xl font-bold leading-none">₹560</h3>
-      <p className="text-amber-50 text-[9px] md:text-[12px] font-semibold mt-1 uppercase tracking-wider">Earnings Today</p>
-      <p className="text-amber-100/80 text-[9px] mt-0.5">+₹120 from yesterday</p>
+      <h3 className="text-lg md:text-xl font-bold leading-none">₹{totalEarningsAllTime}</h3>
+      <p className="text-amber-50 text-[9px] md:text-[12px] font-semibold mt-1 uppercase tracking-wider">Total Earnings</p>
+      <p className="text-amber-100/80 text-[9px] mt-0.5">All time</p>
     </div>
   </div>
 
@@ -276,194 +375,153 @@ const HeroSection = () => {
 <div className="flex flex-col lg:flex-row gap-5 md:gap-6 w-full">
   
   {/* LEFT SIDE: 50% Nearby Pickup Requests (Compact & Row-locked for Mobile) */}
-  <div className="w-full lg:w-1/2 bg-white rounded-3xl p-4 md:p-5 border border-gray-100 shadow-sm flex flex-col">
+  <div className="w-full lg:w-1/2 bg-white rounded-3xl p-4 md:p-5 border border-gray-300 shadow-sm flex flex-col">
     
     {/* Header */}
     <div className="flex justify-between items-center mb-3 md:mb-4">
       <h2 className="font-bold text-base md:text-lg text-gray-900">Nearby Pickup Requests</h2>
-      <button className="text-[10px] md:text-xs font-bold text-emerald-700 bg-white border border-emerald-200 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors shadow-sm">
+      <Link
+      to="/dashboard/nearby"
+      className="text-[10px] md:text-xs font-bold text-emerald-700 bg-white border border-emerald-200 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors shadow-sm">
         View All
-      </button>
+      </Link>
     </div>
 
-    {/* Requests List */}
+   {/* Requests List */}
     <div className="flex flex-col">
-      
-      {/* Item 1 */}
-      {/* Changed to permanent flex-row. No more stacking on mobile! */}
-      <div className="flex flex-row gap-3 md:gap-4 py-3 md:py-3.5 border-b border-gray-100 first:pt-0">
-        
-        {/* Fixed Thumbnail Image Box */}
-        <div className="w-20 h-20 md:w-24 md:h-20 shrink-0 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
-          <img src="/H1.jpg" alt="Mixed Recyclables" className="w-full h-full object-cover" />
-        </div>
-        
-        {/* Content Wrapper */}
-        <div className="flex-1 flex flex-row justify-between gap-2 min-w-0">
-          
-          {/* Details Area (min-w-0 prevents text overflow issues on small screens) */}
-          <div className="flex flex-col justify-center gap-1 md:gap-1.5 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h3 className="font-bold text-gray-900 text-xs md:text-sm truncate">Mixed Recyclables</h3>
-              {/* Badge hidden on very small phones to save space */}
-              <span className="hidden sm:inline-block bg-emerald-50 text-emerald-700 text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0">New</span>
+      {pendingRequests.length === 0 ? (
+        <p className="text-gray-500 text-sm p-4 text-center font-medium">No requests nearby.</p>
+      ) : (
+        pendingRequests.slice(0, 3).map((req) => (
+          <div key={req._id} className="flex flex-row gap-3 md:gap-4 py-3 md:py-3.5 border-b border-gray-100 first:pt-0 last:border-b-0">
+            
+            {/* Fixed Thumbnail Image Box */}
+            <div className="w-20 h-20 md:w-24 md:h-20 shrink-0 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+              <img 
+                src={req.image ? `http://localhost:2007${req.image}` : "/H1.jpg"} 
+                alt={req.wasteType || "Waste"} 
+                className="w-full h-full object-cover" 
+              />
             </div>
             
-            <div className="flex flex-col xl:flex-row xl:items-center gap-0.5 xl:gap-3 text-[10px] md:text-xs text-gray-500 font-medium">
-              <span className="flex items-center gap-1"><Package size={12} className="shrink-0" /> 2.5 kg</span>
-              <span className="flex items-center gap-1"><Calendar size={12} className="shrink-0" /> May 21, 10:30 AM</span>
-            </div>
-            
-            <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-500 font-medium truncate mt-0.5">
-              <MapPin size={12} className="shrink-0" /> <span className="truncate">221B Green Street, Indore</span>
-            </div>
-          </div>
+            {/* Content Wrapper */}
+            <div className="flex-1 flex flex-row justify-between gap-2 min-w-0">
+              
+              {/* Details Area (min-w-0 prevents text overflow issues on small screens) */}
+              <div className="flex flex-col justify-center gap-1 md:gap-1.5 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-bold text-gray-900 text-xs md:text-sm truncate">{req.wasteType}</h3>
+                  {/* Badge hidden on very small phones to save space */}
+                  <span className="hidden sm:inline-block bg-emerald-50 text-emerald-700 text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0">New</span>
+                </div>
+                
+                <div className="flex flex-col xl:flex-row xl:items-center gap-0.5 xl:gap-3 text-[10px] md:text-xs text-gray-500 font-medium">
+                  <span className="flex items-center gap-1"><Package size={12} className="shrink-0" /> {req.quantity} kg</span>
+                  <span className="flex items-center gap-1"><Calendar size={12} className="shrink-0" /> 
+                    {new Date(req.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-500 font-medium truncate mt-0.5">
+                  <MapPin size={12} className="shrink-0" /> <span className="truncate">{req.location}</span>
+                </div>
+              </div>
 
-          {/* Price & Action Button (Right aligned vertically) */}
-          <div className="flex flex-col justify-center items-end shrink-0 gap-1.5 md:gap-2">
-            <span className="text-base md:text-lg font-bold text-emerald-600 leading-none">₹40</span>
-            <button className="bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] md:text-xs font-bold px-3 md:px-4 py-1.5 rounded-lg transition-colors shadow-sm whitespace-nowrap">
-              Accept
-            </button>
-          </div>
+              {/* Price & Action Button (Right aligned vertically) */}
+              <div className="flex flex-col justify-center items-end shrink-0 gap-1.5 md:gap-2">
+                <span className="text-base md:text-lg font-bold text-emerald-600 leading-none">₹{req.points || req.quantity * 10}</span>
+                <button 
+                  onClick={() => handleAccept(req._id)}
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] md:text-xs font-bold px-3 md:px-4 py-1.5 rounded-lg transition-colors shadow-sm whitespace-nowrap"
+                >
+                  Accept
+                </button>
+              </div>
 
-        </div>
-      </div>
-
-      {/* Item 2 */}
-      <div className="flex flex-row gap-3 md:gap-4 py-3 md:py-3.5 border-b border-gray-100">
-        <div className="w-20 h-20 md:w-24 md:h-20 shrink-0 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
-          <img src="/H2.jpg" alt="Plastic Bottles" className="w-full h-full object-cover" />
-        </div>
-        <div className="flex-1 flex flex-row justify-between gap-2 min-w-0">
-          <div className="flex flex-col justify-center gap-1 md:gap-1.5 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h3 className="font-bold text-gray-900 text-xs md:text-sm truncate">Plastic Bottles</h3>
-              <span className="hidden sm:inline-block bg-emerald-50 text-emerald-700 text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0">New</span>
-            </div>
-            <div className="flex flex-col xl:flex-row xl:items-center gap-0.5 xl:gap-3 text-[10px] md:text-xs text-gray-500 font-medium">
-              <span className="flex items-center gap-1"><Package size={12} className="shrink-0" /> 1.8 kg</span>
-              <span className="flex items-center gap-1"><Calendar size={12} className="shrink-0" /> May 21, 11:15 AM</span>
-            </div>
-            <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-500 font-medium truncate mt-0.5">
-              <MapPin size={12} className="shrink-0" /> <span className="truncate">78 MG Road, Indore</span>
             </div>
           </div>
-          <div className="flex flex-col justify-center items-end shrink-0 gap-1.5 md:gap-2">
-            <span className="text-base md:text-lg font-bold text-emerald-600 leading-none">₹30</span>
-            <button className="bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] md:text-xs font-bold px-3 md:px-4 py-1.5 rounded-lg transition-colors shadow-sm whitespace-nowrap">
-              Accept
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Item 3 */}
-      <div className="flex flex-row gap-3 md:gap-4 py-3 md:py-3.5 border-b border-gray-100">
-        <div className="w-20 h-20 md:w-24 md:h-20 shrink-0 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
-          <img src="/H3.jpg" alt="Paper Waste" className="w-full h-full object-cover" />
-        </div>
-        <div className="flex-1 flex flex-row justify-between gap-2 min-w-0">
-          <div className="flex flex-col justify-center gap-1 md:gap-1.5 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h3 className="font-bold text-gray-900 text-xs md:text-sm truncate">Paper Waste</h3>
-            </div>
-            <div className="flex flex-col xl:flex-row xl:items-center gap-0.5 xl:gap-3 text-[10px] md:text-xs text-gray-500 font-medium">
-              <span className="flex items-center gap-1"><Package size={12} className="shrink-0" /> 3.2 kg</span>
-              <span className="flex items-center gap-1"><Calendar size={12} className="shrink-0" /> May 21, 12:00 PM</span>
-            </div>
-            <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-500 font-medium truncate mt-0.5">
-              <MapPin size={12} className="shrink-0" /> <span className="truncate">36 Scheme No. 54, Indore</span>
-            </div>
-          </div>
-          <div className="flex flex-col justify-center items-end shrink-0 gap-1.5 md:gap-2">
-            <span className="text-base md:text-lg font-bold text-emerald-600 leading-none">₹35</span>
-            <button className="bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] md:text-xs font-bold px-3 md:px-4 py-1.5 rounded-lg transition-colors shadow-sm whitespace-nowrap">
-              Accept
-            </button>
-          </div>
-        </div>
-      </div>
-
+        ))
+      )}
     </div>
 
     {/* Footer Full Width Button */}
-    <button className="w-full mt-3 bg-emerald-200 hover:bg-emerald-100 text-emerald-800 font-bold text-xs md:text-sm py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
+    <Link to="/dashboard/nearby" className="w-full mt-3 bg-emerald-200 hover:bg-emerald-100 text-emerald-800 font-bold text-xs md:text-sm py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
       View All Requests <ArrowRight size={14} />
-    </button>
+    </Link>
     
   </div>
 
- {/* RIGHT SIDE: 50% Earnings Summary (Polished, Balanced & Fully Responsive) */}
+ {/* RIGHT SIDE: 50% Earnings Summary (Fully Functional) */}
 <div className="w-full lg:w-1/2 bg-white rounded-3xl p-4 md:p-6 border border-gray-300 shadow-sm flex flex-col h-full">
   
   {/* Header */}
   <div className="flex justify-between items-center mb-4 md:mb-6">
     <h2 className="font-bold text-base md:text-lg text-gray-900">Earnings Summary</h2>
-    <button className="text-[10px] sm:text-xs font-bold border border-green-400 text-emerald-700 bg-emerald-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl hover:bg-emerald-100 transition-colors whitespace-nowrap">
+    <Link to="/dashboard/earnings" className="text-[10px] sm:text-xs font-bold border border-green-400 text-emerald-700 bg-emerald-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl hover:bg-emerald-100 transition-colors whitespace-nowrap">
       Go to Earnings
-    </button>
+    </Link>
   </div>
 
-  {/* Main Stats Card - Enhanced visual depth */}
+  {/* Main Stats Card */}
   <div className="bg-emerald-700 rounded-2xl md:rounded-3xl p-5 md:p-7 text-white shadow-xl relative overflow-hidden mb-5 md:mb-6">
-    {/* Decorative abstract circle */}
     <div className="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-emerald-600 rounded-full -mr-8 -mt-8 md:-mr-10 md:-mt-10 opacity-60"></div>
     
     <div className="relative z-10">
       <p className="text-emerald-100 text-xs md:text-sm font-semibold uppercase tracking-wider mb-1.5 md:mb-2">Total Earnings (This Week)</p>
       <div className="flex items-baseline gap-2 md:gap-3">
-        <h2 className="text-3xl md:text-4xl font-bold">₹12,450</h2>
-        <span className="flex items-center text-emerald-100 text-[10px] md:text-xs font-bold bg-emerald-800/50 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full whitespace-nowrap">
-          +12% ↑
+        <h2 className="text-3xl md:text-4xl font-bold">₹{weeklyEarnings}</h2>
+        <span className={`flex items-center text-[10px] md:text-xs font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full whitespace-nowrap ${earningTrend >= 0 ? 'bg-emerald-800/50 text-emerald-100' : 'bg-red-500/50 text-red-100'}`}>
+          {earningTrend >= 0 ? '+' : ''}{earningTrend}% {earningTrend >= 0 ? '↑' : '↓'}
         </span>
       </div>
       
       {/* Target Progress Bar */}
       <div className="mt-5 md:mt-7">
         <div className="flex justify-between text-[10px] md:text-xs font-semibold mb-1.5 md:mb-2 text-emerald-100">
-          <span>Target Progress</span>
-          <span>75%</span>
+          <span>Target Progress (₹{weeklyGoal})</span>
+          <span>{earningProgress}%</span>
         </div>
         <div className="w-full bg-emerald-900/40 h-2.5 md:h-3 rounded-full overflow-hidden shadow-inner">
-          <div className="bg-white h-full w-[75%] rounded-full shadow-md"></div>
+          <div 
+            className="bg-white h-full rounded-full shadow-md transition-all duration-1000 ease-out"
+            style={{ width: `${earningProgress}%` }}
+          ></div>
         </div>
       </div>
     </div>
   </div>
 
-  {/* 3-Column Grid (Responsive padding and gaps to prevent squashing on mobile) */}
+  {/* 3-Column Grid */}
   <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mt-auto">
     
-    {/* Stat Card 1 */}
+    {/* Card 1: Jobs Done */}
     <div className="bg-gray-50 hover:bg-gray-100 transition-colors p-3 sm:p-4 md:p-6 rounded-2xl md:rounded-3xl border border-gray-300 flex flex-col items-center justify-center text-center overflow-hidden">
-      <div className="text-emerald-600 mb-2 md:mb-3 bg-emerald-100 rounded-full flex items-center justify-center">
-        <Clock size={22} />
+      <div className="text-emerald-600 mb-2 md:mb-3 bg-emerald-100 rounded-full flex items-center justify-center p-2">
+        <CheckCircle size={20} />
       </div>
-      <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-1 truncate w-full">Pending</p>
-      <p className="text-base sm:text-lg md:text-xl font-bold text-gray-900">₹2.8k</p>
+      <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-1 truncate w-full">Jobs Done</p>
+      <p className="text-base sm:text-lg md:text-xl font-bold text-gray-900">{totalCompleted.length}</p>
     </div>
 
-    {/* Stat Card 2 */}
+    {/* Card 2: Average Per Job */}
     <div className="bg-gray-50 hover:bg-gray-100 transition-colors p-3 sm:p-4 md:p-6 rounded-2xl md:rounded-3xl border border-gray-300 flex flex-col items-center justify-center text-center overflow-hidden">
-      <div className="text-blue-600 mb-2 md:mb-3 bg-blue-100 rounded-full flex items-center justify-center">
-        <CheckCircle size={22} />
+      <div className="text-amber-600 mb-2 md:mb-3 bg-amber-100 rounded-full flex items-center justify-center p-2">
+        <TrendingUp size={20} />
       </div>
-      <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-1 truncate w-full">Jobs</p>
-      <p className="text-base sm:text-lg md:text-xl font-bold text-gray-900">42</p>
+      <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-1 truncate w-full">Avg / Job</p>
+      <p className="text-base sm:text-lg md:text-xl font-bold text-gray-900">₹{avgPerJob}</p>
     </div>
 
-    {/* Stat Card 3 */}
+    {/* Card 3: In Progress (Accepted) */}
     <div className="bg-gray-50 hover:bg-gray-100 transition-colors p-3 sm:p-4 md:p-6 rounded-2xl md:rounded-3xl border border-gray-300 flex flex-col items-center justify-center text-center overflow-hidden">
-      <div className="text-amber-600 mb-2 md:mb-3 bg-amber-100 rounded-full flex items-center justify-center">
-        <TrendingUp size={22} />
+      <div className="text-blue-600 mb-2 md:mb-3 bg-blue-100 rounded-full flex items-center justify-center p-2">
+        <Clock size={20} />
       </div>
-      <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-1 truncate w-full">Avg/Job</p>
-      <p className="text-base sm:text-lg md:text-xl font-bold text-gray-900">₹296</p>
+      <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-1 truncate w-full">In Progress</p>
+      <p className="text-base sm:text-lg md:text-xl font-bold text-gray-900">{acceptedCount}</p>
     </div>
     
   </div>
-
 </div>
 
 </div>
@@ -478,7 +536,7 @@ const HeroSection = () => {
   
   <div className="flex justify-between items-center mb-6">
     <h2 className="font-bold text-lg text-gray-900">Recent Activity</h2>
-    <button className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors">View All</button>
+    <Link to="/dashboard/history" className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors">View All</Link>
   </div>
 
   {/* Table container with horizontal scroll for mobile */}
@@ -494,54 +552,22 @@ const HeroSection = () => {
         </tr>
       </thead>
       <tbody className="text-sm font-semibold text-gray-700">
-        
-        {/* Row 1 */}
-        <tr className="border-b border-gray-50">
-          <td className="py-4 pl-2 text-gray-900">#01</td>
-          <td className="py-4 flex items-center gap-3">
-            <img src="/H1.jpg" alt="Plastic" className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" />
-            Plastic Waste
-          </td>
-          <td className="py-4">4.2 kg</td>
-          <td className="py-4 text-[11px] text-gray-600">Today, 08:30 AM</td>
-          <td className="py-4 text-right pr-2"><span className="text-[11px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">Completed</span></td>
-        </tr>
-
-        {/* Row 2 */}
-        <tr className="border-b border-gray-50">
-          <td className="py-4 pl-2 text-gray-900">#02</td>
-          <td className="py-4 flex items-center gap-3">
-            <img src="/H2.jpg" alt="Paper" className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" />
-            Paper Collection
-          </td>
-          <td className="py-4">1.5 kg</td>
-          <td className="py-4 text-[11px] text-gray-600">Yesterday, 02:00 PM</td>
-          <td className="py-4 text-right pr-2"><span className="text-[11px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">Completed</span></td>
-        </tr>
-
-        {/* Row 3 */}
-        <tr className="border-b-0">
-          <td className="py-4 pl-2 text-gray-900">#03</td>
-          <td className="py-4 flex items-center gap-3">
-            <img src="/H3.jpg" alt="Glass" className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" />
-            Glass Bottles
-          </td>
-          <td className="py-4">2.0 kg</td>
-          <td className="py-4 text-[11px] text-gray-600">May 20, 11:00 AM</td>
-          <td className="py-4 text-right pr-2"><span className="text-[11px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">Completed</span></td>
-        </tr>
-
-        {/* Row 4*/}
-        <tr className="border-b border-gray-50">
-          <td className="py-4 pl-2 text-gray-900">#04</td>
-          <td className="py-4 flex items-center gap-3">
-            <img src="/H4.jpg" alt="E-Waste" className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" />
-            E-Waste
-          </td>
-          <td className="py-4">0.8 kg</td>
-          <td className="py-4 text-[11px] text-gray-600">May 18, 09:15 AM</td>
-          <td className="py-4 text-right pr-2"><span className="text-[10px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">Completed</span></td>
-        </tr>
+        {historyData.slice(0, 4).map((item, index) => (
+  <tr key={item._id} className="border-b border-gray-50 last:border-b-0">
+    <td className="py-4 pl-2 text-gray-900">#{index + 1}</td>
+    <td className="py-4 flex items-center gap-3">
+      <img src={item.image ? `http://localhost:2007${item.image}` : "/H1.jpg"} alt={item.wasteType} className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" />
+      {item.wasteType.charAt(0).toUpperCase() + item.wasteType.slice(1)}
+    </td>
+    <td className="py-4">{item.quantity} kg</td>
+    <td className="py-4 text-[11px] text-gray-600">{new Date(item.createdAt).toLocaleDateString()}</td>
+    <td className="py-4 text-right pr-2">
+      <span className="text-[11px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">
+        {item.status === 'Delivered' ? 'Completed' : item.status}
+      </span>
+    </td>
+  </tr>
+))}
 
       </tbody>
     </table>

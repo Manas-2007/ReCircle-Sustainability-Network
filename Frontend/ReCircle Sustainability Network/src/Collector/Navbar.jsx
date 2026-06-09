@@ -120,7 +120,7 @@ const Navbar = () => {
             
             <div className="hidden xl:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] shadow-sm cursor-default hover:shadow-md transition-all">
               <span className="text-[#166534] font-bold text-sm">₹</span>
-              <span className="font-[650] text-[#166534] text-[13.5px] tracking-tight">2,850.00</span>
+              <span className="font-[650] text-[#166534] text-[13.5px] tracking-tight">{user?.walletBalance ? user.walletBalance.toFixed(2) : "0.00"}</span>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-6">
@@ -223,7 +223,7 @@ const Navbar = () => {
               <p className="text-sm font-bold text-gray-900">{user?.firstName} {user?.lastName}</p>
               <p className="text-[11px] font-bold text-emerald-700 mt-1 flex items-center gap-1.5 bg-emerald-50 px-2 py-1 rounded-lg w-fit border border-emerald-100/50">
                 <Wallet size={12} />
-                <span>₹2,450 Earned</span>
+                <span>₹{user?.walletBalance ? user.walletBalance.toFixed(2) : "0.00"} Earned</span>
               </p>
             </div>
           </Link>

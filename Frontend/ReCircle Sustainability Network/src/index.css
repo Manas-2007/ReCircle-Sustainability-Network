@@ -44,3 +44,24 @@ html, body {
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background-color: #15803d;
 }
+
+@keyframes shine {
+  0% { transform: translateX(-150%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shine {
+  animation: shine 2s infinite;
+}
+
+/* Mobile Background scroll  */
+.custom-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #16a34a transparent;
+  overscroll-behavior-y: contain; 
+}
+
+html {
+  scroll-behavior: smooth;
+}

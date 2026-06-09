@@ -1,52 +1,19 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { Download, MapPin, Calendar, History as HistoryIcon } from "lucide-react";
 
 const History = () => {
-  const historyData = [
-    {
-      id: 1,
-      image: "https://images.unsplash.com/photo-1558640479-8246d8d3f4b4?w=400",
-      wasteType: "Plastic Bottles",
-      quantity: 15,
-      amount: 120,
-      address: "Green Park Avenue",
-      pincode: "462001",
-      date: "01 Jun 2026",
-    },
-    {
-      id: 2,
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400",
-      wasteType: "Paper Waste",
-      quantity: 22,
-      amount: 180,
-      address: "Model Town",
-      pincode: "462010",
-      date: "30 May 2026",
-    },
-    {
-      id: 3,
-      image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400",
-      wasteType: "Metal Scrap",
-      quantity: 12,
-      amount: 250,
-      address: "Sector 4",
-      pincode: "462022",
-      date: "28 May 2026",
-    },
-    {
-      id: 4,
-      image: "https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=400",
-      wasteType: "E-Waste",
-      quantity: 8,
-      amount: 320,
-      address: "Lake View Colony",
-      pincode: "462016",
-      date: "25 May 2026",
-    },
-  ];
+  const [historyData, setHistoryData] = useState([]);
 
-  const totalKg = historyData.reduce((sum, item) => sum + item.quantity, 0);
-  const totalEarnings = historyData.reduce((sum, item) => sum + item.amount, 0);
+  useEffect(() => {
+    fetch('http://localhost:2007/api/requests/history', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setHistoryData(data))
+      .catch(err => console.log("History fetch error", err));
+  }, []);
+
+// Dynamic Calculations
+  const totalKg = historyData.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const totalEarnings = historyData.reduce((sum, item) => sum + (item.points || item.quantity * 10), 0);
 
   const downloadHistory = () => {
     window.print();
@@ -174,18 +141,18 @@ const History = () => {
       </thead>
       <tbody className="divide-y divide-gray-50">
         {historyData.map((item, index) => (
-          <tr key={item.id} className="hover:bg-emerald-100/40 transition-colors group">
+          <tr key={item._id} className="hover:bg-emerald-100/40 transition-colors group">
             
             {/* S.No Data */}
             <td className="px-6 py-4 font-semibold text-gray-700">
-              #{index + 1 < 10 ? `0${index + 1}` : index + 1}
+             #{index + 1}
             </td>
 
             <td className="px-6 py-4">
               <div className="flex items-center gap-3">
                 <img 
-                  src={item.image} 
-                  alt={item.wasteType} 
+                  src={item.image ? `http://localhost:2007${item.image}` : "default.jpg"}
+                  alt="Waste" 
                   className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" 
                 />
                 <span className="font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">
@@ -201,18 +168,17 @@ const History = () => {
             </td>
 
             <td className="px-6 py-4">
-              <p className="font-semibold text-gray-800">{item.address}</p>
+              <p className="font-semibold text-gray-800">{item.location}</p>
               <p className="text-[11px] text-gray-500 mt-0.5">Pin: {item.pincode}</p>
             </td>
 
             <td className="px-6 py-4 font-medium text-gray-600">
-              {item.date}
+             {new Date(item.createdAt).toLocaleDateString()}
             </td>
 
             <td className="px-6 py-4 text-right">
               <span className="bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-bold inline-block">
-                ₹{item.amount}
-              </span>
+               ₹{item.points || item.quantity * 10}</span>
             </td>
 
           </tr>

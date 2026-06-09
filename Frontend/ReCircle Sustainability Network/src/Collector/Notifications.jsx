@@ -28,61 +28,53 @@ const Notifications = () => {
 
   const [notifications, setNotifications] = useState(staticNotifications);
 
-  // --- FETCH REAL NOTIFICATIONS (Dynamic Logic) ---
-  useEffect(() => {
-    const fetchRealNotifications = async () => {
-      try {
-        const res = await fetch('http://localhost:2007/api/requests/my-requests', { credentials: 'include' });
-        const data = await res.json();
-        
-        if (res.ok) {
-          const realNotifs = data
-            // Ab 'Delivered' ko bhi filter mein allow karenge
-            .filter(req => req.status === 'Accepted' || req.status === 'Scheduled' || req.status === 'Delivered')
-            .map(req => {
-              // 1. Agar request Delivered ho chuki hai, toh REWARD NOTIFICATION dikhao
-              if (req.status === 'Delivered') {
-                return {
-                  id: req._id,
-                  type: 'points_earned',
-                  title: 'Eco Points Credited ✅',
-                  message: `Amazing! ${req.points || req.quantity * 10} Eco Points have been added to your balance for your ${req.quantity}kg ${req.wasteType} contribution.`,
-                  time: 'Just updated',
-                  isUnread: true,
-                  image: '/eco.jpg', // Tumhari points wali image
-                  actionText: 'View History',
-                  actionIcon: <Wallet size={14} />,
-                  status: 'Completed'
-                };
-              }
-
-              // 2. Default logic for Accepted & Scheduled
+  // --- FETCH REAL NOTIFICATIONS FOR COLLECTOR ---
+useEffect(() => {
+  const fetchRealNotifications = async () => {
+    try {
+      // Collector ka endpoint
+      const res = await fetch('http://localhost:2007/api/requests/collector-updates', { credentials: 'include' });
+      const data = await res.json();
+      
+      if (res.ok) {
+        const realNotifs = data
+          // Status 'Delivered' ko handle karenge
+          .map(req => {
+            if (req.status === 'Delivered') {
               return {
                 id: req._id,
-                collectorId: req.collectorId,
-                type: 'collector_accepted',
-                title: req.status === 'Accepted' ? 'Pickup Accepted!' : 'Pickup Scheduled!',
-                message: req.status === 'Accepted' 
-                  ? `A collector has accepted your request for ${req.quantity}kg ${req.wasteType}.` 
-                  : `Your pickup is scheduled for ${req.scheduledDate} at ${req.scheduledTime}.`,
-                time: 'Just updated',
+                type: 'delivered', // Green style ke liye
+                title: 'Payment Credited! 💸',
+                message: `Delivery Successful! ₹${req.points || req.quantity * 10} has been added to your wallet for collecting ${req.quantity}kg of ${req.wasteType}.`,
+                time: 'Just now',
                 isUnread: true,
-                image: req.image?.startsWith('http') ? req.image : `http://localhost:2007${req.image}`,
-                actionText: 'View Collector',
-                actionIcon: <MapPin size={14} />,
-                status: req.status
+                image: '/wallet-icon.png', // Tumhara wallet icon
+                amount: `₹${req.points || req.quantity * 10}`, // Amount yahan dikhega
+                status: 'Completed'
               };
-            });
+            }
+            
+            // Baki statuses ke liye (jaise Accepted)
+            return {
+               id: req._id,
+               type: 'pending',
+               title: 'Pickup Update',
+               message: `Pickup for ${req.quantity}kg ${req.wasteType} is ${req.status}.`,
+               time: 'Just updated',
+               isUnread: true,
+               image: '/delivery-truck.png' // Optional: Truck icon
+            };
+          });
 
-          setNotifications([...realNotifs, ...staticNotifications]);
-        }
-      } catch (err) {
-        console.error("Error fetching notifications:", err);
+        setNotifications([...realNotifs, ...staticNotifications]);
       }
-    };
+    } catch (err) {
+      console.error("Error fetching collector notifications:", err);
+    }
+  };
 
-    fetchRealNotifications();
-  }, []);
+  fetchRealNotifications();
+}, []);
 
   const unreadCount = notifications.filter(n => n.isUnread).length;
 

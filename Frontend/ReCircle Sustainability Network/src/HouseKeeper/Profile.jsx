@@ -26,7 +26,7 @@ const Profile = () => {
   fetchHistory();
 }, []);
 
-  // 1. Fetching logic
+  // Profile Fetching logic
 useEffect(() => {
   const fetchProfile = async () => {
     try {
@@ -49,8 +49,6 @@ useEffect(() => {
 
   // USER DATA (Dynamic Badge Logic Based on Eco Points)
   const totalPoints = userData?.points || 0;
-
-  // Dynamic Badge Calculator
   const getBadgeInfo = (points) => {
     if (points >= 5000) return { icon: "👑", name: "Champion", bg: "bg-amber-100", text: "text-amber-700", border: "border-amber-200" };
     if (points >= 2000) return { icon: "🌍", name: "Planet Protector", bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-200" };
@@ -74,11 +72,11 @@ useEffect(() => {
       const res = await fetch('http://localhost:2007/api/auth/logout', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include' // <--- YE THA ASLI HERO!
+        credentials: 'include' 
       });
 
       if (res.ok) {
-        navigate('/'); // Redirect to Home
+        navigate('/');
       } else {
         alert("Logout failed, try again!");
       }
@@ -96,12 +94,11 @@ useEffect(() => {
   const userBadge = getBadgeInfo(totalPoints);
 
   return (
-    // Single View Container
    <div className="w-full max-w-[1400px] mx-auto px-5 md:px-8 lg:px-12 lg:h-[calc(100vh-110px)] font-sans pb-10 -mt-2 sm:-mt-0">
       
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-6 h-full">
         
-        {/* LEFT COLUMN: FIXED PROFILE CARD */}
+        {/* LEFT COLUMN*/}
         <div className="w-full lg:w-[340px] xl:w-[360px] flex-shrink-0 flex flex-col bg-white rounded-[24px] border border-gray-200 shadow-sm overflow-hidden h-fit">
           
           {/* Cover Photo */}
@@ -189,7 +186,7 @@ useEffect(() => {
   </div>
 </div>
 
-          {/* Action Buttons (Edit & Logout) - FIXED HEIGHT ISSUE */}
+          {/* Action Buttons*/}
           <div className="p-4 sm:p-5 flex items-center gap-3 w-full shrink-0 bg-white">
             <button 
               onClick={() => setIsEditing(!isEditing)}
@@ -207,9 +204,7 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* ========================================== */}
-        {/* RIGHT COLUMN: UNIFIED ON DESKTOP, ACCORDION ON MOBILE */}
-        {/* ========================================== */}
+        {/* RIGHT COLUMN */}
         <div className="flex-1 flex flex-col bg-white rounded-[24px] border border-gray-200 shadow-sm overflow-hidden h-fit lg:h-full">
           
           {/* Header Row */}
@@ -225,10 +220,10 @@ useEffect(() => {
             )}
           </div>
 
-          {/* Form Scrollable Area (Tight spacing on mobile, wide on desktop) */}
+          {/* Form Scrollable Area */}
           <div className="p-4 sm:p-8 overflow-y-auto flex-1 space-y-3 lg:space-y-10 scrollbar-hide bg-gray-50/50 lg:bg-white">
             
-            {/* SECTION 1: Personal Information */}
+            {/* Personal Information */}
             <section className="animate-fadeIn bg-white lg:bg-transparent border border-gray-200 lg:border-none rounded-2xl lg:rounded-none overflow-hidden lg:overflow-visible shadow-sm lg:shadow-none">
               
               {/* Accordion Header (Clickable ONLY on mobile) */}
@@ -298,7 +293,7 @@ useEffect(() => {
               </div>
             </section>
 
-            {/* SECTION 2: Notification Preferences */}
+            {/* Notification Preferences */}
             <section className="animate-fadeIn bg-white lg:bg-transparent border border-gray-200 lg:border-none rounded-2xl lg:rounded-none overflow-hidden lg:overflow-visible shadow-sm lg:shadow-none">
               
               <div
@@ -333,7 +328,7 @@ useEffect(() => {
               </div>
             </section>
 
-            {/* SECTION 3: Security */}
+            {/* Security */}
             <section className="animate-fadeIn bg-white lg:bg-transparent border border-gray-200 lg:border-none rounded-2xl lg:rounded-none overflow-hidden lg:overflow-visible shadow-sm lg:shadow-none pb-0 lg:pb-6">
               
               <div

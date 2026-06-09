@@ -15,7 +15,6 @@ const HeroSection = () => {
       })
       .then(res => res.json())
       .then(data => {
-      // IMAGE URL FIX: Relative path ko full URL banao
       const formattedRequests = data.map(req => ({
         ...req,
         image: req.image ? (req.image.startsWith('http') ? req.image : `http://localhost:2007${req.image}`) : null
@@ -46,16 +45,17 @@ useEffect(() => {
     fetchUserData();
   }, []);
 
-  //Day Sentence
+
+  //Day wishing logic
   const getGreeting = () => {
-  const hour = new Date().getHours(); // Current hour mil jayega
+  const hour = new Date().getHours();
   if (hour >= 5 && hour < 12) return "Good Morning";
   if (hour >= 12 && hour < 17) return "Good Afternoon";
   if (hour >= 17 && hour < 21) return "Good Evening";
   return "Good Night";
 };
 
-// --- DYNAMIC DASHBOARD LOGIC (Replace all previous calculation blocks with this) ---
+// DASHBOARD LOGIC
 const deliveredRequests = requests.filter(r => r.status === 'Delivered');
 const totalWaste = deliveredRequests.reduce((acc, curr) => acc + (curr.quantity || 0), 0);
 const totalPickups = deliveredRequests.length;
@@ -213,7 +213,7 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
     </button>
   </div>
 
-  {/* STEPPER (Keeping it as is for the top active request) */}
+  {/* STEPPER*/}
   <div className="w-full overflow-hidden">
     <div className="relative w-full mx-auto mt-2 sm:mt-4 z-0">
       <div className="absolute top-[18px] sm:top-[22px] left-[10%] right-[10%] h-[2px] sm:h-[3px] bg-gray-200 z-0"></div>
@@ -253,10 +253,9 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
     </div>
   </div>
 
-  {/* DYNAMIC REQUEST CARDS (Max 3) */}
+  {/* DYNAMIC REQUEST CARDS */}
   <div className="mt-4">
     {requests.filter(r => r.status !== 'Delivered' && r.status !== 'Completed').slice(0, 3).map((req, i) => {
-      // YAHAN HAI FIX: Ab hum status pe depend karenge, na ki sirf collector object pe
       const isAssigned = req.status !== 'Pending'; 
       const collectorName = typeof req.collector === 'string' ? req.collector : req.collector?.name || 'ReCircle Partner';
 
@@ -422,16 +421,17 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
 </div>
       </div>
 
-        {/* --- RIGHT SIDEBAR (1 Column) --- */}
+        {/* RIGHT SIDEBAR  */}
     <div className="space-y-6">
 
-      {/* 1. Eco Impact Card - DYNAMIC */}
+      {/* 1. Eco Impact Card  */}
 <div className="bg-gradient-to-br from-[#f2fdf5] to-white p-5 sm:p-6 rounded-3xl border border-emerald-300/80 shadow-sm w-full transition-all duration-300 ease-out">
   <div className="flex justify-between items-center mb-6">
     <h3 className="font-bold text-emerald-900 text-[15px] sm:text-base tracking-wide">
       Your Eco Impact
     </h3>
-    {/* The 'i' button replacing the text button */}
+
+    {/* 'i' button */}
     <button 
       onClick={() => setShowCo2Modal(true)} 
       className="text-emerald-600 hover:text-emerald-800 transition-colors p-1.5 rounded-full hover:bg-emerald-50"
@@ -456,7 +456,7 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
   </div>
 </div>
 
-{/* MEDIUM SIZE CO2 CALCULATION MODAL */}
+{/* CO2 CALCULATION MODAL */}
 {showCo2Modal && (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
     <div className="relative w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-300">
@@ -535,7 +535,7 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
   </div>
 )}
 
-      {/* 2. Eco Rewards Card - Hover Scaling */}
+      {/* Eco Rewards Card */}
       <div className="relative w-full rounded-3xl overflow-hidden font-sans min-h-[300px] p-7 sm:p-5 flex flex-col justify-between shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group cursor-pointer">
 
         <img
@@ -547,7 +547,7 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
         {/* Content Layer */}
         <div className="relative z-10 flex flex-col h-full justify-between">
           
-          {/* Top Header: Title & View All Button */}
+          {/* Top Header */}
           <div className="flex justify-between items-start mb-3">
             <h3 className="font-semibold text-[#dcedc1] tracking-wide text-sm sm:text-base">
               Eco Rewards
@@ -557,7 +557,7 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
             </Link>
           </div>
 
-          {/* Middle Points Section */}
+          {/* Points Section */}
           <div className="mb-2 transform group-hover:translate-x-1 transition-transform duration-300">
             <h2 className="text-4xl sm:text-4xl font-[600] text-white mb-1 tracking-tight">
              {user?.points || 0}
@@ -567,7 +567,6 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
             </p>
           </div>
 
-          {/* Description Text */}
           <p className="text-xs sm:text-[12px] text-white/80 font-medium leading-relaxed max-w-[55%] sm:max-w-[60%] mb-6">
             Redeem your points for exciting rewards and discounts.
           </p>
@@ -582,7 +581,7 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
         </div>
       </div>
 
-      {/* 3. Quick Actions - Themed & Animated */}
+      {/* 3. Quick Actions */}
     <div className="bg-gradient-to-br from-[#f2fdf5] to-white p-5 sm:p-6 rounded-3xl border border-emerald-300/80 shadow-sm w-full hover:-translate-y-1 hover:shadow-md transition-all duration-300">
       <h3 className="font-bold text-emerald-900 mb-5 text-[15px] sm:text-base tracking-wide">
         Quick Actions
@@ -620,17 +619,14 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
       </div>
     </div>
 
-      {/* 4. Global Impact / Revolving Earth Card */}
+      {/* Global Impact */}
       <div className="bg-gradient-to-br from-emerald-900 to-[#064e3b] p-6 sm:p-7 rounded-3xl border border-emerald-800 shadow-xl font-sans w-full relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
         
-        {/* Large Background Revolving Earth (Decorative) */}
         <div className="absolute -right-12 -top-12 opacity-10 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none">
           <Globe size={180} className="text-emerald-100 animate-[spin_20s_linear_infinite]" strokeWidth={1} />
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center">
-          
-          {/* Small Glowing Revolving Earth */}
           <div className="relative mb-5">
             <div className="absolute inset-0 bg-emerald-400 blur-md opacity-30 rounded-full animate-pulse"></div>
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
@@ -638,8 +634,6 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
             </div>
             <Sparkles size={16} className="absolute -top-1 -right-2 text-emerald-300 animate-bounce" />
           </div>
-
-          {/* Message Content */}
           <h3 className="text-white font-bold text-base sm:text-lg tracking-wide mb-2">
             Our Planet Thanks You! 🌍
           </h3>
@@ -647,8 +641,6 @@ const dashOffset = 263.89 - (impactPercent / 100 * 263.89);
           <p className="text-emerald-100/80 text-xs sm:text-[13px] leading-relaxed font-medium mb-6 max-w-[220px]">
             Every item you recycle is a step towards a greener, cleaner Earth. You're part of a global movement today.
           </p>
-
-          {/* Action Button */}
           <button onClick={() => setShowCo2Modal(true)}  className="w-full text-[11px] sm:text-xs font-bold text-emerald-950 bg-emerald-100 px-4 py-2.5 rounded-xl hover:bg-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)] transition-all duration-300">
             See Global Impact
           </button>

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 const Request = () => {
+
   // Points logic per KG
   const pointsMultiplier = {
     plastic: 15,
@@ -32,7 +33,6 @@ const Request = () => {
 
   const fileInputRef = useRef(null);
 
-  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Form State (Empty by default)
@@ -83,7 +83,7 @@ const Request = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // FormData create karo
+  // FormData creation
   const data = new FormData();
   data.append('name', formData.name);
   data.append('wasteType', formData.wasteType);
@@ -92,15 +92,14 @@ const Request = () => {
   data.append('pincode', formData.pincode);
   data.append('points', calculatedPoints);
   if (fileInputRef.current.files[0]) {
-    data.append('image', fileInputRef.current.files[0]); // File add ki
+    data.append('image', fileInputRef.current.files[0]); 
   }
 
   try {
     const res = await fetch('http://localhost:2007/api/requests/create', {
       method: 'POST',
       credentials: 'include',
-      body: data // JSON.stringify mat karna, FormData direct bhejo
-      // 'Content-Type' header mat bhejo, fetch apne aap handle karega
+      body: data 
     });
 
     if (res.ok) {
@@ -185,15 +184,13 @@ const Request = () => {
   </div>
 </div>
 
-      {/* CREATE REQUEST MODAL (Ultra-Compact & Centered) */}
+      {/* CREATE REQUEST MODAL*/}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-          {/* Decreased width for desktop to max-w-[480px] */}
           <div className="relative w-full max-w-[480px] my-auto animate-in fade-in zoom-in-95 duration-200">
             
             <form 
               onSubmit={handleSubmit} 
-              // Removed scroller (overflow-y-auto), made it cleanly hidden
               className="bg-gradient-to-br from-emerald-50 to-emerald-100/40 rounded-[24px] border-2 border-emerald-300 shadow-2xl p-4 sm:p-5 relative flex flex-col overflow-hidden"
             >
               {/* Close Button */}
@@ -213,7 +210,6 @@ const Request = () => {
                 Pickup Details
               </h3>
 
-              {/* Grid: Forced 2 columns on ALL screens so small fields don't drop to a new row */}
               <div className="grid grid-cols-2 gap-3 flex-1">
                 
                 {/* Name */}
@@ -244,7 +240,6 @@ const Request = () => {
                       <option value="paper">Paper</option>
                       <option value="metal">Metals</option>
                     </select>
-                    {/* Custom small arrow to make it look like a dropdown even on mobile */}
                     <ChevronRight size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-emerald-600/70 rotate-90 pointer-events-none" />
                   </div>
                 </div>
@@ -304,7 +299,7 @@ const Request = () => {
                   </div>
                 </div>
 
-                {/* Amber/Gold Eco Points Banner */}
+                {/* Eco Points Banner */}
                 <div className="col-span-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg p-2.5 flex items-center justify-between shadow-sm border border-amber-600 mt-1 shrink-0">
                   <div className="flex items-center gap-2.5 text-white">
                     <div className="bg-white/20 p-1 rounded-md backdrop-blur-sm border border-white/20"><Award size={16} className="text-white" /></div>
@@ -318,7 +313,7 @@ const Request = () => {
                   </div>
                 </div>
 
-                {/* Submit Button (Dark Green) */}
+                {/* Submit Button*/}
                 <div className="col-span-2 mt-auto pt-1 shrink-0">
                   <button 
                     type="submit"
@@ -340,12 +335,10 @@ const Request = () => {
       {/* Requested Pickups Grid */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
   {requests.map((req, index) => {
-  // Safe check lagaya hai taaki status na hone par error na aaye
   const isPending = req.status ? req.status.toLowerCase() === "pending" : false;
 
   return (
     <div
-      // MongoDB ki ID (_id) ko priority di hai
       key={req._id || req.id || index}
       className="
         bg-white
@@ -366,7 +359,6 @@ const Request = () => {
         gap-2.5 sm:gap-3
       "
     >
-        {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent pointer-events-none -z-10"></div>
 
         {/* Top Section */}

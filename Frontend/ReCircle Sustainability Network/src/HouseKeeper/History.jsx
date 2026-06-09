@@ -17,10 +17,8 @@ const History = () => {
         const data = await res.json();
 
         if (res.ok) {
-          // Filter only completed/delivered requests
           const completedRequests = data.filter(req => req.status === 'Delivered');
 
-          // Map for Table/Cards
           const formattedData = completedRequests.map(req => ({
             id: req._id,
             date: new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
@@ -29,14 +27,13 @@ const History = () => {
             type: req.wasteType,
             weight: `${req.quantity} kg`,
             points: req.points || req.quantity * 10,
-            collector: 'ReCircle Partner', // Can be populated if backend sends collector details
+            collector: 'ReCircle Partner',
             status: 'Completed',
             image: req.image?.startsWith('http') ? req.image : `http://localhost:2007${req.image}`
           }));
 
           setHistoryData(formattedData);
 
-          // Calculate Top Stats
           const pickups = completedRequests.length;
           const points = completedRequests.reduce((sum, req) => sum + (req.points || req.quantity * 10), 0);
           const waste = completedRequests.reduce((sum, req) => sum + req.quantity, 0);
@@ -50,7 +47,7 @@ const History = () => {
     fetchHistory();
   }, []);
 
-  // 1. STATS DATA (Mapped to dynamic values)
+  // STATS DATA 
   const stats = [
     { 
       title: 'Total Pickups', 
@@ -156,9 +153,8 @@ const History = () => {
       ))}
     </div>
 
-      {/* HISTORY TABLE WITH S.NO AND QUANTITY COLUMNS */}
+      {/* HISTORY TABLE  */}
       <div className="divide-y divide-gray-100">
-        {/* Desktop Header Labels */}
         <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-300 bg-gray-50/50 text-[13px] font-bold text-gray-500 uppercase tracking-wider">
           <div className="col-span-1">S.No</div>
           <div className="col-span-4">Pickup Details</div>
@@ -174,15 +170,13 @@ const History = () => {
         historyData.map((item, index) => (
           <div key={item.id} className="group transition-all duration-300">
             
-           {/* DESKTOP TABLE ROW - ENHANCED & SLIGHTLY LARGER */}
+           {/* DESKTOP TABLE ROW */}
 <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-5 bg-white hover:bg-gray-50/60 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-[1px] transition-all duration-300 items-center border-b border-gray-100/80 group">
   
-  {/* 1. S.No - Thoda bada aur hover pe color change hoga */}
   <div className="col-span-1 text-[14px] font-bold text-gray-400 group-hover:text-emerald-500 transition-colors">
     #{String(index + 1).padStart(2, '0')}
   </div>
   
-  {/* 2. Details - Image thodi badi (w-14) aur Title 16px (text-base) */}
   <div className="col-span-4 flex items-center gap-4">
     <div className="w-14 h-14 rounded-xl overflow-hidden border border-gray-200/80 shadow-sm shrink-0 bg-gray-50">
       <img src={item.image} alt={item.type} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -196,26 +190,22 @@ const History = () => {
     </div>
   </div>
   
-  {/* 3. Quantity/Weight - Bada font aur thodi extra padding */}
   <div className="col-span-1">
     <span className="text-[14px] font-bold text-gray-800 bg-gray-100/80 px-3 py-1.5 rounded-lg border border-gray-200/50">
       {item.weight}
     </span>
   </div>
   
-  {/* 4. Collector - Clear and larger */}
   <div className="col-span-2 text-[14px] font-bold text-gray-700 truncate pr-2">
     {item.collector}
   </div>
   
-  {/* 5. Reward - Glowing badge effect aur text 13px */}
   <div className="col-span-2">
      <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-50 to-orange-50/50 text-amber-700 px-3 py-1.5 rounded-xl text-[13px] font-bold border border-amber-200/80 shadow-[0_2px_10px_-3px_rgba(251,191,36,0.3)] hover:shadow-md transition-shadow">
        <TrendingUp size={15} className="text-amber-500" /> +{item.points} Pts
      </div>
   </div>
   
-  {/* 6. Status - Premium Pill with soft shadow */}
   <div className="col-span-2 flex justify-end">
     <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50/80 text-emerald-700 border border-emerald-200/80 rounded-full text-[13px] font-bold shadow-[0_2px_10px_-3px_rgba(16,185,129,0.2)]">
       <CheckCircle2 size={15} className="text-emerald-500" /> 
@@ -225,15 +215,12 @@ const History = () => {
   
 </div>
 
-            {/* MOBILE PREMIUM CARD LAYOUT */}
+            {/* MOBILE  CARD LAYOUT */}
 <div className="lg:hidden my-3">
-  {/* Tap karne par slight press effect (active:scale) */}
   <div className="relative overflow-hidden bg-white rounded-[20px] p-4 border border-gray-100 shadow-sm active:scale-[0.98] transition-all duration-200">
     
-    {/* Accent Bar */}
     <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500" />
     
-    {/* Header: Status & Points with Glowing Shadows */}
     <div className="flex items-center justify-between mb-3.5 pl-2">
       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-emerald-50/80 text-emerald-700 border border-emerald-100 shadow-[0_2px_8px_-2px_rgba(16,185,129,0.15)]">
         <CheckCircle2 size={12} className="text-emerald-500" /> {item.status}
@@ -244,10 +231,9 @@ const History = () => {
       </div>
     </div>
 
-    {/* Body: Image & Details */}
     <div className="flex gap-3.5 pl-2">
       
-      {/* Image - Size increased aur p-0.5 border framing add ki */}
+      {/* Image  */}
       <div className="w-[84px] h-[84px] rounded-2xl overflow-hidden shrink-0 border border-gray-200/80 bg-gray-50 p-0.5 shadow-sm">
         <img src={item.image} alt={item.type} className="w-full h-full object-cover rounded-[14px]" />
       </div>
@@ -255,7 +241,6 @@ const History = () => {
       {/* Content */}
       <div className="flex-1 min-w-0 py-0.5">
         
-        {/* Title + Weight (Weight mobile me missing tha pehle!) */}
         <div className="flex justify-between items-start gap-2">
           <h4 className="font-bold text-gray-900 text-base leading-tight truncate capitalize">
             {item.type}
@@ -265,7 +250,7 @@ const History = () => {
           </span>
         </div>
         
-        {/* Date & Location - Darker text (gray-600) & larger font (12px) */}
+        {/* Date & Location*/}
         <div className="mt-2.5 space-y-1.5">
           <div className="flex items-center gap-1.5 text-[12px] text-gray-600 font-medium">
             <Clock size={13} className="shrink-0 text-gray-400" />
@@ -279,7 +264,7 @@ const History = () => {
       </div>
     </div>
 
-    {/* Footer: Collector details bold and visible */}
+    {/* Footer */}
     <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between pl-2">
       <span className="text-[10px] uppercase tracking-[0.15em] text-gray-500 font-bold">
         Collector

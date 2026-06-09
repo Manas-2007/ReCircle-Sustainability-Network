@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Truck, Award, Clock, MapPin, CheckCheck, Sparkles, Wallet, CalendarPlus, Bell, X, Phone, User } from 'lucide-react';
 
 const Notifications = () => {
-  // --- MODAL STATES ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [collector, setCollector] = useState(null);
   const [selectedNotif, setSelectedNotif] = useState(null); 
@@ -16,7 +15,6 @@ const Notifications = () => {
         const data = await res.json();
         
         if (res.ok && Array.isArray(data)) {
-          // Sirf relevant statuses filter karo
           const realNotifs = data
             .filter(req => ['Pending', 'Accepted', 'Scheduled'].includes(req.status))
             .map(req => ({
@@ -170,7 +168,6 @@ const Notifications = () => {
 
               {notif.actionText && (
                 <button
-                  // Dynamic onClick based on notification type
                   onClick={() => {
                     if (notif.type === 'collector_accepted') {
                       viewCollector(notif.collectorId, notif);
@@ -190,10 +187,8 @@ const Notifications = () => {
      {/* COLLECTOR DETAILS MODAL */}
 {isModalOpen && collector && selectedNotif && (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    {/* Container: Mobile pe 90% width, Laptop/Desktop pe max-w-sm */}
     <div className="bg-white w-full max-w-[90%] sm:max-w-sm rounded-3xl p-5 sm:p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
       
-      {/* Close Button: Mobile pe thoda bada touch target */}
       <button 
         onClick={() => setIsModalOpen(false)} 
         className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
@@ -230,7 +225,7 @@ const Notifications = () => {
         </div>
       </div>
 
-      {/* Action Buttons: Mobile pe vertical stack, Desktop pe side-by-side */}
+      {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3">
         <button 
           onClick={() => updateRequestStatus(selectedNotif.id, 'Cancelled')}

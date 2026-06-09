@@ -13,7 +13,6 @@ const EcoPoints = () => {
   const handleRedeem = async (reward) => {
     if (totalPoints < reward.points) return alert("Not enough points!");
     
-    // Safer check for ID matching
     const alreadyRedeemed = redeemedRewards.some(id => String(id) === String(reward.id));
     if (alreadyRedeemed) return alert("Already redeemed!");
 
@@ -61,9 +60,7 @@ const EcoPoints = () => {
       });
   }, []);
 
-  // ==========================================
   // DYNAMIC BADGE & PROGRESS CALCULATION LOGIC
-  // ==========================================
   const badgeData = [
     { icon: "🌱", name: "Eco Beginner", level: 1, threshold: 0 },
     { icon: "♻️", name: "Green Contributor", level: 2, threshold: 500 },
@@ -122,8 +119,6 @@ const EcoPoints = () => {
           >
             <img src="miniEarth.jpg" alt="Eco Background" className="w-full h-full object-cover" />
           </div>
-
-          {/* Glow Effect */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
 
           {/* Header */}
@@ -195,7 +190,6 @@ const EcoPoints = () => {
             </span>
           </div>
 
-          {/* Responsive Layout */}
           <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 overflow-x-auto sm:overflow-visible pb-6 sm:pb-0 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             {rewards.map((reward) => {
               const isRedeemed = redeemedRewards.some(id => String(id) === String(reward.id));
@@ -267,7 +261,7 @@ const EcoPoints = () => {
           </div>
         </div>
 
-        {/* 3. BADGE JOURNEY (Gamified & Highlighted) */}
+        {/* 3. BADGE JOURNEY  */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-5 ">
             <div>
@@ -327,7 +321,7 @@ const EcoPoints = () => {
                       Level {badge.level}
                     </p>
 
-                    {/* DYNAMIC POINTS REQUIRED TAG */}
+                    {/* DYNAMIC POINTS  */}
                     <div className={`mt-auto text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full inline-block
                       ${badge.current ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
                       : badge.isPast ? 'bg-gray-50 text-emerald-600 border border-emerald-100/50' 

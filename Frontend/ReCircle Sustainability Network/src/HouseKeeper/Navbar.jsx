@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { Link, NavLink } from "react-router-dom"; // ✨ React Router Superpowers
+import { Link, NavLink } from "react-router-dom";
 import {
   Bell,
   Search,
@@ -16,7 +16,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); 
    const [user, setUser] = useState(null);
 
-  // ✨ MODIFIED TABS: Ab yahan 'id' nahi, seedha URL 'path' hai
   const tabs = [
     { path: "/housekeeper", label: "My Circle", icon: <Users size={18} /> },
     { path: "/housekeeper/requests", label: "Requests", icon: <ClipboardList size={18} /> },
@@ -52,7 +51,6 @@ const getInitials = (firstName, lastName) => {
 
   return (
     <>
-      {/* 1. FULL WIDTH, FLUSH TO TOP HEADER */}
       <header className="sticky top-0 z-50 w-full bg-white border-b border-green-400 font-sans antialiased">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-5 lg:px-8 h-[76px] sm:h-[88px] flex items-center justify-between">
           
@@ -93,7 +91,7 @@ const getInitials = (firstName, lastName) => {
               <NavLink
                 key={tab.path}
                 to={tab.path}
-                end={tab.path === "/housekeeper"} // Taaki default route fix rahe
+                end={tab.path === "/housekeeper"} 
                 className={({ isActive }) => `
                   flex items-center gap-3 px-4 py-1.5 rounded-xl text-[13.5px] font-bold transition-all duration-300 ease-out border
                   ${isActive
@@ -114,7 +112,7 @@ const getInitials = (firstName, lastName) => {
             ))}
           </div>
 
-          {/* RIGHT SIDE (ACTIONS & GREEN HAMBURGER) */}
+          {/* RIGHT SIDE */}
           <div className="flex-1 flex items-center justify-end gap-2 sm:gap-7">
             
             {/* ECO SCORE PILL */}
@@ -155,7 +153,6 @@ const getInitials = (firstName, lastName) => {
                 </span>
               </Link>
 
-              {/* SEPARATOR */}
               <div className="hidden sm:block w-px h-10 bg-gray-200 rounded-full"></div>
 
               {/* PROFILE */}

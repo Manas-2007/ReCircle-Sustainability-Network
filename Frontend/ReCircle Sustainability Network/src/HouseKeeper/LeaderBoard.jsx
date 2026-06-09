@@ -34,19 +34,16 @@ const Leaderboard = () => {
           const boardData = await boardRes.json();
           
           if (boardData.length > 0) {
-            // YAHAN FIX HAI: DB Mapping and Calculation
             const formattedData = boardData.map((u, index) => {
-              // Points se KG nikal lo (Assuming 10 pts = 1 kg)
-              const calculatedWeight = u.points ? (u.points / 10).toFixed(1) : 0;
+            const calculatedWeight = u.points ? (u.points / 10).toFixed(1) : 0;
               
               return {
                 id: u._id,
                 rank: index + 1,
                 name: `${u.firstName || ''} ${u.lastName || ''}`.trim(),
                 points: u.points || 0,
-                weight: `${calculatedWeight} kg`, // Dynamic weight!
+                weight: `${calculatedWeight} kg`, 
                 trend: "up", 
-                // Dono type ki id match handle kar li: u._id string hoti hai
                 isCurrentUser: loggedInUser && (u._id === loggedInUser._id || u._id === loggedInUser.id)
               };
             });
@@ -68,7 +65,6 @@ const Leaderboard = () => {
     fetchLeaderboardData();
   }, []);
 
-  // SAFETY CHECK: Ensure we always have at least 3 users for the Top 3 Podium
   // This prevents crashes if the database only has 1 or 2 users.
   const safeLeaderboard = [...(leaderboardData.length > 0 ? leaderboardData : defaultLeaderboard)];
   while (safeLeaderboard.length < 3) {
@@ -85,7 +81,7 @@ const Leaderboard = () => {
   // Identify Current User's Rank
   const myData = safeLeaderboard.find(u => u.isCurrentUser);
   const myRank = myData ? myData.rank : '-';
-  const totalUsers = Math.max(safeLeaderboard.length, 420); // Fallback aesthetic number
+  const totalUsers = Math.max(safeLeaderboard.length, 420); 
 
   // Helper function for Trend Icons
   const getTrendIcon = (trend) => {
@@ -100,28 +96,24 @@ const Leaderboard = () => {
       {/* Header */}
     <div className="-mt-2 sm:-mt-4 mb-6 flex flex-row items-center justify-between gap-x-3 border-b border-gray-300 pb-5 overflow-hidden whitespace-nowrap">
       
-      {/* Left Section: Badge and Titles */}
+      {/* Left Section */}
       <div className="flex flex-col items-start justify-center flex-1 truncate">
         
-        {/* Weekly Badge - Compact & Clean */}
         <div className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider border border-emerald-100 mb-1.5 shrink-0">
           <CalendarDays size={10} />
           <span>Weekly Report</span>
         </div>
 
-        {/* Title - Refined size and weight for desktop */}
         <h1 className="text-[15px] sm:text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2 truncate w-full">
           <Trophy className="text-amber-500 shrink-0" size={16} />
           <span className="truncate">Eco Champions</span>
         </h1>
-        
-        {/* Description - Normal weight for better readability on desktop */}
         <p className="hidden sm:block text-gray-500 text-[12px] font-normal mt-0.5 truncate">
           Top contributors this week. Climb ranks to earn rewards!
         </p>
       </div>
       
-      {/* Right Section: User's Quick Stat - DYNAMIC */}
+      {/* Right Section */}
       <div className="bg-white border border-gray-100 px-3 py-2 sm:px-4 rounded-xl flex items-center gap-2.5 shadow-sm shrink-0">
         <div className="bg-emerald-50 p-1.5 rounded-lg text-emerald-600">
           <User size={16} />
@@ -135,13 +127,10 @@ const Leaderboard = () => {
       </div>
     </div>
 
-      {/* PREMIUM SOLID TOP 3 PODIUM SECTION */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 justify-center items-center w-full max-w-[900px] mx-auto mb-10  pt-2 sm:pt-9 ">
         
-        {/* RANK 2: SILVER (Sleek Slate) */}
         <div className="order-1 bg-gradient-to-b from-slate-700 to-slate-900 border border-slate-600 rounded-[12px] sm:rounded-[20px] p-2.5 sm:p-5 flex flex-col items-center text-center shadow-lg relative overflow-hidden group">
           
-          {/* Corner Circle Badge */}
           <div className="absolute top-1.5 sm:top-3 left-1.5 sm:left-3 flex items-center justify-center w-5 h-5 sm:w-8 sm:h-8 bg-gradient-to-br from-slate-300 to-slate-400 rounded-full border border-white/20 shadow-[0_0_10px_rgba(148,163,184,0.3)] animate-[pulse_3s_ease-in-out_infinite] z-20">
             <span className="text-slate-900 font-black text-[8px] sm:text-xs">#2</span>
           </div>
@@ -158,20 +147,18 @@ const Leaderboard = () => {
             {safeLeaderboard[1].weight} <span className="hidden sm:inline">Recycled</span>
           </p>
           
-          {/* Points Pill (Compact) */}
+          {/* Points Pill  */}
           <div className="mt-auto bg-slate-950/50 text-slate-50 px-1 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[9px] sm:text-xs border border-slate-300/50 flex items-center gap-1 sm:gap-1.5 justify-center backdrop-blur-sm shadow-inner transition-colors group-hover:bg-slate-800/60 w-full">
             <Leaf className="text-emerald-300 w-3 h-3 sm:w-3.5 sm:h-3.5" /> 
             <span>{safeLeaderboard[1].points} <span className="hidden sm:inline">Pts</span></span>
           </div>
         </div>
 
-        {/* RANK 1: GOLD (Rich Emerald) */}
+        {/* RANK 1 */}
         <div className="order-2 bg-gradient-to-b from-emerald-700 to-emerald-950 border border-emerald-600 rounded-[14px] sm:rounded-[24px] p-3 sm:p-6 flex flex-col items-center text-center shadow-2xl relative overflow-hidden transform -translate-y-4 sm:-translate-y-8 md:-translate-y-10 group z-10">
           
-          {/* Background Accent Glow */}
           <div className="absolute -top-10 -left-10 w-20 sm:w-28 h-20 sm:h-28 bg-emerald-500 rounded-full blur-[40px] sm:blur-[50px] opacity-20 pointer-events-none"></div>
 
-          {/* Corner Circle Badge */}
           <div className="absolute top-2 sm:top-3.5 left-2 sm:left-3.5 flex items-center justify-center w-6 h-6 sm:w-10 sm:h-10 bg-gradient-to-br from-amber-300 to-amber-500 rounded-full border border-white/30 shadow-[0_0_20px_rgba(251,191,36,0.4)] animate-[pulse_2s_ease-in-out_infinite] z-20">
             <span className="text-amber-950 font-black text-[9px] sm:text-sm">#1</span>
           </div>
@@ -192,17 +179,16 @@ const Leaderboard = () => {
             {safeLeaderboard[0].weight} <span className="hidden sm:inline">Recycled</span>
           </p>
           
-          {/* Points Pill (Compact) */}
+          {/* Points Pill */}
           <div className="mt-auto bg-emerald-950/40 text-white px-1 sm:px-5 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-sm border border-emerald-500/40 flex items-center gap-1 sm:gap-1.5 justify-center backdrop-blur-sm shadow-inner transition-colors group-hover:bg-emerald-800/40 w-full">
             <Leaf className="text-emerald-400 w-3.5 h-3.5 sm:w-4 sm:h-4" /> 
             <span>{safeLeaderboard[0].points} <span className="hidden sm:inline">Pts</span></span>
           </div>
         </div>
 
-        {/* RANK 3: BRONZE (Deep Copper/Orange) */}
+        {/* RANK 3*/}
         <div className="order-3 bg-gradient-to-b from-orange-800 to-orange-950 border border-orange-700/80 rounded-[12px] sm:rounded-[20px] p-2.5 sm:p-5 flex flex-col items-center text-center shadow-lg relative overflow-hidden group">
           
-          {/* Corner Circle Badge */}
           <div className="absolute top-1.5 sm:top-3 left-1.5 sm:left-3 flex items-center justify-center w-5 h-5 sm:w-8 sm:h-8 bg-gradient-to-br from-orange-300 to-rose-400 rounded-full border border-white/20 shadow-[0_0_10px_rgba(249,115,22,0.3)] animate-[pulse_3s_ease-in-out_infinite] z-20">
             <span className="text-white font-black text-[8px] sm:text-xs">#3</span>
           </div>
@@ -219,7 +205,7 @@ const Leaderboard = () => {
             {safeLeaderboard[2].weight} <span className="hidden sm:inline">Recycled</span>
           </p>
           
-          {/* Points Pill (Compact) */}
+          {/* Points Pill */}
           <div className="mt-auto bg-orange-950/40 text-orange-50 px-1 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[9px] sm:text-xs border border-orange-700/50 flex items-center gap-1 sm:gap-1.5 justify-center backdrop-blur-sm shadow-inner transition-colors group-hover:bg-orange-900/50 w-full">
             <Leaf className="text-emerald-400 w-3 h-3 sm:w-3.5 sm:h-3.5" /> 
             <span>{safeLeaderboard[2].points} <span className="hidden sm:inline">Pts</span></span>
@@ -228,7 +214,7 @@ const Leaderboard = () => {
 
       </div>
 
-      {/* VERTICAL LADDER GRAPH (Hybrid, Perfect Alignment & Premium Shadows) */}
+      {/* VERTICAL LADDER GRAPH  */}
       <div className="mt-6 sm:mt-12 relative px-1 sm:px-4 w-full">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2 tracking-tight">
           <ArrowUp size={20} className="text-emerald-500" />
@@ -236,15 +222,11 @@ const Leaderboard = () => {
         </h3>
 
         <div className="relative pb-6">
-          {/* Main Vertical Track Background */}
           <div className="absolute left-[15px] sm:left-[23px] top-4 bottom-4 w-1 bg-gray-100 rounded-full shadow-inner"></div>
-          
-          {/* Filled Color Track */}
           <div className="absolute left-[15px] sm:left-[23px] top-4 h-[80%] w-1 bg-gradient-to-b from-emerald-400 via-amber-300 to-rose-300 rounded-full opacity-80"></div>
 
           <div className="flex flex-col gap-3 sm:gap-5">
             {safeLeaderboard.slice(3).map((user) => {
-              // Ensure maxPoints is never 0 to avoid Infinity calculations
               const maxPoints = safeLeaderboard[0].points || 1; 
               const progressPercent = Math.max((user.points / maxPoints) * 100, 8); 
               const pointsAway = maxPoints - user.points;
@@ -283,17 +265,16 @@ const Leaderboard = () => {
                     #{user.rank}
                   </div>
 
-                  {/* Main User Card with Elevated Border & Shadow */}
+                  {/* Main User Card */}
                   <div className={`flex-1 bg-white border-[1.5px] rounded-[16px] sm:rounded-[20px] p-2 sm:p-4 transition-all duration-300 relative overflow-hidden flex items-center
                     ${user.isCurrentUser ? 'border-emerald-400 shadow-[0_4px_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/20' : 'border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300'}
                   `}>
                     
                     {user.isCurrentUser && <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/40 to-transparent pointer-events-none"></div>}
 
-                    {/* Fixed Widths for Perfect Alignment */}
                     <div className="flex flex-row w-full items-center justify-between gap-1 sm:gap-4 relative z-10">
 
-                      {/* 1. User Info - Fixed Width to prevent pushing */}
+                      {/* User Info  */}
                       <div className="flex items-center gap-2 sm:gap-4 w-[45%] sm:w-[30%] shrink-0 overflow-hidden">
                         <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold shrink-0 shadow-inner border
                           ${user.isCurrentUser ? 'bg-emerald-600 text-white border-emerald-700' : bgAccent}
@@ -310,7 +291,7 @@ const Leaderboard = () => {
                       </div>
 
               
-                      {/* 2A. MOBILE ONLY: Circular Progress Ring (Centered perfectly) */}
+                      {/*  MOBILE ONLY: Circular Progress Ring  */}
               
                       <div className="flex sm:hidden w-[20%] flex-col items-center justify-center shrink-0">
                         <div className="relative flex items-center justify-center w-9 h-9">
@@ -332,7 +313,7 @@ const Leaderboard = () => {
                       </div>
 
               
-                      {/* 2B. DESKTOP ONLY: Linear Progress Bar */}
+                      {/*  DESKTOP ONLY: Linear Progress Bar */}
               
                       <div className="hidden sm:flex flex-1 flex-col justify-center gap-1.5 px-3">
                         <div className="flex justify-between items-end text-[10px] font-semibold uppercase tracking-wider">
@@ -352,9 +333,8 @@ const Leaderboard = () => {
                         </div>
                       </div>
 
-                      {/* 3. Right: Points Block - Fixed Width */}
+                      {/* 3. Right: Points */}
                       <div className="w-[30%] sm:w-[20%] flex justify-end shrink-0 relative z-10">
-                        {/* Notice the border-[1.5px] and pointsBorder logic for highlighting */}
                         <div className={`flex items-center justify-center gap-1 px-1.5 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border-[1.5px] font-bold text-[9px] sm:text-[13px] shadow-sm transition-all
                           ${user.isCurrentUser ? 'bg-emerald-600 text-white border-emerald-400 shadow-emerald-500/30' : pointsBorder + ' hover:shadow-md'}
                         `}>
@@ -374,11 +354,9 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* ANIMATED INFO BOX (How it works & Weekly Reset) */}
       <div className="mt-8 sm:mt-12 mb-6 max-w-[900px] mx-auto px-2 sm:px-4 w-full">
         <div className="relative overflow-hidden rounded-[16px] sm:rounded-[24px] bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 border-[1.5px] border-emerald-200/60 p-4 sm:p-6 shadow-[0_8px_30px_rgba(16,185,129,0.08)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] hover:border-emerald-300 group">
           
-          {/* Animated Background Glowing Orbs */}
           <div className="absolute -top-10 -left-10 w-32 sm:w-40 h-32 sm:h-40 bg-emerald-300/30 rounded-full blur-[40px] animate-[pulse_4s_ease-in-out_infinite]"></div>
           <div className="absolute -bottom-10 -right-10 w-32 sm:w-40 h-32 sm:h-40 bg-teal-300/20 rounded-full blur-[40px] animate-[pulse_5s_ease-in-out_infinite]" style={{ animationDelay: '2s' }}></div>
 
@@ -386,15 +364,12 @@ const Leaderboard = () => {
             
             {/* Animated Icon Wrapper */}
             <div className="shrink-0 relative flex items-center justify-center">
-              {/* Outer rotating dashed ring */}
               <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border-[1.5px] border-dashed border-emerald-400 animate-[spin_8s_linear_infinite] opacity-70"></div>
-              {/* Inner floating circle */}
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 animate-[bounce_3s_infinite]">
                 <RefreshCw size={18} className="text-white animate-[spin_4s_linear_infinite] sm:w-[20px] sm:h-[20px]" />
               </div>
             </div>
 
-            {/* Text Content */}
             <div className="text-center sm:text-left flex-1">
               <h4 className="text-sm sm:text-base font-bold text-emerald-900 mb-1.5 flex items-center justify-center sm:justify-start gap-1.5">
                 <Sparkles size={16} className="text-emerald-500 animate-pulse" />
@@ -406,7 +381,6 @@ const Leaderboard = () => {
               </p>
             </div>
 
-            {/* Decorative Button/Tag */}
             <div className="shrink-0 mt-2 sm:mt-0">
               <div className="inline-flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-100/80 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest shadow-inner group-hover:bg-emerald-100 transition-colors">
                 Keep Recycling

@@ -245,7 +245,7 @@ app.post('/api/requests/create', authMiddleware, upload.single('image'),async (r
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
-});
+}); 
 
 // Get My Requests Route
 app.get('/api/requests/my-requests', authMiddleware, async (req, res) => {

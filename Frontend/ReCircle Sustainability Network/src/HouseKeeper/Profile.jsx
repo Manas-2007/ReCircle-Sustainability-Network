@@ -33,7 +33,7 @@ useEffect(() => {
 }, []);
 
   // USER DATA (Dynamic Badge Logic Based on Eco Points)
-  const totalPoints = 1250; 
+  const totalPoints = userData?.points || 0;
   const totalPickups = 24;
   const co2Offset = "185 kg";
 
@@ -46,8 +46,7 @@ useEffect(() => {
     return { icon: "🌱", name: "Eco Beginner", bg: "bg-green-100", text: "text-green-700", border: "border-green-200" };
   };
 
-  const userBadge = getBadgeInfo(totalPoints);
-
+const userBadge = getBadgeInfo(totalPoints);
   // Image Upload Handler
   const handleImageChange = (e) => {
     const file = e.target.files[0];

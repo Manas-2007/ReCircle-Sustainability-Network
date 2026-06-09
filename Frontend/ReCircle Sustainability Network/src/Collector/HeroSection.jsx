@@ -410,7 +410,9 @@ const HeroSection = () => {
               {/* Details Area (min-w-0 prevents text overflow issues on small screens) */}
               <div className="flex flex-col justify-center gap-1 md:gap-1.5 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-bold text-gray-900 text-xs md:text-sm truncate">{req.wasteType}</h3>
+                  <h3 className="font-bold text-gray-900 text-xs md:text-sm truncate capitalize">
+  {req.wasteType.replace(/ewaste/i, 'E-Waste').charAt(0).toUpperCase() + req.wasteType.slice(1).replace('waste', '-Waste')}
+</h3>
                   {/* Badge hidden on very small phones to save space */}
                   <span className="hidden sm:inline-block bg-emerald-50 text-emerald-700 text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0">New</span>
                 </div>

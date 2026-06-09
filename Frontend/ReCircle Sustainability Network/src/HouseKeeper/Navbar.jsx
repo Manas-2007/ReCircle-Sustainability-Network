@@ -127,7 +127,7 @@ const getInitials = (firstName, lastName) => {
             >
               <Leaf size={16} className="text-[#16a34a]" />
               <span className="font-[650] text-[#166534] text-[13.5px] tracking-tight">
-                850 Points
+                {user ? user.points : 0} Points
               </span>
             </div>
 
@@ -230,7 +230,7 @@ const getInitials = (firstName, lastName) => {
             <div>
               <p className="text-sm font-bold text-gray-900">{user ? `${user.firstName} ${user.lastName}` : "Loading..."}</p>
               <p className="text-xs font-semibold text-[#16a34a] mt-0.5 flex items-center gap-1">
-                <Leaf size={12} /> 850 Eco Points
+                <Leaf size={12} /> {user ? user.points : 0} Eco Points
               </p>
             </div>
           </Link>

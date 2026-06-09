@@ -156,8 +156,8 @@ const History = () => {
                   className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm" 
                 />
                 <span className="font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">
-                  {item.wasteType}
-                </span>
+      {item.wasteType ? item.wasteType.charAt(0).toUpperCase() + item.wasteType.slice(1) : ''}
+    </span>
               </div>
             </td>
 

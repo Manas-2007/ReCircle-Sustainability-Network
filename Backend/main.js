@@ -485,7 +485,7 @@ app.post('/api/rewards/redeem', authMiddleware, async (req, res) => {
 
     if (user.points < pointsCost) return res.status(400).json({ message: "Insufficient points" });
     if (user.redeemedRewards.includes(rewardId)) return res.status(400).json({ message: "Already redeemed" });
-
+  
     user.points -= pointsCost;
     user.redeemedRewards.push(rewardId);
     await user.save();
@@ -493,5 +493,21 @@ app.post('/api/rewards/redeem', authMiddleware, async (req, res) => {
     res.json({ message: "Success", newPoints: user.points });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+// GET LEADERBOARD (HOUSEKEEPERS ONLY)
+app.get('/api/users/leaderboard', async (req, res) => {
+  try {
+    // Sirf 'household' role walo ko points ke hisaab se descending order mein sort karo
+    const users = await User.find({ role: 'household', points: { $gt: 0 } })
+      .sort({ points: -1 }) 
+      .limit(10) // Top 10 users hi bhejo network bandwidth bachane ke liye
+      .select('firstName lastName points'); // Sirf zaruri data bhejo
+    
+    res.json(users);
+  } catch (err) {
+    console.error("Leaderboard Fetch Error:", err);
+    res.status(500).json({ message: "Error fetching leaderboard" });
   }
 });

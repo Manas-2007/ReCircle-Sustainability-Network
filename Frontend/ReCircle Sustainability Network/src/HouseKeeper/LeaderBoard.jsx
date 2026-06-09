@@ -1,16 +1,91 @@
-import React from 'react';
-import { Trophy, Medal, Leaf, ArrowUp, ArrowDown, Minus, User, CalendarDays,Star,Sparkles,RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Trophy, Medal, Leaf, ArrowUp, ArrowDown, Minus, User, CalendarDays, Star, Sparkles, RefreshCw } from 'lucide-react';
 
 const Leaderboard = () => {
-  const leaderboardData = [
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Fallback data in case backend fails or is empty initially
+  const defaultLeaderboard = [
     { rank: 1, name: "Sarah Jenkins", points: 1540, weight: "45 kg", trend: "up" },
     { rank: 2, name: "Rahul Sharma", points: 1220, weight: "38 kg", trend: "up" },
     { rank: 3, name: "Priya Singh", points: 1080, weight: "31 kg", trend: "down" },
     { rank: 4, name: "Amit Kumar", points: 940, weight: "27 kg", trend: "same" },
-    { rank: 5, name: "John Doe", points: 850, weight: "24 kg", trend: "up", isCurrentUser: true }, // Current User
+    { rank: 5, name: "John Doe", points: 850, weight: "24 kg", trend: "up", isCurrentUser: true },
     { rank: 6, name: "Neha Gupta", points: 720, weight: "19 kg", trend: "down" },
-    { rank: 7, name: "Vikas Verma", points: 650, weight: "15 kg", trend: "up" },
   ];
+
+ useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        // 1. Fetch Current Logged-in User
+        const userRes = await fetch('http://localhost:2007/api/auth/me', { credentials: 'include' });
+        let loggedInUser = null;
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          loggedInUser = userData.user;
+          setCurrentUser(loggedInUser);
+        }
+
+        // 2. Fetch Leaderboard Data from Backend
+        const boardRes = await fetch('http://localhost:2007/api/users/leaderboard', { credentials: 'include' });
+        
+        if (boardRes.ok) {
+          const boardData = await boardRes.json();
+          
+          if (boardData.length > 0) {
+            // YAHAN FIX HAI: DB Mapping and Calculation
+            const formattedData = boardData.map((u, index) => {
+              // Points se KG nikal lo (Assuming 10 pts = 1 kg)
+              const calculatedWeight = u.points ? (u.points / 10).toFixed(1) : 0;
+              
+              return {
+                id: u._id,
+                rank: index + 1,
+                name: `${u.firstName || ''} ${u.lastName || ''}`.trim(),
+                points: u.points || 0,
+                weight: `${calculatedWeight} kg`, // Dynamic weight!
+                trend: "up", 
+                // Dono type ki id match handle kar li: u._id string hoti hai
+                isCurrentUser: loggedInUser && (u._id === loggedInUser._id || u._id === loggedInUser.id)
+              };
+            });
+            setLeaderboardData(formattedData);
+          } else {
+            console.log("No data found in DB, using fallback");
+            setLeaderboardData(defaultLeaderboard); 
+          }
+        } else {
+          console.error("API Failed with status:", boardRes.status);
+          setLeaderboardData(defaultLeaderboard); 
+        }
+      } catch (err) {
+        console.error("Leaderboard Fetch Error:", err);
+        setLeaderboardData(defaultLeaderboard);
+      }
+    };
+
+    fetchLeaderboardData();
+  }, []);
+
+  // SAFETY CHECK: Ensure we always have at least 3 users for the Top 3 Podium
+  // This prevents crashes if the database only has 1 or 2 users.
+  const safeLeaderboard = [...(leaderboardData.length > 0 ? leaderboardData : defaultLeaderboard)];
+  while (safeLeaderboard.length < 3) {
+    safeLeaderboard.push({
+      rank: safeLeaderboard.length + 1,
+      name: "Awaiting User",
+      points: 0,
+      weight: "0 kg",
+      trend: "same",
+      isCurrentUser: false
+    });
+  }
+
+  // Identify Current User's Rank
+  const myData = safeLeaderboard.find(u => u.isCurrentUser);
+  const myRank = myData ? myData.rank : '-';
+  const totalUsers = Math.max(safeLeaderboard.length, 420); // Fallback aesthetic number
 
   // Helper function for Trend Icons
   const getTrendIcon = (trend) => {
@@ -46,7 +121,7 @@ const Leaderboard = () => {
         </p>
       </div>
       
-      {/* Right Section: User's Quick Stat */}
+      {/* Right Section: User's Quick Stat - DYNAMIC */}
       <div className="bg-white border border-gray-100 px-3 py-2 sm:px-4 rounded-xl flex items-center gap-2.5 shadow-sm shrink-0">
         <div className="bg-emerald-50 p-1.5 rounded-lg text-emerald-600">
           <User size={16} />
@@ -54,7 +129,7 @@ const Leaderboard = () => {
         <div>
           <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-widest leading-none">Your Rank</p>
           <p className="text-sm font-bold text-gray-900 leading-none mt-1">
-            #5 <span className="text-gray-400 text-xs font-normal">/ 420</span>
+            #{myRank} <span className="text-gray-400 text-xs font-normal">/ {totalUsers}</span>
           </p>
         </div>
       </div>
@@ -73,22 +148,20 @@ const Leaderboard = () => {
 
           {/* Profile Picture */}
           <div className="relative mb-1.5 sm:mb-2 mt-1 sm:mt-1 z-10">
-            <img 
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" 
-              alt="Rank 2" 
-              className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover border-[1.5px] sm:border-[2px] border-slate-400 shadow-md bg-slate-200"
-            />
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-[1.5px] sm:border-[2px] border-slate-400 shadow-md bg-slate-800 flex items-center justify-center text-slate-300 font-bold text-lg">
+              {safeLeaderboard[1].name.charAt(0)}
+            </div>
           </div>
 
-          <h3 className="text-[10px] sm:text-sm md:text-base font-[600] text-white truncate w-full">{leaderboardData[1].name}</h3>
+          <h3 className="text-[10px] sm:text-sm md:text-base font-[600] text-white truncate w-full">{safeLeaderboard[1].name}</h3>
           <p className="text-[8px] sm:text-[11px] font-medium text-slate-300 mb-3 sm:mb-5">
-            {leaderboardData[1].weight} <span className="hidden sm:inline">Recycled</span>
+            {safeLeaderboard[1].weight} <span className="hidden sm:inline">Recycled</span>
           </p>
           
           {/* Points Pill (Compact) */}
           <div className="mt-auto bg-slate-950/50 text-slate-50 px-1 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[9px] sm:text-xs border border-slate-300/50 flex items-center gap-1 sm:gap-1.5 justify-center backdrop-blur-sm shadow-inner transition-colors group-hover:bg-slate-800/60 w-full">
             <Leaf className="text-emerald-300 w-3 h-3 sm:w-3.5 sm:h-3.5" /> 
-            <span>{leaderboardData[1].points} <span className="hidden sm:inline">Pts</span></span>
+            <span>{safeLeaderboard[1].points} <span className="hidden sm:inline">Pts</span></span>
           </div>
         </div>
 
@@ -105,26 +178,24 @@ const Leaderboard = () => {
 
           {/* Profile Picture */}
           <div className="relative mb-2.5 sm:mb-3 mt-1 z-10">
-            <img 
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop" 
-              alt="Rank 1" 
-              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-[2px] sm:border-[3px] border-amber-400 shadow-lg bg-emerald-200"
-            />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-[2px] sm:border-[3px] border-amber-400 shadow-lg bg-emerald-800 flex items-center justify-center text-amber-300 font-bold text-2xl">
+              {safeLeaderboard[0].name.charAt(0)}
+            </div>
             <div className="absolute -bottom-2 sm:-bottom-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[6px] sm:text-[9px] font-[650] px-2 sm:px-3 py-0.5 sm:py-1 rounded-full uppercase tracking-widest shadow-md border border-amber-200 whitespace-nowrap">
               <span className="hidden sm:inline">Champion</span>
               <span className="sm:hidden">Champ</span>
             </div>
           </div>
 
-          <h3 className="text-[11px] sm:text-base md:text-lg font-[600] text-white truncate w-full">{leaderboardData[0].name}</h3>
+          <h3 className="text-[11px] sm:text-base md:text-lg font-[600] text-white truncate w-full">{safeLeaderboard[0].name}</h3>
           <p className="text-[8.5px] sm:text-xs font-[600] text-emerald-200/80 mb-3 sm:mb-4">
-            {leaderboardData[0].weight} <span className="hidden sm:inline">Recycled</span>
+            {safeLeaderboard[0].weight} <span className="hidden sm:inline">Recycled</span>
           </p>
           
           {/* Points Pill (Compact) */}
           <div className="mt-auto bg-emerald-950/40 text-white px-1 sm:px-5 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-sm border border-emerald-500/40 flex items-center gap-1 sm:gap-1.5 justify-center backdrop-blur-sm shadow-inner transition-colors group-hover:bg-emerald-800/40 w-full">
             <Leaf className="text-emerald-400 w-3.5 h-3.5 sm:w-4 sm:h-4" /> 
-            <span>{leaderboardData[0].points} <span className="hidden sm:inline">Pts</span></span>
+            <span>{safeLeaderboard[0].points} <span className="hidden sm:inline">Pts</span></span>
           </div>
         </div>
 
@@ -138,22 +209,20 @@ const Leaderboard = () => {
 
           {/* Profile Picture */}
           <div className="relative mb-1.5 sm:mb-2 mt-1 z-10">
-            <img 
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop" 
-              alt="Rank 3" 
-              className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover border-[1.5px] sm:border-[2px] border-orange-400 shadow-md bg-orange-200"
-            />
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-[1.5px] sm:border-[2px] border-orange-400 shadow-md bg-orange-900 flex items-center justify-center text-orange-200 font-bold text-lg">
+              {safeLeaderboard[2].name.charAt(0)}
+            </div>
           </div>
 
-          <h3 className="text-[10px] sm:text-sm md:text-base font-[600] text-white truncate w-full">{leaderboardData[2].name}</h3>
+          <h3 className="text-[10px] sm:text-sm md:text-base font-[600] text-white truncate w-full">{safeLeaderboard[2].name}</h3>
           <p className="text-[8px] sm:text-[11px] font-medium text-orange-200/80 mb-3 sm:mb-5">
-            {leaderboardData[2].weight} <span className="hidden sm:inline">Recycled</span>
+            {safeLeaderboard[2].weight} <span className="hidden sm:inline">Recycled</span>
           </p>
           
           {/* Points Pill (Compact) */}
           <div className="mt-auto bg-orange-950/40 text-orange-50 px-1 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-[9px] sm:text-xs border border-orange-700/50 flex items-center gap-1 sm:gap-1.5 justify-center backdrop-blur-sm shadow-inner transition-colors group-hover:bg-orange-900/50 w-full">
             <Leaf className="text-emerald-400 w-3 h-3 sm:w-3.5 sm:h-3.5" /> 
-            <span>{leaderboardData[2].points} <span className="hidden sm:inline">Pts</span></span>
+            <span>{safeLeaderboard[2].points} <span className="hidden sm:inline">Pts</span></span>
           </div>
         </div>
 
@@ -174,8 +243,9 @@ const Leaderboard = () => {
           <div className="absolute left-[15px] sm:left-[23px] top-4 h-[80%] w-1 bg-gradient-to-b from-emerald-400 via-amber-300 to-rose-300 rounded-full opacity-80"></div>
 
           <div className="flex flex-col gap-3 sm:gap-5">
-            {leaderboardData.slice(3).map((user) => {
-              const maxPoints = leaderboardData[0].points;
+            {safeLeaderboard.slice(3).map((user) => {
+              // Ensure maxPoints is never 0 to avoid Infinity calculations
+              const maxPoints = safeLeaderboard[0].points || 1; 
               const progressPercent = Math.max((user.points / maxPoints) * 100, 8); 
               const pointsAway = maxPoints - user.points;
 

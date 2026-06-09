@@ -10,6 +10,21 @@ const Profile = () => {
   const fileInputRef = useRef(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [requests, setRequests] = useState([]);
+
+  // Fetch user's request history for the "My Requests" section
+  useEffect(() => {
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch('http://localhost:2007/api/requests/my-requests', { credentials: 'include' });
+      const data = await res.json();
+      setRequests(data);
+    } catch (err) {
+      console.error("Error fetching history:", err);
+    }
+  };
+  fetchHistory();
+}, []);
 
   // 1. Fetching logic
 useEffect(() => {
@@ -34,8 +49,6 @@ useEffect(() => {
 
   // USER DATA (Dynamic Badge Logic Based on Eco Points)
   const totalPoints = userData?.points || 0;
-  const totalPickups = 24;
-  const co2Offset = "185 kg";
 
   // Dynamic Badge Calculator
   const getBadgeInfo = (points) => {
@@ -46,7 +59,6 @@ useEffect(() => {
     return { icon: "🌱", name: "Eco Beginner", bg: "bg-green-100", text: "text-green-700", border: "border-green-200" };
   };
 
-const userBadge = getBadgeInfo(totalPoints);
   // Image Upload Handler
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -75,6 +87,13 @@ const userBadge = getBadgeInfo(totalPoints);
       alert("Something went wrong during logout");
     }
   };
+
+  // --- DYNAMIC CALCULATIONS ---
+  const deliveredRequests = requests.filter(r => r.status === 'Delivered');
+  const totalPickups = deliveredRequests.length;
+  const totalWaste = deliveredRequests.reduce((acc, curr) => acc + (curr.quantity || 0), 0);
+  const co2Offset = (totalWaste * 4).toFixed(1) + " kg";
+  const userBadge = getBadgeInfo(totalPoints);
 
   return (
     // Single View Container
@@ -140,31 +159,35 @@ const userBadge = getBadgeInfo(totalPoints);
           </div>
 
           {/* Impact Stats Grid */}
-          <div className="p-4 sm:p-5 grid grid-cols-3 gap-2 border-b border-gray-100 bg-gray-50/50 shrink-0">
-            <div className="flex flex-col items-center justify-center text-center p-1.5">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mb-2.5 border border-gray-200 shadow-sm bg-white p-0.5">
-                <img src="/eco.jpg" alt="Eco Points" className="w-full h-full object-cover rounded-full" />
-              </div>
-              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{userData?.points || 0}</div>
-              <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Points</div>
-            </div>
+<div className="p-4 sm:p-5 grid grid-cols-3 gap-2 border-b border-gray-100 bg-gray-50/50 shrink-0">
+  
+  {/* Points */}
+  <div className="flex flex-col items-center justify-center text-center p-1.5">
+    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mb-2.5 border border-gray-200 shadow-sm bg-white p-0.5">
+      <img src="/eco.jpg" alt="Eco Points" className="w-full h-full object-cover rounded-full" />
+    </div>
+    <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{userData?.points || 0}</div>
+    <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Points</div>
+  </div>
 
-            <div className="flex flex-col items-center justify-center text-center p-1.5 border-l border-gray-200/80">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden mb-2.5 border border-gray-200 shadow-sm bg-white p-0.5">
-                <img src="/H1.jpg" alt="Total Pickups" className="w-full h-full object-cover rounded-md" />
-              </div>
-              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{totalPickups}</div>
-              <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Pickups</div>
-            </div>
+  {/* Pickups */}
+  <div className="flex flex-col items-center justify-center text-center p-1.5 border-l border-gray-200/80">
+    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden mb-2.5 border border-gray-200 shadow-sm bg-white p-0.5">
+      <img src="/H1.jpg" alt="Total Pickups" className="w-full h-full object-cover rounded-md" />
+    </div>
+    <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{totalPickups}</div>
+    <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Pickups</div>
+  </div>
 
-            <div className="flex flex-col items-center justify-center text-center p-1.5 border-l border-gray-200/80">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2.5 bg-sky-50 rounded-full border border-sky-100 shadow-sm">
-                <Leaf size={24} className="text-sky-500" />
-              </div>
-              <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{co2Offset}</div>
-              <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Offset</div>
-            </div>
-          </div>
+  {/* Offset */}
+  <div className="flex flex-col items-center justify-center text-center p-1.5 border-l border-gray-200/80">
+    <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2.5 bg-sky-50 rounded-full border border-sky-100 shadow-sm">
+      <Leaf size={24} className="text-sky-500" />
+    </div>
+    <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">{co2Offset}</div>
+    <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">Offset</div>
+  </div>
+</div>
 
           {/* Action Buttons (Edit & Logout) - FIXED HEIGHT ISSUE */}
           <div className="p-4 sm:p-5 flex items-center gap-3 w-full shrink-0 bg-white">

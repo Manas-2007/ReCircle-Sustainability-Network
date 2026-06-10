@@ -44,9 +44,26 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
+
+    if (!isLogin && !termsAccepted) {
+      setErrors((prev) => ({
+        ...prev,
+        terms: "You must agree to the Terms & Policy to register.",
+      }));
+      return; 
+    }
+
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Passwords do not match.",
+      }));
+      return; 
+    }
+
     setIsLoading(true);
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
@@ -63,7 +80,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 ...formData,
                 role: selectedRole,
                 terms: termsAccepted.toString(),
-              },
+              }
         ),
       });
 
@@ -79,7 +96,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
             alert("Registration successful! Now you can login.");
             setIsLogin(true); 
         }
-    } else {
+      } else {
         if (data.errors) {
             const newErrors = {};
             data.errors.forEach((err) => (newErrors[err.path] = err.msg));
@@ -87,7 +104,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
         } else {
             setErrors({ general: data.message || "Something went wrong" });
         }
-    }
+      }
     } catch (err) {
       setErrors({
         general: "Network error. Please check your internet connection.",
@@ -95,7 +112,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     } finally {
       setIsLoading(false); 
     }
-};
+  };
 
   useEffect(() => {
     if (isOpen) {

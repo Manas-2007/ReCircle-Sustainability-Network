@@ -12,18 +12,11 @@
   animation: float 4s ease-in-out infinite;
 }
 
-/*
-   APP-LIKE LAYOUT: Body aur HTML ka scroll band!
-   */
 html,
 body {
   overflow: hidden;
   height: 100%;
 }
-
-/*
-   SCOPED: Custom Thin Green Scrollbar 
-   */
 
 .custom-scroll {
   overflow-y: auto;

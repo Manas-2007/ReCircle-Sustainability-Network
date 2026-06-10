@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReCircle | Server Status</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #1f2937;
+        }
+        .card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .logo { font-size: 3rem; margin-bottom: 1rem; }
+        .title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #111827; }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ecfdf5;
+            color: #059669;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #059669;
+            border-radius: 50%;
+            animation: breathe 2s infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .info { color: #6b7280; font-size: 0.9rem; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">♻️</div>
+        <div class="title">ReCircle Network</div>
+        <div class="status-badge">
+            <div class="pulse"></div>
+            SYSTEM ONLINE
+        </div>
+        <p class="info">Backend API is operational and processing requests.</p>
+    </div>
+</body>
+</html>

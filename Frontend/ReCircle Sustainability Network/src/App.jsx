@@ -1,4 +1,5 @@
 import React from "react";
+import NotFound from "./NotFound";
 import {
   BrowserRouter,
   Routes,
@@ -59,7 +60,7 @@ const App = () => {
         </Route>
 
         {/* 4. FALLBACK : WRONG URL POINT TO HOME */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

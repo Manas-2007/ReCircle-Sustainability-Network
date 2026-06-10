@@ -200,13 +200,7 @@ const Earnings = () => {
 
   // Fetch Data (Balance, Pricing & History)
   useEffect(() => {
-    // 1. Fetch User Balance
-    fetch("http://localhost:2007/api/user/profile", { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => setBalance(data.walletBalance || 0))
-      .catch((err) => console.log("Balance fetch error"));
-
-    // 2. Fetch Pricing Data
+    // 1. Fetch Pricing Data 
     fetch("http://localhost:2007/api/pricing-guide")
       .then((res) => res.json())
       .then((data) => {
@@ -231,13 +225,20 @@ const Earnings = () => {
         ]);
       });
 
-    // 3. Fetch History Data for Calculations and Dynamic Transactions
+    // 2. Fetch History Data for Calculations, Transactions AND Balance
     fetch("http://localhost:2007/api/requests/history", {
       credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
         setHistoryData(data);
+
+        const calculatedTotal = data.reduce(
+          (sum, item) => sum + (item.points || item.quantity * 10),
+          0
+        );
+        setBalance(calculatedTotal); 
+
         const initialTransactions = data.map((item, index) => ({
           id: item._id || `init-${index}`,
           type: "Credit",
@@ -252,7 +253,6 @@ const Earnings = () => {
       .catch((err) => console.log("History fetch error", err));
   }, []);
 
-  // Calculate Dynamic Stats
   const currentMonth = new Date().getMonth();
   const thisMonthEarnings = historyData
     .filter((item) => new Date(item.createdAt).getMonth() === currentMonth)

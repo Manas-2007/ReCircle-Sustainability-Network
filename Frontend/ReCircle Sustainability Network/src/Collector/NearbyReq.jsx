@@ -47,20 +47,18 @@ const NearbyReq = () => {
   // 2. handleAccept to update the backend
   const handleAccept = async (id) => {
     try {
-      const res = await fetch(
-        `http://localhost:2007/api/requests/accept/${id}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-        },
-      );
+      const res = await fetch(`http://localhost:2007/api/requests/accept/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+      });
 
       if (res.ok) {
         setRequests((prev) =>
-          prev.map((req) =>
-            req._id === id ? { ...req, status: "Accepted" } : req,
-          ),
+          prev.map((req) => req._id === id ? { ...req, status: "Accepted" } : req)
         );
+      } else {
+        alert("Oops! This request was just accepted by another collector.");
+        setRequests((prev) => prev.filter((req) => req._id !== id));
       }
     } catch (err) {
       console.error("Error accepting request:", err);

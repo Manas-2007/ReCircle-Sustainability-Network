@@ -278,12 +278,18 @@ app.get('/api/requests/pending', authMiddleware, async (req, res) => {
 // 2. Accept Request
 app.patch('/api/requests/accept/:id', authMiddleware, async (req, res) => {
   try {
-    const updatedReq = await GarbageRequests.findByIdAndUpdate(
-      req.params.id, 
-      { status: 'Accepted', collectorId: req.user.id }, // Collector ID yahan save ho rahi hai
-      { new: true }
-    );
-    res.json({ message: "Accepted!", request: updatedReq });
+    const request = await GarbageRequests.findById(req.params.id);
+    
+    // YAHAN CHECK HOGA KI KISI AUR NE TOH ACCEPT NAHI KAR LIYA
+    if (request.status !== 'Pending') {
+        return res.status(400).json({ error: "Already accepted by someone else" });
+    }
+
+    request.status = 'Accepted';
+    request.collectorId = req.user.id;
+    await request.save();
+    
+    res.json({ message: "Accepted!", request });
   } catch (err) { 
     res.status(500).json({ error: "Failed to accept request" }); 
   }

@@ -64,24 +64,26 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
       });
 
       const data = await res.json();
-
       if (res.ok) {
-        if (data.user) {
-          onLoginSuccess(data.user);
+        if (isLogin) {
+            if (data.user) {
+                onLoginSuccess(data.user);
+            } else {
+                setErrors({ general: "Something went wrong. Please try logging in directly." });
+            }
         } else {
-          setErrors({
-            general: "Something went wrong. Please try logging in directly.",
-          });
+            alert("Registration successful! Now you can login.");
+            setIsLogin(true); 
         }
-      } else {
+    } else {
         if (data.errors) {
-          const newErrors = {};
-          data.errors.forEach((err) => (newErrors[err.path] = err.msg));
-          setErrors(newErrors);
+            const newErrors = {};
+            data.errors.forEach((err) => (newErrors[err.path] = err.msg));
+            setErrors(newErrors);
         } else {
-          setErrors({ general: data.message || "Something went wrong" });
+            setErrors({ general: data.message || "Something went wrong" });
         }
-      }
+    }
     } catch (err) {
       setErrors({
         general: "Network error. Please check your internet connection.",

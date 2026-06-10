@@ -4,7 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const path = require('path');
-const dns=require('dns');
+const dns = require('dns');
 dns.setServers(['1.1.1.1','8.8.8.8']);
 
 // Route Imports
@@ -23,6 +23,7 @@ const allowedOrigins = [
   'https://re-circle-sustainability-network.vercel.app'
 ];
 
+// 2. Global Middlewares
 // Update CORS configuration
 app.use(cors({
     origin: allowedOrigins, 
@@ -38,15 +39,34 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api', authRoutes);
 app.use('/api', reqRoutes);
 
-//4. Serve Static Files
+app.get('/api/keep-alive', (req, res) => {
+    res.status(200).json({ message: "Server is awake!" });
+});
+
+// 4. Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 
-//5. Handle 404 - Not Found
+// 5. Handle 404 - Not Found
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
-// 4. Start Server
+// 6. Start Server
 app.listen(PORT, () => {
     console.log(`Server is Live at http://localhost:${PORT} 🚀`);
+
+    const url = process.env.NODE_ENV === 'production' 
+        ? 'https://recircle-sustainability-network.onrender.com/api/keep-alive' 
+        : `http://localhost:${PORT}/api/keep-alive`;
+
+    setInterval(async () => {
+        try {
+            const res = await fetch(url);
+            if (res.ok) {
+                console.log('⏰ Keep-alive ping successful!');
+            }
+        } catch (err) {
+            console.error('Keep-alive ping failed:', err.message);
+        }
+    }, 14 * 60 * 1000); 
 });

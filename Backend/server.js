@@ -4,6 +4,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const path = require('path');
+const dns=require('dns');
+dns.setServers(['1.1.1.1','8.8.8.8']);
 
 // Route Imports
 const authRoutes = require('./routes/authRoutes');
@@ -15,9 +17,15 @@ const PORT = process.env.PORT || 2007;
 // 1. Connect to Database
 connectDB();
 
-// 2. Global Middlewares
+// Define allowed origins
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'https://re-circle-sustainability-network.vercel.app'
+];
+
+// Update CORS configuration
 app.use(cors({
-    origin: 'https://re-circle-sustainability-network.vercel.app', 
+    origin: allowedOrigins, 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"]

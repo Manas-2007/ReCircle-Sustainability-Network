@@ -104,7 +104,7 @@ const Navbar = () => {
                 to={tab.path}
                 end={tab.path === "/housekeeper"}
                 className={({ isActive }) => `
-                  flex items-center gap-3 px-4 py-1.5 rounded-xl text-[13.5px] font-bold transition-all duration-300 ease-out border
+                  flex items-center gap-3 px-4 py-1.5 rounded-xl text-[12.5px] font-bold transition-all duration-300 ease-out border
                   ${
                     isActive
                       ? "bg-green-50 border-green-300 text-[#166534] shadow-sm"
@@ -137,7 +137,7 @@ const Navbar = () => {
               "
             >
               <Leaf size={16} className="text-[#16a34a]" />
-              <span className="font-[650] text-[#166534] text-[13.5px] tracking-tight">
+              <span className="font-[650] text-[#166534] text-[12.5px] tracking-tight">
                 {user ? user.points : 0} Points
               </span>
             </div>
@@ -189,7 +189,7 @@ const Navbar = () => {
                     {getInitials(user?.firstName, user?.lastName)}
                   </span>
                 </div>
-                <span className="text-[12px] font-bold text-gray-700 group-hover:text-[#16a34a] transition-colors leading-none hidden sm:block">
+                <span className="text-[11px] font-bold text-gray-700 group-hover:text-[#16a34a] transition-colors leading-none hidden sm:block">
                   {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
                 </span>
               </Link>

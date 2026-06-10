@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import {API_BASE_URL} from "../../config";
+
 
 const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [selectedRole, setSelectedRole] = useState("household");
   const [mounted, setMounted] = useState(false);
-import {API_BASE_URL} from "../../config";
 
   // Validation state
   const [errors, setErrors] = useState({});

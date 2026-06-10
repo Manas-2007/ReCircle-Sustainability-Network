@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Wallet,
   ArrowUpRight,
@@ -200,8 +201,8 @@ const Earnings = () => {
 
   // Fetch Data (Balance, Pricing & History)
   useEffect(() => {
-    // 1. Fetch Pricing Data 
-    fetch("http://localhost:2007/api/pricing-guide")
+    // 1. Fetch Pricing Data
+    fetch(`${API_BASE_URL}/api/pricing-guide`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -226,7 +227,7 @@ const Earnings = () => {
       });
 
     // 2. Fetch History Data for Calculations, Transactions AND Balance
-    fetch("http://localhost:2007/api/requests/history", {
+    fetch(`${API_BASE_URL}/api/requests/history`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -235,9 +236,9 @@ const Earnings = () => {
 
         const calculatedTotal = data.reduce(
           (sum, item) => sum + (item.points || item.quantity * 10),
-          0
+          0,
         );
-        setBalance(calculatedTotal); 
+        setBalance(calculatedTotal);
 
         const initialTransactions = data.map((item, index) => ({
           id: item._id || `init-${index}`,
@@ -284,7 +285,7 @@ const Earnings = () => {
     percent: grandTotal > 0 ? `${Math.round((val / grandTotal) * 100)}%` : "0%",
   }));
 
-  // Track pending payouts in state 
+  // Track pending payouts in state
   const [pendingPayout, setPendingPayout] = useState(0);
 
   // Handle Withdrawal Request
@@ -312,10 +313,10 @@ const Earnings = () => {
       id: Date.now(),
       type: "Payout",
       amount: withdrawAmount,
-      status: "Pending", 
+      status: "Pending",
       date: new Date().toLocaleDateString(),
-      method: method.split(" ")[0], 
-      icon: <ArrowUpRight size={18} className="text-amber-600" />, 
+      method: method.split(" ")[0],
+      icon: <ArrowUpRight size={18} className="text-amber-600" />,
     };
 
     setTransactions([newTransaction, ...transactions]);

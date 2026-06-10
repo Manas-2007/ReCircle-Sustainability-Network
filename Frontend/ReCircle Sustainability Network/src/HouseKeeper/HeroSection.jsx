@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Leaf,
   Recycle,
@@ -33,7 +34,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      fetch("http://localhost:2007/api/requests/my-requests", {
+      fetch(`${API_BASE_URL}/api/requests/my-requests`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       })
@@ -44,7 +45,7 @@ const HeroSection = () => {
             image: req.image
               ? req.image.startsWith("http")
                 ? req.image
-                : `http://localhost:2007${req.image}`
+                : `${API_BASE_URL}${req.image}`
               : null,
           }));
           setRequests(formattedRequests);
@@ -58,7 +59,7 @@ const HeroSection = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/auth/me", {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Award, Star, CheckCircle, X, Trophy, Sparkles } from "lucide-react";
+import {API_BASE_URL} from "../config";
 
 const EcoPoints = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -21,7 +22,7 @@ const EcoPoints = () => {
     setIsRedeeming(true);
 
     try {
-      const res = await fetch("http://localhost:2007/api/rewards/redeem", {
+      const res = await fetch(`${API_BASE_URL}/api/rewards/redeem`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -56,7 +57,7 @@ const EcoPoints = () => {
   // Fetch user points and redeemed rewards
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:2007/api/user/profile", { credentials: "include" })
+    fetch(`${API_BASE_URL}/api/user/profile`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         setTotalPoints(data.points || 0);

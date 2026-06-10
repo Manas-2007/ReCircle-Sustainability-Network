@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Truck,
   Award,
@@ -25,7 +26,7 @@ const Notifications = () => {
     const fetchRealNotifications = async () => {
       try {
         const res = await fetch(
-          "http://localhost:2007/api/requests/my-requests",
+          `${API_BASE_URL}/api/requests/my-requests`,
           { credentials: "include" },
         );
         const data = await res.json();
@@ -54,7 +55,7 @@ const Notifications = () => {
                     : `Your pickup is scheduled for ${req.scheduledDate} at ${req.scheduledTime}.`,
               time: "Just updated",
               isUnread: true,
-              image: req.image ? `http://localhost:2007${req.image}` : null,
+              image: req.image ? `${API_BASE_URL}${req.image}` : null,
               actionText: req.collectorId ? "View Collector" : null,
               actionIcon: <MapPin size={14} />,
             }));
@@ -95,7 +96,7 @@ const Notifications = () => {
     if (!collectorId) return alert("Collector details not available yet.");
     try {
       const res = await fetch(
-        `http://localhost:2007/api/users/collector/${collectorId}`,
+        `${API_BASE_URL}/api/users/collector/${collectorId}`,
         { credentials: "include" },
       );
       const data = await res.json();
@@ -112,7 +113,7 @@ const Notifications = () => {
   const updateRequestStatus = async (id, status) => {
     try {
       const res = await fetch(
-        `http://localhost:2007/api/requests/update-status/${id}`,
+        `${API_BASE_URL}/api/requests/update-status/${id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import {API_BASE_URL} from "../config";
 import {
   Camera,
   Mail,
@@ -88,7 +89,7 @@ const Profile = () => {
     // 1. Fetch User Data
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/auth/me", { credentials: "include" });
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, { credentials: "include" });
         const data = await res.json();
         if (res.ok) setCollectorData(data.user);
       } catch (err) { console.error(err); }
@@ -97,7 +98,7 @@ const Profile = () => {
     // 2. Fetch Stats (Using your history API)
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/requests/history", { credentials: "include" });
+        const res = await fetch(`${API_BASE_URL}/api/requests/history`, { credentials: "include" });
         const data = await res.json();
         if (res.ok) {
            const earnings = data.reduce((sum, item) => sum + (item.points || item.quantity * 10), 0);
@@ -115,7 +116,7 @@ const Profile = () => {
   // Logout Function
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:2007/api/auth/logout", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", 

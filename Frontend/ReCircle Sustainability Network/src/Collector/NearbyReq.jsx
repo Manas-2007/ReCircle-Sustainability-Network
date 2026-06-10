@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {API_BASE_URL} from "../config";
 import {
   MapPin,
   SlidersHorizontal,
@@ -23,7 +24,7 @@ const NearbyReq = () => {
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/requests/pending", {
+        const res = await fetch(`${API_BASE_URL}/api/requests/pending`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -47,7 +48,7 @@ const NearbyReq = () => {
   // 2. handleAccept to update the backend
   const handleAccept = async (id) => {
     try {
-      const res = await fetch(`http://localhost:2007/api/requests/accept/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/requests/accept/${id}`, {
         method: "PATCH",
         credentials: "include",
       });
@@ -69,7 +70,7 @@ const NearbyReq = () => {
   const handleCancel = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:2007/api/requests/cancel/${id}`,
+        `${API_BASE_URL}/api/requests/cancel/${id}`,
         {
           method: "PATCH",
           credentials: "include",
@@ -100,7 +101,7 @@ const NearbyReq = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:2007/api/requests/schedule/${selectedReq._id}`,
+        `${API_BASE_URL}/api/requests/schedule/${selectedReq._id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -200,7 +201,7 @@ const NearbyReq = () => {
                   src={
                     req.image?.startsWith("http")
                       ? req.image
-                      : `http://localhost:2007${req.image}`
+                      : `${API_BASE_URL}${req.image}`
                   }
                   alt={req.wasteType}
                   className="w-14 h-14 rounded-lg object-cover shrink-0"

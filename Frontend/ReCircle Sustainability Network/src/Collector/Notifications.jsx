@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {API_BASE_URL} from "../config";
 import {
   Clock,
   CheckCheck,
@@ -18,7 +19,7 @@ const Notifications = () => {
     const fetchRealNotifications = async () => {
       try {
         const res = await fetch(
-          "http://localhost:2007/api/requests/collector-updates",
+          `${API_BASE_URL}/api/requests/collector-updates`,
           { credentials: "include" },
         );
         const data = await res.json();
@@ -26,7 +27,7 @@ const Notifications = () => {
         if (res.ok && Array.isArray(data)) {
           const realNotifs = data.map((req) => {
             const imageUrl = req.image
-              ? `http://localhost:2007${req.image}`
+              ? `${API_BASE_URL}${req.image}`
               : "/default-icon.png";
             if (req.status === "Delivered") {
               return {
@@ -68,7 +69,7 @@ const Notifications = () => {
     try {
       // Backend ka endpoint call karo
       const res = await fetch(
-        `http://localhost:2007/api/requests/notification/${id}`,
+        `${API_BASE_URL}/api/requests/notification/${id}`,
         {
           method: "DELETE",
           credentials: "include",

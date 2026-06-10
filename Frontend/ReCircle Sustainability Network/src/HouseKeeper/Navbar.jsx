@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {API_BASE_URL} from "../config";
 import { Link, NavLink } from "react-router-dom";
 import {
   Bell,
@@ -40,7 +41,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/auth/me", {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });

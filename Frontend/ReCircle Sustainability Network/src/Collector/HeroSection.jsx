@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Package,
   Truck,
@@ -30,7 +31,7 @@ const HeroSection = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/auth/me", {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });
@@ -45,7 +46,7 @@ const HeroSection = () => {
 
   // Fetch Pending & Accepted Requests
   useEffect(() => {
-    fetch("http://localhost:2007/api/requests/pending", {
+    fetch(`${API_BASE_URL}/api/requests/pending`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -68,7 +69,7 @@ const HeroSection = () => {
 
   // Fetch History
   useEffect(() => {
-    fetch("http://localhost:2007/api/requests/history", {
+    fetch(`${API_BASE_URL}/api/requests/history`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -156,13 +157,10 @@ const HeroSection = () => {
   // ACTION HANDLERS
   const handleAccept = async (id) => {
     try {
-      const res = await fetch(
-        `http://localhost:2007/api/requests/accept/${id}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-        },
-      );
+      const res = await fetch(`${API_BASE_URL}/api/requests/accept/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+      });
 
       if (res.ok) {
         alert("Accepted!");
@@ -448,9 +446,7 @@ const HeroSection = () => {
                   <div className="w-20 h-20 md:w-24 md:h-20 shrink-0 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
                     <img
                       src={
-                        req.image
-                          ? `http://localhost:2007${req.image}`
-                          : "/H1.jpg"
+                        req.image ? `${API_BASE_URL}${req.image}` : "/H1.jpg"
                       }
                       alt={req.wasteType || "Waste"}
                       className="w-full h-full object-cover"
@@ -651,7 +647,7 @@ const HeroSection = () => {
                       <img
                         src={
                           item.image
-                            ? `http://localhost:2007${item.image}`
+                            ? `${API_BASE_URL}${item.image}`
                             : "/H1.jpg"
                         }
                         alt={item.wasteType}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Trophy,
   Medal,
@@ -68,7 +69,7 @@ const Leaderboard = () => {
     const fetchLeaderboardData = async () => {
       try {
         // 1. Fetch Current Logged-in User
-        const userRes = await fetch("http://localhost:2007/api/auth/me", {
+        const userRes = await fetch(`${API_BASE_URL}/api/auth/me`, {
           credentials: "include",
         });
         let loggedInUser = null;
@@ -80,7 +81,7 @@ const Leaderboard = () => {
 
         // 2. Fetch Leaderboard Data from Backend
         const boardRes = await fetch(
-          "http://localhost:2007/api/users/leaderboard",
+          `${API_BASE_URL}/api/users/leaderboard`,
           { credentials: "include" },
         );
 

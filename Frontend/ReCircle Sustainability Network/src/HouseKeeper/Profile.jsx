@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Camera,
   Mail,
@@ -31,7 +32,7 @@ const Profile = () => {
     const fetchHistory = async () => {
       try {
         const res = await fetch(
-          "http://localhost:2007/api/requests/my-requests",
+          `${API_BASE_URL}/api/requests/my-requests`,
           { credentials: "include" },
         );
         const data = await res.json();
@@ -47,7 +48,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/auth/me", {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });
@@ -120,7 +121,7 @@ const Profile = () => {
   // Logout function
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:2007/api/auth/logout", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

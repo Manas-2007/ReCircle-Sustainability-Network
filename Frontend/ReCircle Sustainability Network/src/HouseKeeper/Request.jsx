@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   MapPin,
   Recycle,
@@ -97,7 +98,7 @@ const Request = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:2007/api/requests/create", {
+      const res = await fetch(`${API_BASE_URL}/api/requests/create`, {
         method: "POST",
         credentials: "include",
         body: data,
@@ -124,12 +125,9 @@ const Request = () => {
   useEffect(() => {
     const fetchMyRequests = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:2007/api/requests/my-requests",
-          {
-            credentials: "include",
-          },
-        );
+        const res = await fetch(`${API_BASE_URL}/api/requests/my-requests`, {
+          credentials: "include",
+        });
         const data = await res.json();
         if (res.ok) {
           const onlyActiveRequests = data.filter(
@@ -444,7 +442,7 @@ const Request = () => {
                       src={
                         req.image?.startsWith("http")
                           ? req.image
-                          : `http://localhost:2007${req.image}`
+                          : `${API_BASE_URL}${req.image}`
                       }
                       alt="Waste"
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"

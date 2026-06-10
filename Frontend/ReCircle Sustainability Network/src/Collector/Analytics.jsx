@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   Package,
   Truck,
@@ -15,7 +16,7 @@ const Analytics = () => {
 
   // 2. Fetch History Data from Backend
   useEffect(() => {
-    fetch("http://localhost:2007/api/requests/history", {
+    fetch(`${API_BASE_URL}/api/requests/history`, {
       credentials: "include",
     })
       .then((res) => res.json())

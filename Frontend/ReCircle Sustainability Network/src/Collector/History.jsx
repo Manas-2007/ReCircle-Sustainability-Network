@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {API_BASE_URL} from "../config";
 import {
   Download,
   MapPin,
@@ -10,7 +11,7 @@ const History = () => {
   const [historyData, setHistoryData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:2007/api/requests/history", {
+    fetch(`${API_BASE_URL}/api/requests/history`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -155,7 +156,7 @@ const History = () => {
                       <img
                         src={
                           item.image
-                            ? `http://localhost:2007${item.image}`
+                            ? `${API_BASE_URL}${item.image}`
                             : "default.jpg"
                         }
                         alt="Waste"

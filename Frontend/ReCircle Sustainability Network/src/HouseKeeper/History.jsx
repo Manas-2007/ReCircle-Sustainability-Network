@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 import {
   History as HistoryIcon,
   Download,
@@ -21,7 +22,7 @@ const History = () => {
     const fetchHistory = async () => {
       try {
         const res = await fetch(
-          "http://localhost:2007/api/requests/my-requests",
+          `${API_BASE_URL}/api/requests/my-requests`,
           { credentials: "include" },
         );
         const data = await res.json();
@@ -52,7 +53,7 @@ const History = () => {
             status: "Completed",
             image: req.image?.startsWith("http")
               ? req.image
-              : `http://localhost:2007${req.image}`,
+              : `${API_BASE_URL}${req.image}`,
           }));
 
           setHistoryData(formattedData);

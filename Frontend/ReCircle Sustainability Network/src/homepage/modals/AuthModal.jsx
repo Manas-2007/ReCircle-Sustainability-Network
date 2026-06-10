@@ -4,6 +4,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [selectedRole, setSelectedRole] = useState("household");
   const [mounted, setMounted] = useState(false);
+import {API_BASE_URL} from "../../config";
 
   // Validation state
   const [errors, setErrors] = useState({});
@@ -48,7 +49,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
 
     try {
-      const res = await fetch(`http://localhost:2007${endpoint}`, {
+      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

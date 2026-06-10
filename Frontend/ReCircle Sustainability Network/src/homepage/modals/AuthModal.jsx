@@ -6,6 +6,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [selectedRole, setSelectedRole] = useState("household");
   const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Validation state
   const [errors, setErrors] = useState({});
@@ -46,6 +47,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
+    setIsLoading(true);
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
 
@@ -90,8 +92,10 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
       setErrors({
         general: "Network error. Please check your internet connection.",
       });
+    } finally {
+      setIsLoading(false); 
     }
-  };
+};
 
   useEffect(() => {
     if (isOpen) {
@@ -448,21 +452,44 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
             <div className="flex-shrink-0 bg-gray-50 border-t border-gray-100 px-5 py-4 sm:px-6">
               <button
                 type="submit"
-                className="rc-display w-full text-white text-[13.5px] font-[600] py-3 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
-                style={{
-                  background: "linear-gradient(135deg,#16a34a,#15803d)",
-                  boxShadow: "0 4px 14px rgba(22,163,74,0.32)",
+                disabled={isLoading}
+                className={`rc-display w-full text-white text-[13.5px] font-[600] py-3 rounded-xl transition-all duration-200 ${
+                  isLoading
+                    ? "bg-gray-400 cursor-not-allowed opacity-80"
+                    : "hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
+                }`}
+                style={
+                  isLoading
+                    ? {}
+                    : {
+                        background: "linear-gradient(135deg,#16a34a,#15803d)",
+                        boxShadow: "0 4px 14px rgba(22,163,74,0.32)",
+                      }
+                }
+                onMouseEnter={(e) => {
+                  if (!isLoading)
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 20px rgba(22,163,74,0.42)";
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.boxShadow =
-                    "0 6px 20px rgba(22,163,74,0.42)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.boxShadow =
-                    "0 4px 14px rgba(22,163,74,0.32)")
-                }
+                onMouseLeave={(e) => {
+                  if (!isLoading)
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 14px rgba(22,163,74,0.32)";
+                }}
               >
-                {isLogin ? "→ Sign In Securely" : "→ Complete Registration"}
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Please wait...
+                  </span>
+                ) : isLogin ? (
+                  "→ Sign In Securely"
+                ) : (
+                  "→ Complete Registration"
+                )}
               </button>
 
               <div className="flex items-center justify-center gap-1 flex-wrap mt-3 text-[12.5px] font-[600] text-gray-500">

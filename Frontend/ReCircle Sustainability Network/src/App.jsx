@@ -10,6 +10,7 @@ import {
 import HomeDash from "./homepage/homeDash";
 import FinalUI from "./HouseKeeper/FinalUI";
 import CollectorUI from "./Collector/FinalUI";
+import ProtectedRoute from "./ProtectedRoute";
 
 // 1. COLLECTOR COMPONENTS 
 import HeroSection from "./Collector/HeroSection";
@@ -37,7 +38,11 @@ const App = () => {
         <Route path="/" element={<HomeWrapper />} />
 
         {/* 2. COLLECTOR DASHBOARD ROUTES */}
-        <Route path="/dashboard" element={<CollectorUI />}>
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <CollectorUI />
+          </ProtectedRoute>
+        }>
           <Route index element={<HeroSection />} />
           <Route path="nearby" element={<NearbyReq />} />
           <Route path="earnings" element={<Earnings />} />
@@ -48,7 +53,11 @@ const App = () => {
         </Route>
 
         {/* 3. HOUSEKEEPER DASHBOARD ROUTES */}
-        <Route path="/housekeeper" element={<FinalUI />}>
+       <Route path="/housekeeper" element={
+          <ProtectedRoute>
+            <FinalUI />
+          </ProtectedRoute>
+        }>
           <Route index element={<HKHeroSection />} />
           <Route path="requests" element={<HKRequest />} />
           <Route path="eco" element={<HKEco />} />
@@ -62,6 +71,23 @@ const App = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+  );
+};
+const HomeWrapper = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="w-full">
+      <HomeDash
+        onLogin={(user) => {
+          if (user.role === "collector") {
+            navigate("/dashboard");
+          } else {
+            navigate("/housekeeper");
+          }
+        }}
+      />
+    </div>
   );
 };
 

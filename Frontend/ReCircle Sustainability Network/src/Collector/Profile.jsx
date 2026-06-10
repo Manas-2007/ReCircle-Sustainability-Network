@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const [stats, setStats] = useState({ earnings: 0, pickups: 0, weight: 0 });
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
@@ -82,25 +83,33 @@ const Profile = () => {
     }
   };
 
-  //Profile fetching from DB
+  //Fetch Collector Profile & Stats on Component Mount
   useEffect(() => {
-    const fetchCollectorData = async () => {
+    // 1. Fetch User Data
+    const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:2007/api/auth/me", {
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
+        const res = await fetch("http://localhost:2007/api/auth/me", { credentials: "include" });
+        const data = await res.json();
+        if (res.ok) setCollectorData(data.user);
+      } catch (err) { console.error(err); }
+    };
+
+    // 2. Fetch Stats (Using your history API)
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("http://localhost:2007/api/requests/history", { credentials: "include" });
         const data = await res.json();
         if (res.ok) {
-          setCollectorData(data.user);
+           const earnings = data.reduce((sum, item) => sum + (item.points || item.quantity * 10), 0);
+           const weight = data.reduce((sum, item) => sum + (item.quantity || 0), 0);
+           setStats({ earnings, pickups: data.length, weight: weight });
         }
-      } catch (err) {
-        console.error("Error:", err);
-      } finally {
-        setLoading(false);
-      }
+      } catch (err) { console.error(err); }
     };
-    fetchCollectorData();
+
+    fetchProfile();
+    fetchStats();
+    setLoading(false);
   }, []);
 
   // Logout Function
@@ -197,7 +206,7 @@ const Profile = () => {
                 <Wallet size={20} />
               </div>
               <div className="text-base sm:text-[17px] font-bold text-gray-900 leading-none">
-                ₹{collectorData?.earnings || 0}
+                ₹{stats.earnings}
               </div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">
                 Earnings
@@ -210,7 +219,7 @@ const Profile = () => {
                 <Truck size={20} />
               </div>
               <div className="text-lg sm:text-[20px] font-bold text-gray-900 leading-none">
-                {collectorData?.totalCollections || 0}
+               {stats.pickups}
               </div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">
                 Pickups
@@ -223,7 +232,7 @@ const Profile = () => {
                 <BarChart3 size={20} />
               </div>
               <div className="text-base sm:text-[17px] font-bold text-gray-900 leading-none">
-                {collectorData?.totalWeightCollected || "0 Ton"}
+               {stats.weight} Kg
               </div>
               <div className="text-[9px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1.5">
                 Processed

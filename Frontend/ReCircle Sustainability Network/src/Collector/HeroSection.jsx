@@ -52,7 +52,6 @@ const HeroSection = () => {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          // Filter Pending
           const onlyPending = data.filter(
             (req) => req.status?.toLowerCase() === "pending",
           );

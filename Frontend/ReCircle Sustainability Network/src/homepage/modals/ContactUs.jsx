@@ -48,7 +48,6 @@ const ContactUs = ({ isOpen, onClose }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50/30 rounded-[1.2rem] md:rounded-[1.5rem] -z-10 transform -rotate-1"></div>
 
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-5 p-4 md:p-6 rounded-[1.2rem] md:rounded-[1.5rem] bg-white border border-green-100/80 shadow-[0_4px_20px_rgb(22,163,74,0.04)]">
-              {/* Avatar - Scaled Down on Mobile */}
               <div className="relative shrink-0 group cursor-pointer">
                 <div className="absolute inset-0 bg-[#16a34a] rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-md"></div>
                 <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-sm bg-white border-2 border-white ring-1 ring-gray-100 relative z-10">

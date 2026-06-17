@@ -24,7 +24,6 @@ const allowedOrigins = [
 ];
 
 // 2. Global Middlewares
-// Update CORS configuration
 app.use(cors({
     origin: allowedOrigins, 
     credentials: true,

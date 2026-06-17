@@ -95,7 +95,7 @@ const Profile = () => {
       } catch (err) { console.error(err); }
     };
 
-    // 2. Fetch Stats (Using your history API)
+    // 2. Fetch Stats 
     const fetchStats = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/requests/history`, { credentials: "include" });

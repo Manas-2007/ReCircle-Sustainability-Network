@@ -35,7 +35,7 @@ const Request = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Form State (Empty by default)
+  // Form State 
   const [formData, setFormData] = useState({
     name: "",
     wasteType: "plastic",
@@ -45,7 +45,7 @@ const Request = () => {
     image: null,
   });
 
-  // Submitted Requests State (Pre-filled with 1 dummy request for UI)
+  // Submitted Requests State 
   const [requests, setRequests] = useState([
     {
       id: "RC-8842",
@@ -254,7 +254,6 @@ const Request = () => {
                       name="wasteType"
                       value={formData.wasteType}
                       onChange={handleChange}
-                      // NEW: Added h-[34px], adjusted pl-7, and reduced font size for mobile
                       className="w-full h-[34px] pl-7 pr-2 py-0 bg-white border border-emerald-200 rounded-lg text-[11px] sm:text-[12px] font-[600] text-gray-900 focus:bg-emerald-50 focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/20 transition-all outline-none shadow-sm appearance-none cursor-pointer hover:border-emerald-300"
                     >
                       <option value="plastic">Plastics</option>

@@ -5,12 +5,10 @@ const NotFound = () => {
     <main className="min-h-screen flex items-center justify-center bg-white p-6">
       <div className="text-center max-w-2xl w-full">
         
-        {/* Responsive Heading */}
         <h1 className="text-[100px] md:text-[180px] font-extrabold text-gray-100 select-none">
           404
         </h1>
         
-        {/* Content Section */}
         <div className="-mt-16 md:-mt-32 space-y-6">
           <h2 className="text-2xl md:text-4xl font-bold text-gray-900 tracking-tight">
             Page Not Found
@@ -20,7 +18,6 @@ const NotFound = () => {
             The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
           </p>
 
-          {/* Action Link */}
           <div className="pt-4">
             <Link 
               to="/" 

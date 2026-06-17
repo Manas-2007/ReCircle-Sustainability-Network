@@ -96,7 +96,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* CENTER NAVIGATION (Hidden on Mobile) */}
+          {/* CENTER NAVIGATION  */}
           <div className="hidden lg:flex justify-center shrink-0 items-center gap-1.5 xl:gap-3">
             {tabs.map((tab) => (
               <NavLink

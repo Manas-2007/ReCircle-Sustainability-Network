@@ -577,13 +577,11 @@ const Earnings = () => {
 
       {/*  TRANSACTIONS + GOAL */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Transactions (2/3 width) - With Scrollbar & S.No */}
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-gray-300 shadow-sm">
           <h3 className="font-bold text-gray-900 mb-5 lg:text-lg">
             Recent Transactions
           </h3>
 
-          {/* Scrollable Container */}
           <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
             {transactions.length > 0 ? (
               transactions.map((t, index) => (
@@ -634,7 +632,6 @@ const Earnings = () => {
 
         {/* WEEKLY GOAL CARD */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 p-5 sm:p-6 lg:p-7 text-white shadow-[0_10px_40px_rgba(16,185,129,0.25)] flex flex-col justify-between min-h-[220px] sm:min-h-[240px]">
-          {/* Background Glow */}
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-2xl"></div>
 

@@ -164,7 +164,6 @@ const Profile = () => {
 
           {/* Profile Header Info */}
           <div className="px-5 pb-5 relative flex flex-col items-center sm:items-start text-center sm:text-left shrink-0 border-b border-gray-100">
-            {/* Avatar overlapping cover */}
             <div className="relative -mt-12 sm:-mt-14 mb-3">
               <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-full border-[3px] border-white shadow-md overflow-hidden bg-gradient-to-br from-[#064e3b] to-emerald-600 flex items-center justify-center">
                 {profileImage ? (

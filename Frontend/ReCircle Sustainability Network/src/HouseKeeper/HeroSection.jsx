@@ -486,7 +486,6 @@ const HeroSection = () => {
                     <th className="pb-3 text-[9px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                       Image
                     </th>{" "}
-                    {/* Naya Column */}
                     <th className="pb-3 text-[9px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                       Waste Type
                     </th>
@@ -545,7 +544,6 @@ const HeroSection = () => {
                         </div>
                       </td>
                       <td className="py-2.5 sm:py-3 pr-2 text-right">
-                        {/* YAHAN HAI FIX: Dynamic Status Colors */}
                         <span
                           className={`inline-flex items-center text-[8px] sm:text-[10px] px-2 sm:px-2.5 py-1 rounded-full font-bold uppercase ${
                             item.status === "Delivered" ||
@@ -553,7 +551,7 @@ const HeroSection = () => {
                               ? "bg-gray-900 text-white"
                               : item.status === "Pending"
                                 ? "bg-amber-100 text-amber-700"
-                                : "bg-blue-100 text-blue-700" // For Accepted, Scheduled, Progress
+                                : "bg-blue-100 text-blue-700"
                           }`}
                         >
                           {item.status}

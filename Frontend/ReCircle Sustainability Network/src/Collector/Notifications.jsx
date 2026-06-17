@@ -67,7 +67,6 @@ const Notifications = () => {
   //Delete Notification
   const deleteNotification = async (id) => {
     try {
-      // Backend ka endpoint call karo
       const res = await fetch(
         `${API_BASE_URL}/api/requests/notification/${id}`,
         {
